@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: real
+    include: db
+  error:
+    include-exception: true
+    include-stacktrace: always
+
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    session:
+      store-type: jdbc
+
+server:
+    port: 8080
+    servlet:
+      context-path: /

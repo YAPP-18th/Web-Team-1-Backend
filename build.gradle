@@ -1,3 +1,9 @@
+//buildscript {
+//	dependencies {
+//		classpath('se.transmode.gradle:gradle-docker:1.2')
+//	}
+//}
+
 plugins {
 	id 'org.springframework.boot' version '2.4.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -21,7 +27,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -38,3 +45,17 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+//apply plugin: 'docker'
+//
+//task buildDocker(type: Docker, dependsOn: build) {
+//	// push = true
+//	applicationName = jar.baseName
+//	dockerfile = file('/Dockerfile')
+//	doFirst {
+//		copy {
+//			from jar
+//			into stageDir
+//		}
+//	}
+//}

@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### application ###
+application-db.yaml
+application.yaml
+
+./src/main/resources/static
