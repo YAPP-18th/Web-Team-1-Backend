@@ -1,0 +1,12 @@
+# spring.profiles.include는 deprecated됨
+# spring.config.use-legacy-processing=true를 추가하는 것으로 해결
+spring:
+  config:
+    use-legacy-processing: true
+  profiles:
+    include: test # real로 바꾸면 rds와 연결
+
+# 최신 코드
+#  config:
+#    activate:
+#      on-profile: "dev"
