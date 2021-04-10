@@ -35,9 +35,18 @@ Test : 테스트 코드 수정
 
 <br>
 
-## 🔀 Git flow
+## 🔀 Git-Flow
+```
 
-우아한 형제들 참고 https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html
+master : 제품으로 출시될 수 있는 브랜치
+develop :  다음 출시 버전을 개발하는 브랜치
+feature/{feature_name} : 기능을 개발하는 브랜치
+release_{version} : 이번 출시 버전을 준비하는 브랜치
+hotfix : 출시 버전에서 발생한 버그를 수정 하는 브랜치
+
+```
+
+**우아한 형제들 [우린 Git-Flow를 사용하고 있어요](https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)** 참조
 
 <br>
 
