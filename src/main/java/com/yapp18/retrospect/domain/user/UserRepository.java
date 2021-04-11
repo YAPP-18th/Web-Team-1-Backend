@@ -1,4 +1,6 @@
 package com.yapp18.retrospect.domain.user;
 
-public interface UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 }

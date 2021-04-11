@@ -1,11 +1,13 @@
 spring:
   profiles:
-    active: real
-#    include: db
+    active: dev
   error:
     include-exception: true
     include-stacktrace: always
-
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: always
   jpa:
     hibernate:
       naming:
@@ -13,11 +15,12 @@ spring:
       ddl-auto: none
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        format_sql: true # sql prettier
     show-sql: true
-    session:
-      store-type: jdbc
+    open-in-view: false # 안쓰면 warning 뜸
 
 server:
-    port: 8080
+    port: 8081
     servlet:
       context-path: /
