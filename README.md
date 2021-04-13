@@ -8,8 +8,9 @@
 <br>
 
 ## 📋 ERD
-https://www.erdcloud.com/d/dsywqiDTmJcMtcASj
-<img width="1249" alt="스크린샷 2021-03-28 오후 2 47 27" src="https://user-images.githubusercontent.com/35520314/113499598-4c9ac380-9552-11eb-96f9-b39673502d02.png">
+https://www.erdcloud.com/d/dsywqiDTmJcMtcASj  
+<br>
+![vertical](https://user-images.githubusercontent.com/54519245/114515952-e0b60a80-9c77-11eb-99f5-6cc32a6a7c6a.PNG)
 <br>
 
 ## 📤 Commit & PR 규칙
