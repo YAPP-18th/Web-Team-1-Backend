@@ -21,7 +21,7 @@ public class Scrap extends BaseTimeEntity {
     private Long scrap_idx;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_idx") // 'scrap한 유저'의 idx
+    @JoinColumn(name = "own_user_idx") // 'scrap한 유저'의 idx
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 

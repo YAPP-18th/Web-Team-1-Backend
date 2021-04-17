@@ -20,18 +20,18 @@ public class Image extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long image_idx;
 
+    @Column(nullable = false)
+    private String image_url;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_idx")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
-    @Column(nullable = false)
-    private String image_url;
-
     @Builder
-    public Image(Post post, String image_url) {
-        this.post = post;
+    public Image(String image_url, Post post) {
         this.image_url = image_url;
+        this.post = post;
     }
 }
 

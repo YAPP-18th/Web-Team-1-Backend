@@ -17,19 +17,28 @@ public class User extends BaseTimeEntity {
     private Long user_idx;
     @Column(length = 20, nullable = false)
     private String name;
+    @Column(length = 20, nullable = false)
+    private String nickname;
+    @Column(length = 100)
+    private String intro;
     @Column(length = 50, nullable = false)
     private String email;
-    private String profile_url;
+    private String picture;
     @Column(length = 20, nullable = false)
     private String platform;
+    @Column(length = 20)
+    private String job;
     private String access_token;
 
     @Builder
-    public User(String name, String email, String profile_url, String platform, String access_token) {
+    public User(String name, String nickname, String intro, String email, String picture, String platform, String job, String access_token) {
         this.name = name;
+        this.nickname = nickname;
+        this.intro = intro;
         this.email = email;
-        this.profile_url = profile_url;
+        this.picture = picture;
         this.platform = platform;
+        this.job = job;
         this.access_token = access_token;
     }
 }
