@@ -8,8 +8,9 @@
 <br>
 
 ## 📋 ERD
-https://www.erdcloud.com/d/dsywqiDTmJcMtcASj
-<img width="1249" alt="스크린샷 2021-03-28 오후 2 47 27" src="https://user-images.githubusercontent.com/35520314/113499598-4c9ac380-9552-11eb-96f9-b39673502d02.png">
+https://www.erdcloud.com/d/dsywqiDTmJcMtcASj  
+<br>
+![vertical](https://user-images.githubusercontent.com/54519245/114515952-e0b60a80-9c77-11eb-99f5-6cc32a6a7c6a.PNG)
 <br>
 
 ## 📤 Commit & PR 규칙
@@ -35,9 +36,18 @@ Test : 테스트 코드 수정
 
 <br>
 
-## 🔀 Git flow
+## 🔀 Git-Flow
+```
 
-우아한 형제들 참고 https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html
+master : 제품으로 출시될 수 있는 브랜치
+develop :  다음 출시 버전을 개발하는 브랜치
+feature/{feature_name} : 기능을 개발하는 브랜치
+release_{version} : 이번 출시 버전을 준비하는 브랜치
+hotfix : 출시 버전에서 발생한 버그를 수정 하는 브랜치
+
+```
+
+**우아한 형제들 [우린 Git-Flow를 사용하고 있어요](https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)** 참조
 
 <br>
 

@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.domain.image;
 
 import com.yapp18.retrospect.domain.post.Post;
+import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -25,33 +26,47 @@ public class ImageRepositoryTest {
     }
 
     String name = "테스트 이름";
+    String nickname = "테스트 닉네임";
+    String intro = "테스트 자기소개";
     String email = "test@gmail.com";
-    String profile_url = null;
+    String picture = null;
     String platform = "google";
+    String job = "개발자";
     String access_token = null;
 
     User user = User.builder()
             .name(name)
+            .nickname(nickname)
+            .intro(intro)
             .email(email)
-            .profile_url(profile_url)
+            .picture(picture)
             .platform(platform)
+            .job(job)
             .access_token(access_token)
             .build();
 
+    String template_name = "4F";
+    String template_content = "...";
+
+    Template template = Template.builder()
+            .template_name(template_name)
+            .content(template_content)
+            .user(user)
+            .build();
+
     String category = "개발";
-    String template = "DAKI";
     String title = "테스트 제목";
     String content = "테스트 콘텐츠";
     long view = 0;
 
     Post post = Post.builder()
-                .user(user)
-                .category(category)
-                .template(template)
-                .title(title)
-                .content(content)
-                .view(view)
-                .build();
+            .category(category)
+            .title(title)
+            .content(content)
+            .view(view)
+            .user(user)
+            .template(template)
+            .build();
 
     @Test
     public void 이미지저장_불러오기() {

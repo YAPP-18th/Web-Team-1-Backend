@@ -1,7 +1,6 @@
-package com.yapp18.retrospect.domain.scrap;
+package com.yapp18.retrospect.domain.template;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
-import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,25 +13,26 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name="scrap_tb")
-public class Scrap extends BaseTimeEntity {
+@Table(name="template_tb")
+public class Template extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long scrap_idx;
+    private Long template_idx;
+
+    @Column(length = 30, nullable = false)
+    private String template_name;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "own_user_idx") // 'scrap한 유저'의 idx
+    @JoinColumn(name = "own_user_idx")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "scraped_post_idx") // 'scrap된 포스트'의 idx
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Post post;
-
     @Builder
-    public Scrap(User user, Post post) {
+    public Template(String template_name, String content, User user) {
+        this.template_name = template_name;
+        this.content = content;
         this.user = user;
-        this.post = post;
     }
 }
