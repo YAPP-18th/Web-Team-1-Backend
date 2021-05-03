@@ -50,19 +50,19 @@ public class ImageRepositoryTest {
 
     Template template = Template.builder()
             .template_name(template_name)
-            .content(template_content)
+            .template(template_content)
             .user(user)
             .build();
 
     String category = "개발";
     String title = "테스트 제목";
-    String content = "테스트 콘텐츠";
+    String contents = "테스트 콘텐츠";
     long view = 0;
 
     Post post = Post.builder()
             .category(category)
             .title(title)
-            .content(content)
+            .contents(contents)
             .view(view)
             .user(user)
             .template(template)
