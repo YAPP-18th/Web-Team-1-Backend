@@ -27,7 +27,7 @@ public class Post extends BaseTimeEntity {
     private String title;
     //columnDefinition = "TEXT" - VARCHAR 255 제한 해제
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    private String contents;
     @Column(nullable = false)
     @ColumnDefault("0")
     private Long view;
@@ -47,10 +47,10 @@ public class Post extends BaseTimeEntity {
     private Template template;
 
     @Builder
-    public Post(String category, String title, String content, Long view, User user, Template template) {
+    public Post(String category, String title, String contents, Long view, User user, Template template) {
         this.category = category;
         this.title = title;
-        this.content = content;
+        this.contents = contents;
         this.view = view;
         this.user = user;
         this.template = template;

@@ -21,7 +21,7 @@ public class Comment extends BaseTimeEntity {
     private Long comment_idx;
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    private String comment;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_idx")
@@ -35,8 +35,8 @@ public class Comment extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Comment(String content, Post post, User user) {
-        this.content = content;
+    public Comment(String comment, Post post, User user) {
+        this.comment = comment;
         this.post = post;
         this.user = user;
     }
