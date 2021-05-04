@@ -10,7 +10,7 @@
 ## 📋 ERD
 https://www.erdcloud.com/d/dsywqiDTmJcMtcASj  
 <br>
-![vertical](https://user-images.githubusercontent.com/54519245/114515952-e0b60a80-9c77-11eb-99f5-6cc32a6a7c6a.PNG)
+![erd](https://user-images.githubusercontent.com/54519245/116951582-3acc4d80-acc3-11eb-8031-5f0fcf7d0035.png)
 <br>
 
 ## 📤 Commit & PR 규칙
