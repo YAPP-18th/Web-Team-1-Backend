@@ -1,6 +1,8 @@
 spring:
   freemarker:
     check-template-location: false
+  profiles:
+    active: local
   error:
     include-exception: true
     include-stacktrace: always
