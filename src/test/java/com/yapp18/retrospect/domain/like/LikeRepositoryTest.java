@@ -1,4 +1,4 @@
-package com.yapp18.retrospect.domain.scrap;
+package com.yapp18.retrospect.domain.like;
 
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.template.Template;
@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ScrapRepositoryTest {
+public class LikeRepositoryTest {
     @Autowired
-    ScrapRepository scrapRepository;
+    LikeRepository likeRepository;
 
     @AfterEach
     public void teardown() {
-        scrapRepository.deleteAll();
+        likeRepository.deleteAll();
     }
 
     String name_1 = "테스트 이름1";
@@ -71,7 +71,7 @@ public class ScrapRepositoryTest {
 
     Template template = Template.builder()
             .template_name(template_name)
-            .content(template_content)
+            .template(template_content)
             .user(user2)
             .build();
 
@@ -83,7 +83,7 @@ public class ScrapRepositoryTest {
     Post post = Post.builder()
             .category(category)
             .title(title)
-            .content(content)
+            .contents(content)
             .view(view)
             .user(user2)
             .template(template)
@@ -91,18 +91,18 @@ public class ScrapRepositoryTest {
 
     @Test
     public void 스크랩저장_불러오기() {
-        scrapRepository.save(Scrap.builder()
+        likeRepository.save(Like.builder()
                 .user(user1)
                 .post(post)
                 .build()
         );
 
-        List<Scrap> scrapList = scrapRepository.findAll();
+        List<Like> likeList = likeRepository.findAll();
 
-        Scrap scrap = scrapList.get(0);
+        Like like = likeList.get(0);
 
-        assertThat(scrap.getUser().getName()).isEqualTo(name_1);
-        assertThat(scrap.getPost().getUser().getName()).isEqualTo(name_2);
-        assertThat(scrap.getPost().getTitle()).isEqualTo(title);
+        assertThat(like.getUser().getName()).isEqualTo(name_1);
+        assertThat(like.getPost().getUser().getName()).isEqualTo(name_2);
+        assertThat(like.getPost().getTitle()).isEqualTo(title);
     }
 }

@@ -49,7 +49,7 @@ public class PostRepositoryTest {
 
     Template template = Template.builder()
             .template_name(template_name)
-            .content(template_content)
+            .template(template_content)
             .user(user)
             .build();
 
@@ -57,14 +57,14 @@ public class PostRepositoryTest {
     public void 게시글저장_불러오기(){
         String category = "개발";
         String title = "테스트 제목";
-        String content = "테스트 콘텐츠";
+        String contents = "테스트 콘텐츠";
         long view = 0;
 
         //given
         postRepository.save(Post.builder()
                 .category(category)
                 .title(title)
-                .content(content)
+                .contents(contents)
                 .view(view)
                 .user(user)
                 .template(template)
@@ -79,7 +79,7 @@ public class PostRepositoryTest {
         assertThat(post.getCategory()).isEqualTo(category);
         assertThat(post.getTemplate().getTemplate_name()).isEqualTo(template_name);
         assertThat(post.getTitle()).isEqualTo(title);
-        assertThat(post.getContent()).isEqualTo(content);
+        assertThat(post.getContents()).isEqualTo(contents);
         assertThat(post.getView()).isEqualTo(view);
     }
 }

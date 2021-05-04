@@ -22,7 +22,7 @@ public class Template extends BaseTimeEntity {
     @Column(length = 30, nullable = false)
     private String template_name;
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    private String template;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "own_user_idx")
@@ -30,9 +30,9 @@ public class Template extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Template(String template_name, String content, User user) {
+    public Template(String template_name, String template, User user) {
         this.template_name = template_name;
-        this.content = content;
+        this.template = template;
         this.user = user;
     }
 }
