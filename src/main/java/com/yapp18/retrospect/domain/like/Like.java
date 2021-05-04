@@ -1,4 +1,4 @@
-package com.yapp18.retrospect.domain.scrap;
+package com.yapp18.retrospect.domain.like;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.post.Post;
@@ -14,24 +14,24 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name="scrap_tb")
-public class Scrap extends BaseTimeEntity {
+@Table(name="like_tb")
+public class Like extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long scrap_idx;
+    private Long like_idx;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "own_user_idx") // 'scrap한 유저'의 idx
+    @JoinColumn(name = "own_user_idx") // 'like한 유저'의 idx
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "scraped_post_idx") // 'scrap된 포스트'의 idx
+    @JoinColumn(name = "liked_post_idx") // 'like된 포스트'의 idx
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
     @Builder
-    public Scrap(User user, Post post) {
+    public Like(User user, Post post) {
         this.user = user;
         this.post = post;
     }
