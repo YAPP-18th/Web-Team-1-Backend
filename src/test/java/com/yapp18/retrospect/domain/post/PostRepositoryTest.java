@@ -41,7 +41,6 @@ public class PostRepositoryTest {
             .picture(picture)
             .platform(platform)
             .job(job)
-            .access_token(access_token)
             .build();
 
     String template_name = "4F";

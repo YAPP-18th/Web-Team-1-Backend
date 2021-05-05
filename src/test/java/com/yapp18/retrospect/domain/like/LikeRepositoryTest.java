@@ -51,7 +51,6 @@ public class LikeRepositoryTest {
             .picture(picture_1)
             .platform(platform_1)
             .job(job_1)
-            .access_token(access_token_1)
             .build();
 
 
@@ -63,7 +62,6 @@ public class LikeRepositoryTest {
             .picture(picture_2)
             .platform(platform_2)
             .job(job_2)
-            .access_token(access_token_2)
             .build();
 
     String template_name = "4F";
