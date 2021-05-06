@@ -53,6 +53,7 @@ public class OauthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         //OAuth2UserService를 통해 가져온 OAuth2User의 attribute를 담을 클래스입니다.
         //이후 네이버 등 다른 소셜 로그인도 이 클래스를 사용합니다.
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+        //oAuth2User.getAttributes() 얘가 핵심?
 
         //여기서 저장이 안되어 있다면 가입 페이지로 redirect 해야함
         User user = saveOrUpdate(attributes);
