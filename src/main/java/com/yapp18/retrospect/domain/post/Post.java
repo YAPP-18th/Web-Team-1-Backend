@@ -3,6 +3,7 @@ package com.yapp18.retrospect.domain.post;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter

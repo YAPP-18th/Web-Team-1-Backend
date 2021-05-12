@@ -39,7 +39,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	// swagger, ui
+	// swagger
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.5.0'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.5.0'
 
