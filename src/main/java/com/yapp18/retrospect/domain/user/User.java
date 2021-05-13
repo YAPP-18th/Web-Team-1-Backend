@@ -31,7 +31,8 @@ public class User extends BaseTimeEntity {
     private String access_token;
 
     @Builder
-    public User(String name, String nickname, String intro, String email, String picture, String platform, String job, String access_token) {
+    public User(Long user_idx, String name, String nickname, String intro, String email, String picture, String platform, String job, String access_token) {
+        this.user_idx = user_idx;
         this.name = name;
         this.nickname = nickname;
         this.intro = intro;

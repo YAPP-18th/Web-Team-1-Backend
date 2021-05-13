@@ -21,6 +21,14 @@ public abstract class BaseTimeEntity {
     private LocalDateTime modified_at;
 
     //그리고 다른 Entity 클래스가 BaseTimeEntity를 상속받도록 변경합니다.
+//    public LocalDateTime getCreatedDate() {
+//        return created_at;
+//    }
+//
+//    public LocalDateTime getModifiedDate() {
+//        return modified_at;
+//    }
 
 
 }
+

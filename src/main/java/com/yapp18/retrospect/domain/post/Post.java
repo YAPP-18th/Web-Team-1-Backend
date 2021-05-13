@@ -59,4 +59,3 @@ public class Post extends BaseTimeEntity {
         this.template = template;
     }
 }
-
