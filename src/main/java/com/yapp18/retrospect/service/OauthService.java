@@ -2,9 +2,6 @@ package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.auth.dto.OAuthAttributes;
 import com.yapp18.retrospect.auth.dto.SessionUser;
-import com.yapp18.retrospect.auth.helper.SocialPlatform;
-import com.yapp18.retrospect.auth.social.GoogleOauth;
-import com.yapp18.retrospect.auth.social.KakaoOauth;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +14,8 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.StringTokenizer;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +51,7 @@ public class OauthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         User user = saveOrUpdate(attributes);
 
         //SessionUser - 세션에 사용자 정보를 저장하기 위한 Dto 클래스입니다.
+        System.out.println("registrationId = "  + registrationId);
         if(registrationId.equals("google")) httpSession.setAttribute("google", new SessionUser(user));
         else httpSession.setAttribute("kakao", new SessionUser(user));
 
