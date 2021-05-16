@@ -1,7 +1,7 @@
 package com.yapp18.retrospect.config;
 
 import com.yapp18.retrospect.domain.user.Role;
-import com.yapp18.retrospect.service.OauthService;
+import com.yapp18.retrospect.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 @RequiredArgsConstructor
 @EnableWebSecurity // Spring Security 설정들을 활성화시켜 주며, 모든 엔드포인트에 접근 제한이 걸리게 됩니다.
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final OauthService OAuthService;
+    private final OAuthService OAuthService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

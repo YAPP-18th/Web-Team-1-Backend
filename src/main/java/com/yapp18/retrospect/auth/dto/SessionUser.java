@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.auth.dto;
 
+import com.yapp18.retrospect.auth.helper.SocialPlatform;
 import com.yapp18.retrospect.domain.user.User;
 import lombok.Getter;
 

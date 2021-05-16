@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -24,24 +25,32 @@ import java.util.Collections;
 
 스프링 부트 2 버전의 시큐리티에서는 기본적으로 {도메인}/login/oauth2/code/{소셜서비스코드}로 리다이렉트 URL을 지원하고 있습니다.
 사용자가 별도로 리다이렉트 URL을 지원하는 Controller를 만들 필요가 없습니다. 시큐리티에서 이미 구현해 놓은 상태입니다.*/
-public class OauthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
     private final HttpSession httpSession;
+    public static OAuth2AccessToken accessToken;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        System.out.println("OAuth 로그인 진행 중.....");
+        accessToken = userRequest.getAccessToken();
+        System.out.println("토큰 : "+ accessToken.getTokenValue());
+
         //userRequest = {도메인}/login/oauth2/code/{소셜서비스코드}로 날아오는 요청?
         OAuth2UserService delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
+        System.out.println("유저 정보 : "+ oAuth2User.getAttributes());
 
         //registrationId - 현재 로그인 진행 중인 서비스를 구분하는 코드
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        System.out.println("registrationId = "  + registrationId);
 
         //userNameAttributeName - OAuth2 로그인 진행 시 키가 되는 필드 값을 이야기 합니다. Primary Key와 같은 의미입니다.
         /*표준 OAuth 2.0 Provider의 경우 UserInfo 응답에서 사용자 이름에 액세스하는 데 사용되는 속성 이름이 필요하므로
         UserInfoEndpoint.getUserNameAttributeName()을 통해 사용할 수 있어야합니다.*/
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
+        System.out.println("userNameAttributeName = "  + userNameAttributeName);
 
         //OAuth2UserService를 통해 가져온 OAuth2User의 attribute를 담을 클래스입니다.
         //이후 네이버 등 다른 소셜 로그인도 이 클래스를 사용합니다.
@@ -51,7 +60,6 @@ public class OauthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         User user = saveOrUpdate(attributes);
 
         //SessionUser - 세션에 사용자 정보를 저장하기 위한 Dto 클래스입니다.
-        System.out.println("registrationId = "  + registrationId);
         if(registrationId.equals("google")) httpSession.setAttribute("google", new SessionUser(user));
         else httpSession.setAttribute("kakao", new SessionUser(user));
 
@@ -62,6 +70,8 @@ public class OauthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         );
     }
 
+
+
     private User saveOrUpdate(OAuthAttributes attributes){
         User user = userRepository.findByEmail(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getName(), attributes.getPicture())) // 결괏값(entity)가 존재한다면, 즉 DB에 존재한다면 update
@@ -69,30 +79,4 @@ public class OauthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
         return userRepository.save(user);
     }
-
-//    private final GoogleOauth googleOauth;
-//    private final KakaoOauth kakaoOauth;
-//    private final HttpServletResponse response;
-//
-//    public void request(SocialPlatform socialPlatform){
-//        String redirectURL;
-//        switch (socialPlatform) {
-//            case GOOGLE: {
-//                redirectURL = googleOauth.getOauthRedirectURL();
-//                break;
-//            }
-//            case KAKAO: {
-//                redirectURL = kakaoOauth.getOauthRedirectURL();
-//                break;
-//            }
-//            default: {
-//                throw new IllegalArgumentException("알 수 없는 소셜 로그인 형식입니다.");
-//            }
-//        }
-//        try {
-//            response.sendRedirect(redirectURL);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 }
