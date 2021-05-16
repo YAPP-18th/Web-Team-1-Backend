@@ -14,32 +14,39 @@ import javax.persistence.*;
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_idx;
-    @Column(length = 20, nullable = false)
-    private String name;
-    @Column(length = 20, nullable = false)
-    private String nickname;
-    @Column(length = 100)
-    private String intro;
-    @Column(length = 50, nullable = false)
+    @Column(name="user_idx", nullable = false)
+    private Long userIdx;
+
+    @Column(nullable = false, unique = true)
     private String email;
-    private String picture;
-    @Column(length = 20, nullable = false)
-    private String platform;
-    @Column(length = 20)
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String nickname;
+
+    private String profile;
+
     private String job;
-    private String access_token;
+
+    private String intro;
+
+    @Column(nullable = false)
+    private String platform;
+
 
     @Builder
-    public User(Long user_idx, String name, String nickname, String intro, String email, String picture, String platform, String job, String access_token) {
-        this.user_idx = user_idx;
+    public User(Long userIdx, String email, String name, String nickname,
+                String profile, String job, String intro,String platform){
+        this.userIdx = userIdx;
+        this.email = email;
         this.name = name;
         this.nickname = nickname;
-        this.intro = intro;
-        this.email = email;
-        this.picture = picture;
-        this.platform = platform;
+        this.profile = profile;
         this.job = job;
-        this.access_token = access_token;
+        this.intro = intro;
+        this.platform = platform;
+
     }
 }
