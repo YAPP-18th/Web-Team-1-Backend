@@ -12,22 +12,26 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Table(name="tag_tb")
+
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tag_idx;
+    @Column(name="tag_idx", nullable = false)
+    private Long tagIdx;
 
-    @Column(length = 30, nullable = false)
+    @Column(nullable = false)
     private String tag;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tagged_post_idx") // 'like된 포스트'의 idx
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "post_idx", insertable = false, updatable = false)
     private Post post;
 
     @Builder
-    public Tag(String tag, Post post) {
+    public Tag(Long tagIdx, String tag, Post post) {
+        this.tagIdx = tagIdx;
         this.tag = tag;
         this.post = post;
     }
 }
+
+//@OnDelete(action = OnDeleteAction.CASCADE)

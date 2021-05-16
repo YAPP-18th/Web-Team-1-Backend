@@ -1,7 +1,7 @@
 ### application ###
 application-real.yaml
 ./src/main/resources/static
-src/main/resources/application-db.yaml
+src/main/resources/application-real.yaml
 src/main/resources/application-oauth.yaml
 
 HELP.md

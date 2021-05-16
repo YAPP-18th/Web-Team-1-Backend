@@ -17,22 +17,20 @@ import javax.persistence.*;
 public class Template extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long template_idx;
+    @Column(name="template_idx", nullable = false)
+    private Long templateIdx;
 
-    @Column(length = 30, nullable = false)
-    private String template_name;
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(name = "template_name", nullable = false)
+    private String templateName;
+
+    @Column(nullable = false)
     private String template;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "own_user_idx")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
 
     @Builder
-    public Template(String template_name, String template, User user) {
-        this.template_name = template_name;
+    public Template(Long templateIdx, String templateName,String template) {
+        this.templateIdx = templateIdx;
+        this.templateName = templateName;
         this.template = template;
-        this.user = user;
     }
 }
