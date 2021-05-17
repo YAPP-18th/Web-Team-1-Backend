@@ -4,6 +4,7 @@ import com.yapp18.retrospect.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Table(name="user_tb")
+//@ToString(of = {"user_idx", "role", "name", "nickname", "intro", "email", "picture", "platform", "job"})
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

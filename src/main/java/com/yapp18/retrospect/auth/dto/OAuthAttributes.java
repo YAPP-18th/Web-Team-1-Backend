@@ -8,6 +8,8 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
+//이 클래스는 User를 생성자로 전달받아 Spring Security에 User 정보를 전달한다.
+//즉, 인증된 사용자의 세부 정보를 포함한다.
 public class OAuthAttributes {
     private Map<String, Object> attributes;
     private String nameAttributeKey;
