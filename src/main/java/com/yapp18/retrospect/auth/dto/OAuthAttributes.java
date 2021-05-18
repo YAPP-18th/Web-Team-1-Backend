@@ -16,16 +16,18 @@ public class OAuthAttributes {
     private String name;
     private String email;
     private String picture;
-    private String platform;
+    private String provider;
+    private String providerId;
 
     @Builder
-    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email, String picture, String platform) {
+    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email, String picture, String provider, String providerId) {
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.name = name;
         this.email = email;
         this.picture = picture;
-        this.platform = platform;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 
     //OAuth2User에서 반환하는 사용자 정보는 Map이기 때문에 값 하나하나를 변환해야만 함
@@ -39,11 +41,12 @@ public class OAuthAttributes {
     private static OAuthAttributes ofGoogle(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
         //구글 생성자
         return OAuthAttributes.builder()
+                .attributes(attributes)
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
                 .picture((String) attributes.get("picture"))
-                .platform(registrationId)
-                .attributes(attributes)
+                .provider(registrationId)
+                .providerId((String) attributes.get("sub"))
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
@@ -53,11 +56,12 @@ public class OAuthAttributes {
         Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
         System.out.println(profile);
         return OAuthAttributes.builder()
+                .attributes(attributes)
                 .name((String) profile.get("nickname"))
                 .email((String) kakaoAccount.get("email"))
                 .picture((String) profile.get("thumbnail_image_url"))
-                .platform(registrationId)
-                .attributes(attributes)
+                .provider(registrationId)
+                .providerId((String) attributes.get("id"))
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
@@ -69,7 +73,8 @@ public class OAuthAttributes {
                 .nickname(name)
                 .email(email)
                 .picture(picture)
-                .platform(platform)
+                .provider(provider)
+                .providerId(providerId)
                 .build();
     }
 }

@@ -26,7 +26,7 @@ public class UserDto {
             this.nickname = entity.getNickname();
             this.email = entity.getEmail();
             this.picture = entity.getPicture();
-            this.platform = entity.getPlatform();
+            this.platform = entity.getProvider();
         }
     }
 
@@ -39,7 +39,7 @@ public class UserDto {
         private String intro;
         private String email;
         private String picture;
-        private String platform;
+        private String provider;
         private String job;
 
         public totalResponse(User entity) {
@@ -50,7 +50,7 @@ public class UserDto {
             this.intro = entity.getIntro();
             this.email = entity.getEmail();
             this.picture = entity.getPicture();
-            this.platform = entity.getPlatform();
+            this.provider = entity.getProvider();
             this.job = entity.getJob();
         }
     }

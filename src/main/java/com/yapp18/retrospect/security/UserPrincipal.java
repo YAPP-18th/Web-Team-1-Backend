@@ -7,44 +7,37 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 public class UserPrincipal implements OAuth2User, UserDetails {
-    private String name;
+
+    private Long id;
     private String email;
-    private String picture;
-    private String platform;
+    private String password;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    @Builder
-    public UserPrincipal(String name, String email, String picture, String platform, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes) {
-        this.name = name;
+    public UserPrincipal(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
         this.email = email;
-        this.picture = picture;
-        this.platform = platform;
+        this.password = password;
         this.authorities = authorities;
-        this.attributes = attributes;
     }
 
+    public static UserPrincipal create(User user) {
+        List<GrantedAuthority> authorities = Collections.
+                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
-    public static UserPrincipal create(User user){
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER"));
-
-        return UserPrincipal.builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .picture(user.getPicture())
-                .platform(user.getPlatform())
-                .authorities(authorities)
-                .build();
+        return new UserPrincipal(
+                Long.parseLong(user.getProviderId()),
+                user.getEmail(),
+                "",
+                authorities
+        );
     }
 
-    public static UserPrincipal create(User user, Map<String, Object> attributes){
+    public static UserPrincipal create(User user, Map<String, Object> attributes) {
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         userPrincipal.setAttributes(attributes);
         return userPrincipal;
@@ -53,11 +46,6 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     @Override
     public String getUsername() {
         return email;
-    }
-
-    @Override
-    public String getPassword() { // ?
-        return null;
     }
 
     @Override
@@ -92,5 +80,10 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    @Override
+    public String getName() {
+        return String.valueOf(id);
     }
 }

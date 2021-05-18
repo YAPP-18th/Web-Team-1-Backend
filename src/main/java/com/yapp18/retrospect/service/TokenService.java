@@ -1,12 +1,13 @@
 package com.yapp18.retrospect.service;
 
-import com.yapp18.retrospect.auth.dto.OAuthAttributes;
 import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.security.UserPrincipal;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,22 +24,39 @@ public class TokenService {
         this.appProperties = appProperties;
     }
 
-    public String createToken(Authentication authentication){
+    public String createAccessToken(Authentication authentication){
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         System.out.println("createToken authentication : " + authentication);
         System.out.println("createToken userPrincipal : " + userPrincipal);
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
+        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getAccessTokenExpirationMsec());
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getEmail())
-                .setSubject(userPrincipal.getPlatform())
+                .setSubject(String.valueOf(userPrincipal.getId()))
+                .setSubject(userPrincipal.getPassword())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
                 .compact();
 
+    }
+
+    public String createRefreshToken(Authentication authentication){
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        System.out.println("createToken authentication : " + authentication);
+        System.out.println("createToken userPrincipal : " + userPrincipal);
+
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpirationMsec());
+
+        return Jwts.builder()
+                .setSubject(userPrincipal.getUsername())
+                .setSubject(userPrincipal.getPassword())
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+                .compact();
     }
 
     public String getUserEmailFromToken(String token){

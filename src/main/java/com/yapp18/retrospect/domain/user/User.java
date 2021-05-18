@@ -4,7 +4,6 @@ import com.yapp18.retrospect.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -31,19 +30,21 @@ public class User extends BaseTimeEntity {
     private String email;
     private String picture;
     @Column(length = 20, nullable = false)
-    private String platform;
+    private String provider;
+    private String providerId;
     @Column(length = 20)
     private String job;
 
     @Builder
-    public User(Role role, String name, String nickname, String intro, String email, String picture, String platform, String job) {
+    public User(Role role, String name, String nickname, String intro, String email, String picture, String provider, String providerId, String job) {
         this.role = role;
         this.name = name;
         this.nickname = nickname;
         this.intro = intro;
         this.email = email;
         this.picture = picture;
-        this.platform = platform;
+        this.provider = provider;
+        this.providerId = providerId;
         this.job = job;
     }
 
