@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.security.auth.Subject;
 import java.util.Collection;
 
 // Email과 Platform 조합으로 토큰 객체를 생성해준다.

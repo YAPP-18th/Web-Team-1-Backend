@@ -1,15 +1,16 @@
 package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.auth.dto.OAuthAttributes;
-import com.yapp18.retrospect.auth.helper.AppProperties;
+import com.yapp18.retrospect.config.AppProperties;
+import com.yapp18.retrospect.security.UserPrincipal;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 
 // 이 클래스는 유효한 JWT를 생성해준다. (JWT Properties 정보를 담고 있는 클래스 사용)
 @Service
@@ -23,15 +24,16 @@ public class TokenService {
     }
 
     public String createToken(Authentication authentication){
-        OAuthAttributes oAuthAttributes = (OAuthAttributes) authentication.getPrincipal();
-        System.out.println("createToken : " + oAuthAttributes);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        System.out.println("createToken authentication : " + authentication);
+        System.out.println("createToken userPrincipal : " + userPrincipal);
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMSec());
+        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
         return Jwts.builder()
-                .setSubject(oAuthAttributes.getEmail())
-                .setSubject(oAuthAttributes.getPlatform())
+                .setSubject(userPrincipal.getEmail())
+                .setSubject(userPrincipal.getPlatform())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
@@ -64,5 +66,9 @@ public class TokenService {
             logger.error("비어있는 JWT");
         }
         return false;
+    }
+
+    public Map<String,Object> getBobyFromToken(String authToken){
+        return Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken).getBody();
     }
 }
