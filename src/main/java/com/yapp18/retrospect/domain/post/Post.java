@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.domain.post;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
@@ -16,6 +17,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -47,6 +49,10 @@ public class Post extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "template_idx")
     private Template template;
+
+//    @OneToMany(mappedBy = "post")
+//    @JoinColumn(name = "comment_idx")
+//    private List<Comment> commentList = new ArrayList<>();
 
     @Builder
     public Post(Long postIdx,String title, String category, String contents,

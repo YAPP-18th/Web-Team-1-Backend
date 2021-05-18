@@ -23,7 +23,7 @@ public class Tag {
     private String tag;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "post_idx")
     private Post post;
 
     @Builder
