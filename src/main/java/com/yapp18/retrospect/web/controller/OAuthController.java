@@ -6,6 +6,7 @@ package com.yapp18.retrospect.web.controller;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.AuthResponse;
+import com.yapp18.retrospect.web.dto.LoginRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,12 +33,12 @@ public class OAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser() {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        "ybell95@naver.com",
-                        ""
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
                 )
         );
 

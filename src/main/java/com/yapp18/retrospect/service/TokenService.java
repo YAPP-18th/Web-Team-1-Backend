@@ -8,9 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 // 이 클래스는 유효한 JWT를 생성해준다. (JWT Properties 정보를 담고 있는 클래스 사용)
@@ -42,17 +44,21 @@ public class TokenService {
 
     }
 
-    public String createRefreshToken(Authentication authentication){
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        System.out.println("createToken authentication : " + authentication);
-        System.out.println("createToken userPrincipal : " + userPrincipal);
+    public <T> String createRefreshToken(T userDetails){
+        Map<String,Object> claim = new HashMap<>();
+
+        if (userDetails instanceof DefaultOAuth2User) { // kakao도 맞게 설정할 것
+            claim.put("sub",  ((DefaultOAuth2User) userDetails).getName()); // subject 인증 대상(고유 ID)
+
+            claim.put("email", ((DefaultOAuth2User) userDetails).getAttributes().get("userEmail"));
+            claim.put("nickname", ((DefaultOAuth2User) userDetails).getAttributes().get("userName"));
+        }
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpirationMsec());
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
-                .setSubject(userPrincipal.getPassword())
+                .setClaims(claim)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
