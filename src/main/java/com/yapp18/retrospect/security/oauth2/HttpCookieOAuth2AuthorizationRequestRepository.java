@@ -39,10 +39,10 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
         //1. addCookie로 response에 "oauth2_auth_request" 이름으로 authorizationRequest를 직렬화 한 값을 담는다.
         //2. request에서 redirect_uri을 추출하여 redirectUriAfterLogin에 담는다.
         //3. 만약 redirectUriAfterLogin이 존재한다면 response에 "redirect_uri" 이름으로 추출한 redirectUriAfterLogin 값을 담는다.
-        CookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, CookieUtils.serialize(authorizationRequest), cookieExpireSeconds);
+        CookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, CookieUtils.serialize(authorizationRequest), true, cookieExpireSeconds);
         String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
         if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
-            CookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, cookieExpireSeconds);
+            CookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, true, cookieExpireSeconds);
         }
     }
 

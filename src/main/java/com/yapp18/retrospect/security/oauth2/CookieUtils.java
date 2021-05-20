@@ -24,10 +24,10 @@ public class CookieUtils {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+    public static void addCookie(HttpServletResponse response, String name, String value, boolean httpOnly, int maxAge) {
         Cookie cookie = new Cookie(name, value); // 패러미터로 들어온 name과 value를 기반으로 새로운 쿠키를 생성 
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(httpOnly);
         cookie.setMaxAge(maxAge); // Expire 설정
         response.addCookie(cookie); // response에 새로운 쿠키 추가
     }

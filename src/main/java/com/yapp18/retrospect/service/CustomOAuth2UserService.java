@@ -47,11 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());;
-//        if(registrationId.equals("google")) {
-//            oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
-//        } else if(registrationId.equals("kakao")) {
-//            oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
-//        }
+
         if(!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("OAuth2 공급자(구글, 카카오, ...) 에서 이메일을 찾을 수 없습니다.");
         }

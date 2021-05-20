@@ -45,7 +45,7 @@ public class TokenService {
                 .setClaims(claim)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getAccessTokenSecret().getBytes())
+                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getAccessTokenSecret())
                 .compact();
     }
 
@@ -72,7 +72,7 @@ public class TokenService {
                 .setClaims(claim)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getRefreshTokenSecret().getBytes())
+                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getRefreshTokenSecret())
                 .compact();
     }
 
