@@ -5,6 +5,7 @@ import com.yapp18.retrospect.exception.BadRequestException;
 import com.yapp18.retrospect.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,9 @@ import static com.yapp18.retrospect.security.oauth2.HttpCookieOAuth2Authorizatio
 
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private TokenService TokenService;
-
-    private AppProperties appProperties;
-
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
+    private final TokenService TokenService;
+    private final AppProperties appProperties;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Autowired
     OAuth2AuthenticationSuccessHandler(TokenService TokenService, AppProperties appProperties,
@@ -60,10 +58,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
+        String accessToken = TokenService.createAccessToken((DefaultOAuth2User) authentication.getPrincipal());
         String refreshToken = TokenService.createRefreshToken((DefaultOAuth2User) authentication.getPrincipal());
 
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("refreshToken", refreshToken)
+                .queryParam("accessToken", accessToken)
                 .build().toUriString();
     }
 
@@ -75,7 +74,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private boolean isAuthorizedRedirectUri(String uri) {
         URI clientRedirectUri = URI.create(uri);
 
-        return appProperties.getOauth2().getAuthorrizedRedirectUris()
+        return appProperties.getOauth2().getAuthorrizedRedirectUris() // OAuth2 객체 안에 authorrizedRedirectUris은 @ConfigurationProperties로 oauth.yaml으로 값을 읽어와 자동으로 초기화된다.
                 .stream()
                 .anyMatch(authorizedRedirectUri -> {
                     // Only validate host and port. Let the clients use different paths if they want to

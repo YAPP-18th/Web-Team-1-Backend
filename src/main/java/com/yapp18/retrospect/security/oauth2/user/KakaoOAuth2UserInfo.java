@@ -17,7 +17,7 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
 
     @Override
     public String getName() {
-        return (String) attributes.get("nickname");
+        return (String) profile.get("nickname");
     }
 
     @Override

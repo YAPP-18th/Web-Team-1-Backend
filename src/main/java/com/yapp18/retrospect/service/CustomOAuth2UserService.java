@@ -9,13 +9,18 @@ import com.yapp18.retrospect.security.oauth2.AuthPlatform;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,13 +31,27 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        return super.loadUser(userRequest);
+        try {
+            return processOAuth2User(userRequest, oAuth2User);
+        } catch (AuthenticationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            // Throwing an instance of AuthenticationException will trigger the OAuth2AuthenticationFailureHandler
+            throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());
+        }
     }
 
     private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User){
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
+                .getUserInfoEndpoint().getUserNameAttributeName();
 
-        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());;
+//        if(registrationId.equals("google")) {
+//            oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
+//        } else if(registrationId.equals("kakao")) {
+//            oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
+//        }
         if(!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("OAuth2 공급자(구글, 카카오, ...) 에서 이메일을 찾을 수 없습니다.");
         }
@@ -50,12 +69,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user = registerNewUser(registrationId, oAuth2UserInfo);
         }
 
-        return UserPrincipal.create(user, oAuth2User.getAttributes()); // UserPrincipl이 OAuth2User를 상속했기에 반환 가능
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
+                oAuth2UserInfo.getAttributes(),
+                userNameAttributeName
+        );
     }
 
     // DB에 존재하지 않을 경우 새로 등록
     private User registerNewUser(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
-
         return userRepository.save(User.builder()
                 .role(Role.MEMBER)
                 .name(oAuth2UserInfo.getName())
