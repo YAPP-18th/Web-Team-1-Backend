@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Getter
 @Table(name="user_tb")
 public class User extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_idx", nullable = false)
