@@ -2,6 +2,7 @@ package com.yapp18.retrospect.security;
 
 import com.yapp18.retrospect.service.CustomUserDetailsService;
 import com.yapp18.retrospect.service.TokenService;
+import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -42,14 +41,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenService.validateToken(jwt)) {
-                String userEmail = tokenService.getUserEmailFromToken(jwt);
+                Claims claims = tokenService.getClaimsFromToken(jwt);
+                Number idx = (Number) claims.get("user_idx");
+                Long userIdx = idx.longValue();
+                String nickname = (String) claims.get("nickname");
 
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail); // OK
-                Map<String, Object> attributes = tokenService.getBobyFromToken(jwt); // OK
+                UserDetails userDetails = customUserDetailsService.loadUserByUserIdx(userIdx);// OK
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("userEmail::" + userEmail);
-                    logger.debug("JWT::" + attributes);
+                    logger.debug("JWT" + jwt);
+                    logger.debug("userIdx::" + userIdx);
+                    logger.debug("nickname::" + nickname);
                 }
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
