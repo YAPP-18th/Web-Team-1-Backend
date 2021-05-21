@@ -4,7 +4,6 @@ import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.exception.OAuth2AuthenticationProcessingException;
-import com.yapp18.retrospect.security.UserPrincipal;
 import com.yapp18.retrospect.security.oauth2.AuthPlatform;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfoFactory;

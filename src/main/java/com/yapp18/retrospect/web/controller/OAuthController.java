@@ -5,14 +5,8 @@ package com.yapp18.retrospect.web.controller;
 
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.service.TokenService;
-import com.yapp18.retrospect.web.dto.AuthResponse;
-import com.yapp18.retrospect.web.dto.LoginRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

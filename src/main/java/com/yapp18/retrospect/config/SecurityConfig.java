@@ -1,35 +1,27 @@
 package com.yapp18.retrospect.config;
 
-import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.security.TokenAuthenticationFilter;
 import com.yapp18.retrospect.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.yapp18.retrospect.security.oauth2.OAuth2AuthenticationFailureHandler;
 import com.yapp18.retrospect.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.yapp18.retrospect.service.CustomOAuth2UserService;
 import com.yapp18.retrospect.service.CustomUserDetailsService;
-import com.yapp18.retrospect.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.FilterInvocation;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity // Spring Security 설정들을 활성화시켜 주며, 모든 엔드포인트에 접근 제한이 걸리게 됩니다.
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final OAuthService OAuthService;
-
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomUserDetailsService customUserDetailsService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;

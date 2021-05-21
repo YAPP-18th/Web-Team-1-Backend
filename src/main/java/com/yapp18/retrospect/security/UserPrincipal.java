@@ -32,7 +32,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         return new UserPrincipal(
                 Long.parseLong(user.getProviderId()),
                 user.getEmail(),
-                "",
+                null,
                 authorities
         );
     }
@@ -46,6 +46,11 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
     }
 
     @Override
