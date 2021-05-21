@@ -4,20 +4,22 @@ import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.exception.OAuth2AuthenticationProcessingException;
-import com.yapp18.retrospect.security.UserPrincipal;
 import com.yapp18.retrospect.security.oauth2.AuthPlatform;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -62,7 +64,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user = registerNewUser(registrationId, oAuth2UserInfo);
         }
 
-        return UserPrincipal.create(user, oAuth2UserInfo.getAttributes());
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
+                oAuth2UserInfo.getAttributes(),
+                userNameAttributeName
+        );
     }
 
     // DB에 존재하지 않을 경우 새로 등록
@@ -72,9 +77,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .name(oAuth2UserInfo.getName())
                 .nickname(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
-                .profile(oAuth2UserInfo.getProfile())
+                .profile(oAuth2UserInfo.getPicture())
                 .provider(registrationId)
-                .providerId(oAuth2UserInfo.getId())
+//                .platform((AuthPlatform.valueOf(registrationId)) // 추후에 Column 타입 AuthPlatform으로 바꾸기
+//                .providerId(oAuth2UserInfo.getId())
                 .build()
         );
     }
@@ -82,7 +88,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     // DB에 존재할 경우 정보 업데이트
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         return userRepository.save(existingUser
-                .update(oAuth2UserInfo.getName(), oAuth2UserInfo.getProfile())
+                .update(oAuth2UserInfo.getName(), oAuth2UserInfo.getPicture())
         );
     }
 }

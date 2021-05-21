@@ -9,7 +9,7 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
 
     @Override
     public String getId() {
-        return String.valueOf(attributes.get("sub"));
+        return (String) attributes.get("sub");
     }
 
     @Override
@@ -23,7 +23,7 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getProfile() {
+    public String getPicture() {
         return (String) attributes.get("picture");
     }
 }

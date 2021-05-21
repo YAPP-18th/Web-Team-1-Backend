@@ -24,12 +24,4 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return UserPrincipal.create(user);
     }
-
-    @Transactional
-    public UserDetails loadUserByUserIdx(Long userIdx) throws UsernameNotFoundException {
-        User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new UsernameNotFoundException(userIdx + "인덱스를 갖는 사용자를 찾을 수 없습니다."));
-
-        return UserPrincipal.create(user);
-    }
 }

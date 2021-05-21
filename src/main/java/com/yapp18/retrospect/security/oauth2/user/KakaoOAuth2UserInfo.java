@@ -12,7 +12,7 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
     }
     @Override
     public String getId() {
-        return String.valueOf(attributes.get("id"));
+        return (String) attributes.get("id");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getProfile() {
+    public String getPicture() {
         return (String) profile.get("profile_image_url");
     }
 }

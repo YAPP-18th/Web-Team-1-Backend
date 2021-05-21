@@ -1,19 +1,15 @@
 package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.config.AppProperties;
-import com.yapp18.retrospect.domain.user.User;
-import com.yapp18.retrospect.domain.user.UserRepository;
-import com.yapp18.retrospect.security.UserPrincipal;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 // 이 클래스는 유효한 JWT를 생성해준다. (JWT Properties 정보를 담고 있는 클래스 사용)
 @Service
@@ -26,11 +22,21 @@ public class TokenService {
         this.appProperties = appProperties;
     }
 
-    public String createAccessToken(Authentication authentication) {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        Map<String, Object> claim = new HashMap<>();
-        claim.put("user_idx", userPrincipal.getUserIdx());
-        claim.put("nickname", userPrincipal.getNickname());
+    public <T> String createAccessToken(T userDetails){
+        Map<String,Object> claim = new HashMap<>();
+
+        if (userDetails instanceof DefaultOAuth2User) { // kakao도 맞게 설정할 것
+            //nameattributekey로 구분하는 방법? -> DefaultOAuth2User를 상속하는 userPrinciple 클래스 만들기?
+            Map<String,Object> attributes = ((DefaultOAuth2User) userDetails).getAttributes();
+            if(attributes.get("sub") != null){ // google
+                claim.put("providerId",  ((DefaultOAuth2User) userDetails).getName()); // subject 인증 대상(고유 ID)
+                claim.put("email", attributes.get("email"));
+            } else { // kakao
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+                claim.put("providerId",  ((DefaultOAuth2User) userDetails).getName()); // subject 인증 대상(고유 ID)
+                claim.put("email", kakaoAccount.get("email"));
+            }
+        }
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getAccessTokenExpirationMsec());
@@ -43,11 +49,21 @@ public class TokenService {
                 .compact();
     }
 
-    public String createRefreshToken(Authentication authentication) {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        Map<String, Object> claim = new HashMap<>();
-        claim.put("user_idx", userPrincipal.getUserIdx());
-        claim.put("nickname", userPrincipal.getNickname());
+    public <T> String createRefreshToken(T userDetails){
+        Map<String,Object> claim = new HashMap<>();
+
+        if (userDetails instanceof DefaultOAuth2User) { // kakao도 맞게 설정할 것
+            //nameattributekey로 구분하는 방법? -> DefaultOAuth2User를 상속하는 userPrinciple 클래스 만들기?
+            Map<String,Object> attributes = ((DefaultOAuth2User) userDetails).getAttributes();
+            if(attributes.get("sub") != null){ // google
+                claim.put("providerId",  ((DefaultOAuth2User) userDetails).getName()); // subject 인증 대상(고유 ID)
+                claim.put("email", attributes.get("email"));
+            } else { // kakao
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+                claim.put("providerId",  ((DefaultOAuth2User) userDetails).getName()); // subject 인증 대상(고유 ID)
+                claim.put("email", kakaoAccount.get("email"));
+            }
+        }
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpirationMsec());
@@ -60,13 +76,13 @@ public class TokenService {
                 .compact();
     }
 
-    public Claims getClaimsFromToken(String token){
+    public String getUserEmailFromToken(String token){
         Claims claims = Jwts.parser()
             .setSigningKey(appProperties.getAuth().getAccessTokenSecret())
             .parseClaimsJws(token)
             .getBody();
 
-        return claims;
+        return claims.getSubject();
     }
 
     public boolean validateToken(String accessToken) {
