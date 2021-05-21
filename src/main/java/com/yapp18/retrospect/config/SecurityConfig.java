@@ -67,7 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
                         .antMatchers("/", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
                         .antMatchers("/signin", "/signup").permitAll()
-                        .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search").permitAll()
+                        .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search",
+                                "/v2/api-docs", "/swagger-resources/**",
+                                "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
                         .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
                 .and()
                     .logout()

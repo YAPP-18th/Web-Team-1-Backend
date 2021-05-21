@@ -77,7 +77,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .name(oAuth2UserInfo.getName())
                 .nickname(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
-                .picture(oAuth2UserInfo.getPicture())
+                .profile(oAuth2UserInfo.getPicture())
                 .provider(registrationId)
 //                .platform((AuthPlatform.valueOf(registrationId)) // 추후에 Column 타입 AuthPlatform으로 바꾸기
 //                .providerId(oAuth2UserInfo.getId())

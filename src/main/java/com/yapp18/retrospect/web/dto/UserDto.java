@@ -11,7 +11,7 @@ import javax.persistence.Enumerated;
 public class UserDto {
     @Getter
     public static class Response{
-        private Long user_idx;
+        private Long userIdx;
         private Role role;
         private String name;
         private String nickname;
@@ -20,19 +20,19 @@ public class UserDto {
         private String platform;
 
         public Response(User entity) {
-            this.user_idx = entity.getUser_idx();
+            this.userIdx = entity.getUserIdx();
             this.role = entity.getRole();
             this.name = entity.getName();
             this.nickname = entity.getNickname();
             this.email = entity.getEmail();
-            this.picture = entity.getPicture();
+            this.picture = entity.getProfile();
             this.platform = entity.getProvider();
         }
     }
 
     @Getter
     public static class totalResponse{
-        private Long user_idx;
+        private Long userIdx;
         private Role role;
         private String name;
         private String nickname;
@@ -43,13 +43,13 @@ public class UserDto {
         private String job;
 
         public totalResponse(User entity) {
-            this.user_idx = entity.getUser_idx();
+            this.userIdx = entity.getUserIdx();
             this.role = entity.getRole();
             this.name = entity.getName();
             this.nickname = entity.getNickname();
             this.intro = entity.getIntro();
             this.email = entity.getEmail();
-            this.picture = entity.getPicture();
+            this.picture = entity.getProfile();
             this.provider = entity.getProvider();
             this.job = entity.getJob();
         }

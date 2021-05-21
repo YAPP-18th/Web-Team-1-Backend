@@ -32,21 +32,35 @@ public class User extends BaseTimeEntity {
 
     private String intro;
 
-    @Column(nullable = false)
-    private String platform;
+    @Column(length = 20, nullable = false)
+    private String provider;
+    private String providerId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @Builder
-    public User(Long userIdx, String email, String name, String nickname,
-                String profile, String job, String intro,String platform){
-        this.userIdx = userIdx;
-        this.email = email;
+    public User(Role role, String name, String nickname, String intro, String email,
+                String profile, String provider, String providerId, String job) {
+        this.role = role;
         this.name = name;
         this.nickname = nickname;
-        this.profile = profile;
-        this.job = job;
         this.intro = intro;
-        this.platform = platform;
+        this.email = email;
+        this.profile = profile;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.job = job;
+    }
 
+    public User update(String name, String profile){
+        this.name = name;
+        this.profile = profile;
+        return this;
+    }
+
+    public String getRoleKey(){
+        return this.role.getKey();
     }
 }
