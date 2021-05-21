@@ -54,16 +54,19 @@ public class PostQueryRepository {
                 .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
                         user.nickname, user.profile, tag.tag, post.created_at, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post)
+                .from(post).orderBy(post.view.desc())
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
                 .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.postIdx.lt(cursorId))
-                .orderBy(post.view.desc())  // viewCount 순서대로
+                .where(post.view.loe(cursorId))
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
+
+//        select (ROW_NUMBER() OVER()) AS rownum, post.post_idx, post.view, use.nickname
+//        from (select * from post_tb order by view desc) as post
+//        left join user_tb as use on use.user_idx = post.user_idx
     }
 
 }

@@ -14,14 +14,9 @@ import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import java.awt.print.Pageable.*;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageReader;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -99,6 +94,13 @@ public class PostService {
     }
 
     // 회고글 수정
+    public Optional<Post> updatePosts(Long postIdx, PostDto.saveResponse requestDto){
+        // postIdx가 있는지 chk
+        Optional<Post> isPostPresent = postRepository.findByPostIdx(postIdx);
+        if (!isPostPresent.isPresent()) throw new NullPointerException("해당 회고글은 없습니다.");
+        // image, tag, template 모두 바꿔야함 있다면.
+        return isPostPresent;
+    }
 
 
     // 회고글 삭제
