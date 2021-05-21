@@ -35,10 +35,35 @@ public class PostQueryRepository {
                 .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.postIdx.loe(cursorId)) // 최초 id 이하의 값
+                .where(post.postIdx.lt(cursorId)) // 최초 id 이하의 값
                 .orderBy(post.postIdx.desc()) // 조회순으로 바꿔야함.
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
     }
+
+    // 누적 조회수
+    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Long cursorId, Integer pageSize){
+        QPost post = QPost.post;
+        QUser user = QUser.user;
+        QTag tag = QTag.tag1;
+        QComment comment = QComment.comment1;
+        QLike like = QLike.like;
+
+        return queryFactory
+                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
+                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
+                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
+                .from(post)
+                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
+                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
+                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
+                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
+                .where(post.postIdx.lt(cursorId))
+                .orderBy(post.view.desc())  // viewCount 순서대로
+                .limit(pageSize)
+                .groupBy(post, user, tag, comment, like)
+                .fetch();
+    }
+
 }

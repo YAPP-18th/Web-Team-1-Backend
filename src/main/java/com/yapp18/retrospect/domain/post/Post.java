@@ -42,6 +42,9 @@ public class Post extends BaseTimeEntity {
     @ColumnDefault(value = "0")
     private int view;
 
+    @Column(name = "cover_image")
+    private String coverImage;
+
     @ManyToOne
     @JoinColumn(name = "user_idx")
     private User user;
