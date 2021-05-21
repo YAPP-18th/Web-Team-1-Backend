@@ -1,8 +1,11 @@
 package com.yapp18.retrospect.domain.post;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
+import com.yapp18.retrospect.web.dto.PostDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +17,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -22,40 +27,45 @@ import java.time.LocalDateTime;
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_idx;
+    @Column(name="post_idx", nullable = false, unique = true)
+    private Long postIdx;
 
-    @Column(length = 20, nullable = false)
-    private String category;
     @Column(nullable = false)
     private String title;
-    //columnDefinition = "TEXT" - VARCHAR 255 제한 해제
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String contents;
-    @Column(nullable = false)
-    @ColumnDefault("0")
-    private Long view;
 
-    // 참조 방향 Post -> User
-    @ManyToOne(cascade = CascadeType.ALL)
-    // @JoinColumn 어노테이션은 외래 키를 매핑 할 때 사용합니다.
-    // name 속성에는 매핑 할 외래 키 이름을 지정합니다.
-    @JoinColumn(name = "own_user_idx")
-    //user_idx가 삭제되면 CASCADE 처리
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Column(nullable = false)
+    private String category;
+
+    @Column(columnDefinition = "TEXT",nullable = false)
+    private String contents;
+
+    @ColumnDefault(value = "0")
+    private int view;
+
+    @Column(name = "cover_image")
+    private String coverImage;
+
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "template_idx")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Template template;
 
+//    @OneToMany(mappedBy = "post")
+//    @JoinColumn(name = "comment_idx")
+//    private List<Comment> commentList = new ArrayList<>();
+
     @Builder
-    public Post(String category, String title, String contents, Long view, User user, Template template) {
-        this.category = category;
+    public Post(Long postIdx,String title, String category, String contents,
+                User user, Template template) {
+        this.postIdx = postIdx;
         this.title = title;
+        this.category = category;
         this.contents = contents;
-        this.view = view;
         this.user = user;
         this.template = template;
     }
+
 }

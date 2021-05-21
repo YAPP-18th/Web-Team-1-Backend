@@ -6,4 +6,4 @@ spring:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
