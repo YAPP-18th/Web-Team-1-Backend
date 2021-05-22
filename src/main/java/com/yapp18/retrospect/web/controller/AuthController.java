@@ -14,7 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @RestController
-public class OAuthController {
+public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
