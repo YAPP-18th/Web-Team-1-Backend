@@ -66,11 +66,11 @@ public class PostService {
 
     // 회고글 저장
     public Post inputPosts(PostDto.saveResponse saveResponse){
-        Optional<User> user = userRepository.findById(saveResponse.getUserIdx());
+        Optional<User> user = userRepository.findByUserIdx(saveResponse.getUserIdx());
         if(!user.isPresent()) throw new NullPointerException("해당 아이디는 없습니다.");
 
         // 자유 템플릿인 경우 template_idx 0 으로 세팅
-        Optional<Template> template = templateRepository.findById(saveResponse.getTemplateIdx());
+        Optional<Template> template = templateRepository.findByTemplateIdx(saveResponse.getTemplateIdx());
         if(!template.isPresent()) throw new NullPointerException("해당 템플릿이 없습니다.");
 
         // post 저장
