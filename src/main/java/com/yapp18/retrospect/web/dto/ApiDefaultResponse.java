@@ -30,5 +30,4 @@ public class ApiDefaultResponse<T> {
                 .responseMessage(responseMessage)
                 .build();
     }
-
 }
