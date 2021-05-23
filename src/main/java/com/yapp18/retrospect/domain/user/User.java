@@ -34,6 +34,8 @@ public class User extends BaseTimeEntity {
 
     @Column(length = 20, nullable = false)
     private String provider;
+
+    @Column(nullable = false)
     private String providerId;
 
     @Enumerated(EnumType.STRING)
