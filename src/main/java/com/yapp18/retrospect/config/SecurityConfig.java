@@ -64,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // 여기에 EndPoint의 접근 제한을 커스텀할 수 있음.
-        http.cors()
+        http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 // 토큰을 사용하기 위해 sessionCreationPolicy를 STATELESS로 설정 (Session 비활성화)
                     .sessionManagement()
@@ -109,12 +109,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://15.165.67.119:9000/**","http://15.165.67.119:9000"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000","http://15.165.67.119:9000/api/v1/*"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT","OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-
         configuration.setAllowCredentials(true);
-
+        configuration.setMaxAge(5300L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
