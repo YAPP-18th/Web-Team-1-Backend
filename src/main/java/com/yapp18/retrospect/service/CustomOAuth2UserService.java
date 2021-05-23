@@ -5,7 +5,7 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.exception.OAuth2AuthenticationProcessingException;
 import com.yapp18.retrospect.security.UserPrincipal;
-import com.yapp18.retrospect.security.oauth2.AuthPlatform;
+import com.yapp18.retrospect.security.oauth2.AuthProvider;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
@@ -53,9 +53,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user;
         if(userOptional.isPresent()) {
             user = userOptional.get();
-            if(!user.getProvider().equals(AuthPlatform.valueOf(registrationId))) {
+            if(!user.getProvider().equals(AuthProvider.valueOf(registrationId).toString())) {
                 throw new OAuth2AuthenticationProcessingException(
-                        user.getProvider() + "계정을 사용하기 위해서 로그인을 해야합니다.");
+                        user.getProvider() + " 계정을 사용하기 위해서 로그인을 해야합니다.");
             }
             user = updateExistingUser(user, oAuth2UserInfo);
         } else {
