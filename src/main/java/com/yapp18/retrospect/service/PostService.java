@@ -101,8 +101,12 @@ public class PostService {
         Optional<Post> isPostPresent = postRepository.findByPostIdx(postIdx);
         if (!isPostPresent.isPresent()) throw new NullPointerException("해당 회고글은 없습니다.");
         // image, tag, template 모두 바꿔야함 있다면.
+        if (requestDto.getImage().isEmpty()){
+            System.out.println("...");
+        }
         return isPostPresent;
     }
+
 
 
     // 회고글 삭제
