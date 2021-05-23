@@ -31,6 +31,17 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation 'org.slf4j:slf4j-api'
+
+
+	//oauth2, security, jwt
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' // 권한 관련
+	testImplementation 'org.springframework.security:spring-security-test'
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 
 	// mapstruct
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
@@ -49,8 +60,8 @@ dependencies {
 	implementation 'com.querydsl:querydsl-core'
 
 	// swagger
-	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.5.0'
-	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.5.0'
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
 	// test
 	runtimeOnly 'com.h2database:h2'
@@ -74,7 +85,6 @@ test {
 //		}
 //	}
 //}
-
 
 def querydslDir = "$buildDir/generated/querydsl"
 

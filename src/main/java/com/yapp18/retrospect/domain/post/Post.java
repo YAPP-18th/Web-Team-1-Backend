@@ -68,4 +68,13 @@ public class Post extends BaseTimeEntity {
         this.template = template;
     }
 
+    public void update(String title, String category, String contents, String coverIamge, Template template){
+        this.title = title;
+        this.category = category;
+        this.contents = contents;
+        this.coverImage = coverIamge;
+        this.template = template;
+
+    }
+
 }
