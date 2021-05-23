@@ -42,5 +42,7 @@ public class AppProperties {
             this.authorrizedRedirectUris = authorrizedRedirectUris;
             return this;
         }
+
+
     }
 }

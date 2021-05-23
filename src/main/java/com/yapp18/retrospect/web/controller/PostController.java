@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 @Api(value = "PostController") // swagger 리소스 명시
@@ -27,13 +29,13 @@ public class PostController {
     @GetMapping("/lists/new")
     public ResponseEntity<Object> getMainPosts(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
                                       @RequestParam(value = "page", defaultValue = "0") Long page,
-                                @RequestParam(value = "pageSize") Integer pageSize){
+                                @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         ApiPagingResultResponse<PostDto.ListResponse> posts_list = postService.getPostsList(page, pageSize);
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_RECENT.getResponseMessage(), posts_list), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 누적조회순") // api tag, 설명
+    @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 누적조회순")
     @GetMapping("/lists")
     public ResponseEntity<Object> getMainPostsOrderByView(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
                                                @RequestParam(value = "page", defaultValue = "0") Long page,
@@ -53,9 +55,9 @@ public class PostController {
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 수정하기")
     @PutMapping("/{postIdx}")
     public ResponseEntity<Object> updatePosts(@ApiParam(value = "회고글 post_idx", required = true, example = "1")
-                                              @PathVariable(value = "postIdx") Long postIdx){
-
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_UPDATE.getResponseMessage(),""),HttpStatus.OK);
+                                              @PathVariable(value = "postIdx") Long postIdx, @RequestBody PostDto.saveResponse requestDto){
+        Optional<Post> post = postService.updatePosts(postIdx, requestDto);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_UPDATE.getResponseMessage(),post),HttpStatus.OK);
     }
 
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 삭제하기")

@@ -1,6 +1,6 @@
 spring:
-#  profiles:
-#    active: dev1
+  profiles:
+    active: dev1
   freemarker:
     check-template-location: false
   error:

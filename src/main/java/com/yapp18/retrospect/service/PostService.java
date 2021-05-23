@@ -14,14 +14,9 @@ import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import java.awt.print.Pageable.*;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageReader;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -71,11 +66,11 @@ public class PostService {
 
     // 회고글 저장
     public Post inputPosts(PostDto.saveResponse saveResponse){
-        Optional<User> user = userRepository.findById(saveResponse.getUserIdx());
+        Optional<User> user = userRepository.findByUserIdx(saveResponse.getUserIdx());
         if(!user.isPresent()) throw new NullPointerException("해당 아이디는 없습니다.");
 
         // 자유 템플릿인 경우 template_idx 0 으로 세팅
-        Optional<Template> template = templateRepository.findById(saveResponse.getTemplateIdx());
+        Optional<Template> template = templateRepository.findByTemplateIdx(saveResponse.getTemplateIdx());
         if(!template.isPresent()) throw new NullPointerException("해당 템플릿이 없습니다.");
 
         // post 저장
@@ -99,6 +94,13 @@ public class PostService {
     }
 
     // 회고글 수정
+    public Optional<Post> updatePosts(Long postIdx, PostDto.saveResponse requestDto){
+        // postIdx가 있는지 chk
+        Optional<Post> isPostPresent = postRepository.findByPostIdx(postIdx);
+        if (!isPostPresent.isPresent()) throw new NullPointerException("해당 회고글은 없습니다.");
+        // image, tag, template 모두 바꿔야함 있다면.
+        return isPostPresent;
+    }
 
 
     // 회고글 삭제
