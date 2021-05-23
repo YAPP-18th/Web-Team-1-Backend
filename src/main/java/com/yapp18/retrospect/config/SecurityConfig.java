@@ -24,6 +24,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity // Spring Security 설정들을 활성화시켜 주며, 모든 엔드포인트에 접근 제한이 걸리게 됩니다.
@@ -80,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
                         .antMatchers("/oauth2/authorization/**", "/signin", "/signup").anonymous()
                         .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/profile", "/login").permitAll()
-                        .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search",
+                        .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search", "/api/**","/api/v1/**","/api/v1/posts/","/api/v1/posts",
                                 "/v2/api-docs", "/swagger-resources/**",
                                 "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
                         .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
@@ -106,7 +108,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.addAllowedOrigin("*"); // 허용할 url
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
@@ -116,4 +117,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource(){
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("Origin URL 등록" ));
+//        configuration.setAllowedMethods(Arrays.asList("사용할 CRUD 메소드 등록"));
+//        configuration.setAllowedHeaders(Arrays.asList("사용할 Header 등록"));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+
 }
