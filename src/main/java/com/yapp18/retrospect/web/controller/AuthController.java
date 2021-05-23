@@ -5,15 +5,21 @@ package com.yapp18.retrospect.web.controller;
 
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.service.TokenService;
+import com.yapp18.retrospect.web.dto.AuthDto;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RequiredArgsConstructor
-@RequestMapping("/auth")
 @RestController
+@RequiredArgsConstructor
+@Api(value = "AuthController")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
 
@@ -21,9 +27,11 @@ public class AuthController {
 
     private final TokenService tokenService;
 
-    @GetMapping("/oauth/header")
-    public Map<String, Object> getHeader(@RequestHeader Map<String, Object> requestHeader){
-        return requestHeader;
+    @ApiOperation(value = "auth", notes = "[인증] Access Token 재발급")
+    @PostMapping("/reissue")
+    public ResponseEntity<AuthDto.ReissueResponse> reissue (@ApiParam(value = "만료된 Access Token과 유효한 Refresh Token", required = true)
+            @RequestBody AuthDto.ReissueRequest request) {
+        return ResponseEntity.ok(tokenService.reissueAccessToken(request));
     }
 
 //    @PostMapping("/login")

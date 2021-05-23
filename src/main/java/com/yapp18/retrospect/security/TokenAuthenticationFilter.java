@@ -2,13 +2,11 @@ package com.yapp18.retrospect.security;
 
 import com.yapp18.retrospect.service.CustomUserDetailsService;
 import com.yapp18.retrospect.service.TokenService;
-import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -19,18 +17,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 //이 클래스는 요청으로부터 전달된 JWT 토큰 검증하는데 사용된다.
 //전달된 Request에서 JWT 토큰을 가져오고, 가져온 토큰의 유효성 검사 후, 토큰에 있는 사용자 Id를 가져온다.
 //가져온 사용자 Id로 사용자 정보를 가져오고, 이 정보로 UsernamePasswordAuthenticationToken을 만들어 인증하는 과정을 거친다.
 @Component
+@RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private final TokenService tokenService;
 
     // API 호출은 전부 JWT를 확인한다.
 //    private RequestMatcher requestMatcher = new AntPathRequestMatcher("/api/**");
@@ -46,22 +40,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenService.validateToken(jwt)) {
-                Claims claims = tokenService.getClaimsFromToken(jwt);
-                Number idx = (Number) claims.get("user_idx");
-                Long userIdx = idx.longValue();
-                String nickname = (String) claims.get("nickname");
-                
-                
                 //매 토큰 인증마다 DB를 통해 유저 정보를 불러오는 것은 Stateless 하지 않음
                 //SecurityContextHolder.getContext에 Authentication값을 세팅시 유저의 모든 정보를 세팅할 필요는 없고 권한 정보만 세팅해도 됩니다.
-                UserDetails userDetails = customUserDetailsService.loadUserByUserIdx(userIdx);// OK
-
-                if (logger.isDebugEnabled()) {
-                    logger.debug("JWT" + jwt);
-                    logger.debug("userIdx::" + userIdx);
-                    logger.debug("nickname::" + nickname);
-                }
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = tokenService.getAuthentication(jwt);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

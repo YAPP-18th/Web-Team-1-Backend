@@ -1,6 +1,6 @@
 package com.yapp18.retrospect.security.oauth2;
 
-public enum AuthPlatform {
+public enum AuthProvider {
     google,
     kakao
 }
