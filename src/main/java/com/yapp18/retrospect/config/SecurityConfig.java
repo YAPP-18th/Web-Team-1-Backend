@@ -61,21 +61,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // 여기에 EndPoint의 접근 제한을 커스텀할 수 있음.
         http
+                .cors()
+                .and()
                 // 토큰을 사용하기 위해 sessionCreationPolicy를 STATELESS로 설정 (Session 비활성화)
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-                .and()
-                .cors().configurationSource(corsConfigurationSource())
                 .and()
                     .csrf().disable()
                     .headers().frameOptions().disable() //h2-console 화면을 사용하기 위해 해당 옵션들을 disable 합니다.
                 .and()
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
-                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                    .antMatchers("/", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
+                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                        .antMatchers("/", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
                         .antMatchers("/signin", "/signup").permitAll()
-                        .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search",
+                        .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search", "/api/**",
                                 "/v2/api-docs", "/swagger-resources/**",
                                 "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
                         .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
@@ -105,7 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOrigin("*"); // 허용할 url
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
