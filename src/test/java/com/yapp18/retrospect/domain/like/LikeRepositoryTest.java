@@ -51,7 +51,6 @@
 //            .picture(picture_1)
 //            .platform(platform_1)
 //            .job(job_1)
-//            .access_token(access_token_1)
 //            .build();
 //
 //
@@ -63,7 +62,6 @@
 //            .picture(picture_2)
 //            .platform(platform_2)
 //            .job(job_2)
-//            .access_token(access_token_2)
 //            .build();
 //
 //    String template_name = "4F";
@@ -83,26 +81,26 @@
 //    Post post = Post.builder()
 //            .category(category)
 //            .title(title)
-//            .content(content)
+//            .contents(content)
 //            .view(view)
 //            .user(user2)
 //            .template(template)
 //            .build();
 //
-////    @Test
-////    public void 스크랩저장_불러오기() {
-////        likeRepository.save(Like.builder()
-////                .user(user1)
-////                .post(post)
-////                .build()
-////        );
-////
-////        List<Like> likeList = likeRepository.findAll();
-////
-////        Like like = likeList.get(0);
-////
-////        assertThat(like.getUser().getName()).isEqualTo(name_1);
-////        assertThat(like.getPost().getUser().getName()).isEqualTo(name_2);
-////        assertThat(like.getPost().getTitle()).isEqualTo(title);
-////    }
+//    @Test
+//    public void 스크랩저장_불러오기() {
+//        likeRepository.save(Like.builder()
+//                .user(user1)
+//                .post(post)
+//                .build()
+//        );
+//
+//        List<Like> likeList = likeRepository.findAll();
+//
+//        Like like = likeList.get(0);
+//
+//        assertThat(like.getUser().getName()).isEqualTo(name_1);
+//        assertThat(like.getPost().getUser().getName()).isEqualTo(name_2);
+//        assertThat(like.getPost().getTitle()).isEqualTo(title);
+//    }
 //}

@@ -2,36 +2,35 @@ package com.yapp18.retrospect.domain.image;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.post.Post;
-import com.yapp18.retrospect.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.lang.annotation.Target;
 
-@Entity
 @NoArgsConstructor
 @Getter
-@Table(name="image_tb")
+@Entity
+@Table(name ="image_tb")
 public class Image extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long image_idx;
+    @Column(name = "image_idx", nullable = false, unique = true)
+    private Long imageIdx;
 
-    @Column(nullable = false)
-    private String image_url;
+    @Column(name ="image_url",nullable = false)
+    private String imageUrl;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "post_idx")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
     @Builder
-    public Image(String image_url, Post post) {
-        this.image_url = image_url;
+    public Image(Long imageIdx, String imageUrl, Post post){
+        this.imageIdx = imageIdx;
+        this.imageUrl = imageUrl;
         this.post = post;
     }
-}
 
+}

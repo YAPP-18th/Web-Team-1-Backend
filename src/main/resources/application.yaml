@@ -1,15 +1,15 @@
 spring:
-  profiles:
-    active: dev1
+#  profiles:
+#    active: dev1
   freemarker:
     check-template-location: false
   error:
     include-exception: true
     include-stacktrace: always
-  session:
-    store-type: jdbc
-    jdbc:
-      initialize-schema: always
+#  session:
+#    store-type: jdbc
+#    jdbc:
+#      initialize-schema: always
   jpa:
     hibernate:
       naming:

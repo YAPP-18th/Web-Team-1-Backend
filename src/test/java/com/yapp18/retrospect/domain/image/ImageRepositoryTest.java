@@ -42,7 +42,6 @@
 //            .picture(picture)
 //            .platform(platform)
 //            .job(job)
-//            .access_token(access_token)
 //            .build();
 //
 //    String template_name = "4F";
@@ -56,37 +55,37 @@
 //
 //    String category = "개발";
 //    String title = "테스트 제목";
-//    String content = "테스트 콘텐츠";
+//    String contents = "테스트 콘텐츠";
 //    long view = 0;
 //
 //    Post post = Post.builder()
 //            .category(category)
 //            .title(title)
-//            .content(content)
+//            .contents(contents)
 //            .view(view)
 //            .user(user)
 //            .template(template)
 //            .build();
 //
-////    @Test
-////    public void 이미지저장_불러오기() {
-////        //given
-////        String image_url = "https://t1.daumcdn.net/liveboard/rmsdhf/2f08f718bab6497d972f10999b0b31ce.png";
-////
-////        imageRepository.save(Image.builder()
-////                .post(post)
-////                .image_url(image_url)
-////                .build()
-////        );
-////
-////        //when
-////        List<Image> imageList = imageRepository.findAll();
-////
-////        Image image = imageList.get(0);
-////
-////        //then
-////        assertThat(image.getPost().getUser().getName()).isEqualTo(name);
-////        assertThat(image.getPost().getTitle()).isEqualTo(title);
-////        assertThat(image.getImage_url()).isEqualTo(image_url);
-////    }
+//    @Test
+//    public void 이미지저장_불러오기() {
+//        //given
+//        String image_url = "https://t1.daumcdn.net/liveboard/rmsdhf/2f08f718bab6497d972f10999b0b31ce.png";
+//
+//        imageRepository.save(Image.builder()
+//                .post(post)
+//                .image_url(image_url)
+//                .build()
+//        );
+//
+//        //when
+//        List<Image> imageList = imageRepository.findAll();
+//
+//        Image image = imageList.get(0);
+//
+//        //then
+//        assertThat(image.getPost().getUser().getName()).isEqualTo(name);
+//        assertThat(image.getPost().getTitle()).isEqualTo(title);
+//        assertThat(image.getImage_url()).isEqualTo(image_url);
+//    }
 //}
