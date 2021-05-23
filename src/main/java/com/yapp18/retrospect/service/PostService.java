@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,7 @@ public class PostService {
         if (cursorId == null || cursorId == 0){
             cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
             System.out.println("====>>>>"+ cursorId);
+            System.out.println("====>"+cursorId );
         }
         List<PostDto.ListResponse> result = postQueryRepository.findByPostIdxOrderByViewDesc(cursorId, pageSize);
         // lastIdx 검사
@@ -113,6 +115,7 @@ public class PostService {
         }
         return false;
     }
+
 
 
 }
