@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.awt.print.Pageable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class PostQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public List<PostDto.ListResponse> findByPostIdx(Long cursorId, Integer pageSize){
+    public List<PostDto.ListResponse> findByPostIdx(Long cursorId, Integer pageSize, LocalDateTime create_at){
         QPost post = QPost.post;
         QUser user = QUser.user;
         QTag tag = QTag.tag1;
@@ -35,15 +36,15 @@ public class PostQueryRepository {
                 .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.postIdx.lt(cursorId)) // 최초 id 이하의 값
-                .orderBy(post.postIdx.desc()) // 조회순으로 바꿔야함.
+                .where((post.created_at.eq(create_at).and(post.postIdx.lt(cursorId))).or(post.created_at.lt(create_at)))
+                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
     }
 
     // 누적 조회수
-    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Long cursorId, Integer pageSize){
+    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Long cursorId, Integer pageSize, int view){
         QPost post = QPost.post;
         QUser user = QUser.user;
         QTag tag = QTag.tag1;
@@ -59,7 +60,8 @@ public class PostQueryRepository {
                 .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.view.loe(cursorId))
+                .where(post.view.loe(view))
+                .orderBy(post.view.desc())
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();

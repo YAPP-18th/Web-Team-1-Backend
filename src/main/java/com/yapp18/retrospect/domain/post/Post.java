@@ -1,28 +1,22 @@
 package com.yapp18.retrospect.domain.post;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
-import com.yapp18.retrospect.domain.comment.Comment;
-import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
-import com.yapp18.retrospect.web.dto.PostDto;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
+
 
 @NoArgsConstructor
 @Getter
 @Entity
+@DynamicUpdate // 변경된 것만 바꾸기
 @Table(name="post_tb")
 public class Post extends BaseTimeEntity {
     @Id
@@ -68,13 +62,10 @@ public class Post extends BaseTimeEntity {
         this.template = template;
     }
 
-    public void update(String title, String category, String contents, String coverIamge, Template template){
+    public void update(String title, String category, String contents){
         this.title = title;
         this.category = category;
         this.contents = contents;
-        this.coverImage = coverIamge;
-        this.template = template;
-
     }
 
 }
