@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findTop1ByOrderByPostIdxDesc();
     List<Post> findTop1ByOrderByViewDesc();
-    Optional<Post> findByPostIdx(Long postIdx);
+//    Post findByPostIdx(Long postIdx);
     boolean existsByPostIdxLessThan(Long cursorId);
 
 }

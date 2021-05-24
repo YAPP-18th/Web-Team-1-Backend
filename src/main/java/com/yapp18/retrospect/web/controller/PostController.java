@@ -56,7 +56,7 @@ public class PostController {
     @PutMapping("/{postIdx}")
     public ResponseEntity<Object> updatePosts(@ApiParam(value = "회고글 post_idx", required = true, example = "1")
                                               @PathVariable(value = "postIdx") Long postIdx, @RequestBody PostDto.saveResponse requestDto){
-        Optional<Post> post = postService.updatePosts(postIdx, requestDto);
+        Long post = postService.updatePosts(postIdx, requestDto);
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_UPDATE.getResponseMessage(),post),HttpStatus.OK);
     }
 

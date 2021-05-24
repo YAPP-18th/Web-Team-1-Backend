@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +46,7 @@ public class PostService {
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
     }
 
-    // 회고글 목록 조회: 누적조회순
+    // 회고글 목록 조회: 누적조회순 => 그냥 pageable할까?
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByView(Long cursorId, Integer pageSize){
         if (cursorId == null || cursorId == 0){
             cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
@@ -72,7 +71,7 @@ public class PostService {
         if(!user.isPresent()) throw new NullPointerException("해당 아이디는 없습니다.");
 
         // 자유 템플릿인 경우 template_idx 0 으로 세팅
-        Optional<Template> template = templateRepository.findByTemplateIdx(saveResponse.getTemplateIdx());
+        Optional<Template> template = templateRepository.findById(saveResponse.getTemplateIdx());
         if(!template.isPresent()) throw new NullPointerException("해당 템플릿이 없습니다.");
 
         // post 저장
@@ -96,17 +95,38 @@ public class PostService {
     }
 
     // 회고글 수정
-    public Optional<Post> updatePosts(Long postIdx, PostDto.saveResponse requestDto){
+    public Long updatePosts(Long postIdx, PostDto.saveResponse requestDto){
         // postIdx가 있는지 chk
-        Optional<Post> isPostPresent = postRepository.findByPostIdx(postIdx);
-        if (!isPostPresent.isPresent()) throw new NullPointerException("해당 회고글은 없습니다.");
+        Post post = postRepository.findById(postIdx)
+                .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
+
+        post.update(
+                requestDto.getTitle(),
+                requestDto.getCategory(),
+                requestDto.getContents()
+        );
+
         // image, tag, template 모두 바꿔야함 있다면.
-        if (requestDto.getImage().isEmpty()){
-            System.out.println("...");
-        }
-        return isPostPresent;
+        if (!requestDto.getImage().isEmpty()) updateImage(requestDto.getImage());
+        if (!requestDto.getTitle().isEmpty()) updateTag(requestDto.getTag());
+        if (requestDto.getTemplateIdx() != null) updateTemplate(requestDto.getTemplateIdx());
+        return post.getPostIdx();
     }
 
+    // 이미지
+    public void updateImage(List<String> imageList){
+
+    }
+
+    public void updateTag(List<String> tagList){
+
+    }
+
+    public void updateTemplate(Long templateIdx){
+        Template template = templateRepository.findById(templateIdx)
+                .orElseThrow(()-> new IllegalArgumentException("해당 템플릿이 없습니다"));
+//        template.update()
+    }
 
 
     // 회고글 삭제
