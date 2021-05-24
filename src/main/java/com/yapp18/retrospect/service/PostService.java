@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,8 +40,9 @@ public class PostService {
         if (cursorId == null || cursorId == 0){
             cursorId = postRepository.findTop1ByOrderByPostIdxDesc().get(0).getPostIdx();
         }
-        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdx(cursorId, pageSize);
-        // lastIdx 검사
+        LocalDateTime create_at = postRepository.findById(cursorId).get().getCreated_at(); // 마지막 조회 postIdx의 생성날짜
+        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdx(cursorId, pageSize,create_at); // cursor 방식으로 페이징(시간 + id)
+        // 마지막 페이지 검사
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
 
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
@@ -51,15 +53,18 @@ public class PostService {
         if (cursorId == null || cursorId == 0){
             cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
             System.out.println("====>>>>"+ cursorId);
-            System.out.println("====>"+cursorId );
         }
-        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdxOrderByViewDesc(cursorId, pageSize);
+        // 마지막으로 검색된 회고글의 조회수
+        int view = postRepository.findById(cursorId).get().getView();
+        System.out.println("====<<<<<"+view);
+        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdxOrderByViewDesc(cursorId, pageSize, view);
         // lastIdx 검사
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
 
     }
-    // 회고글 마지막 페이지
+
+    // 회고글 마지막 페이지 검사
     private boolean isNext(Long cursorId){
         if (cursorId == null) return false;
         return postRepository.existsByPostIdxLessThan(cursorId);
@@ -95,7 +100,7 @@ public class PostService {
     }
 
     // 회고글 수정
-    public Long updatePosts(Long postIdx, PostDto.saveResponse requestDto){
+    public Long updatePosts(Long postIdx, PostDto.updateResponse requestDto){
         // postIdx가 있는지 chk
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
@@ -107,9 +112,9 @@ public class PostService {
         );
 
         // image, tag, template 모두 바꿔야함 있다면.
-        if (!requestDto.getImage().isEmpty()) updateImage(requestDto.getImage());
-        if (!requestDto.getTitle().isEmpty()) updateTag(requestDto.getTag());
-        if (requestDto.getTemplateIdx() != null) updateTemplate(requestDto.getTemplateIdx());
+//        if (!requestDto.getImage().isEmpty()) updateImage(requestDto.getImage());
+//        if (!requestDto.getTitle().isEmpty()) updateTag(requestDto.getTag());
+//        if (requestDto.getTemplateIdx() != null) updateTemplate(requestDto.getTemplateIdx());
         return post.getPostIdx();
     }
 
