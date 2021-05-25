@@ -78,15 +78,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .headers().frameOptions().disable() //h2-console 화면을 사용하기 위해 해당 옵션들을 disable 합니다.
                 .and()
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
-                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .antMatchers(HttpMethod.OPTIONS, "*").permitAll()
-                        .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/**").permitAll()
-                        .antMatchers("/oauth2/authorization/**", "/signin", "/signup").anonymous()
-                        .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/profile", "/login").permitAll()
-                        .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search", "/api/**","/api/v1/**","/api/v1/posts/","/api/v1/posts",
+                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight는 인증하지 않고 pass(권한이 모두 null로 들어오기 때문에)
+                    .antMatchers(HttpMethod.OPTIONS, "*").permitAll()
+                    .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/**").permitAll()
+                    .antMatchers("/oauth2/authorization/**", "/signin", "/signup").anonymous()
+                    .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/profile", "/login").permitAll()
+                    .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search", "/api/**","/api/v1/**","/api/v1/posts/","/api/v1/posts",
                                 "/v2/api-docs", "/swagger-resources/**","http://localhost:3000",
                                 "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
-                        .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
+                    .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
                 .and()
                     .logout()
                     .logoutSuccessUrl("/") //로그아웃 기능에 대한 여러 설정의 진입점입니다. 성공시 / 주소로 이동합니다.
@@ -110,7 +110,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000","http://15.165.67.119:9000/api/v1/*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT","OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","OPTIONS","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(5300L);

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -44,6 +45,16 @@ public class PostController {
         ApiPagingResultResponse<PostDto.ListResponse> post_list = postService.getPostsListByView(page, pageSize);
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND.getResponseMessage(), post_list), HttpStatus.OK);
     }
+
+    @ApiOperation(value = "detail", notes = "[상세] 회고글 상세보기")
+    @GetMapping("/{post_idx}")
+    public ResponseEntity<Object> findPostsContentById(@ApiParam(value = "상세보기 post_idx", required = true, example = "3")
+                                                       @PathVariable(value = "post_idx") Long postIdx) {
+        PostDto.detailResponse post = postService.findPostContents(postIdx);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_DETAIL.getResponseMessage(),post), HttpStatus.OK);
+
+    }
+
 
     @ApiOperation(value = "main", notes = "[메인]회고글 저장하기")
     @PostMapping("/")

@@ -10,7 +10,6 @@ import com.yapp18.retrospect.web.dto.QPostDto_ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class PostQueryRepository {
     }
 
     // 누적 조회수
-    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Long cursorId, Integer pageSize, int view){
+    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Integer pageSize, int view){
         QPost post = QPost.post;
         QUser user = QUser.user;
         QTag tag = QTag.tag1;
@@ -65,10 +64,9 @@ public class PostQueryRepository {
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
-
-//        select (ROW_NUMBER() OVER()) AS rownum, post.post_idx, post.view, use.nickname
-//        from (select * from post_tb order by view desc) as post
-//        left join user_tb as use on use.user_idx = post.user_idx
     }
+
+
+
 
 }
