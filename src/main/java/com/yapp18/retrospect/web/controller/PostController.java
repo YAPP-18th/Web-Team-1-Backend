@@ -60,7 +60,7 @@ public class PostController {
 
     @ApiOperation(value = "main", notes = "[메인]회고글 저장하기")
     @PostMapping("")
-    public ResponseEntity<Object> inputPosts(@RequestHeader(value="accessToken") String token,
+    public ResponseEntity<Object> inputPosts(@RequestHeader(value="Authorization") String token,
                                              @RequestBody PostDto.saveResponse saveResponse){
         Long userIdx = tokenService.getUserIdx(token);
         Post post = postService.inputPosts(saveResponse, userIdx);
@@ -69,7 +69,7 @@ public class PostController {
 
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 수정하기")
     @PutMapping("/{postIdx}")
-    public ResponseEntity<Object> updatePosts(@RequestHeader(value="accessToken") String token,
+    public ResponseEntity<Object> updatePosts(@RequestHeader(value="Authorization") String token,
                                               @ApiParam(value = "회고글 post_idx", required = true, example = "1")
                                               @PathVariable(value = "postIdx") Long postIdx, @RequestBody PostDto.updateResponse requestDto){
         Long post = postService.updatePosts(tokenService.getUserIdx(token), postIdx, requestDto);
@@ -78,7 +78,7 @@ public class PostController {
 
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 삭제하기")
     @DeleteMapping("")
-    public ResponseEntity<Object> deletePosts(@RequestHeader(value="accessToken") String token,
+    public ResponseEntity<Object> deletePosts(@RequestHeader(value="Authorization") String token,
                                               @ApiParam(value = "회고글 post_idx", required = true, example = "1")
                                               @RequestParam(value = "postIdx") Long postIdx){
 

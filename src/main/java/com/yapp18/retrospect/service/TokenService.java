@@ -63,8 +63,8 @@ public class TokenService {
         String expiredAccessToken = reissueRequest.getAccessToken();
         String refreshToken = reissueRequest.getRefreshToken();
 
-        Claims accessClaims = getClaimsFromToken(expiredAccessToken);
-        Claims refreshClaims = getClaimsFromToken(refreshToken);
+        Claims accessClaims = getClaimsFromToken(expiredAccessToken,appProperties.getAuth().getAccessTokenSecret());
+        Claims refreshClaims = getClaimsFromToken(refreshToken, appProperties.getAuth().getRefreshTokenSecret());
         Number accessIdx = (Number) accessClaims.get("user_idx");
         Number refreshIdx = (Number) refreshClaims.get("user_idx");
         if(!accessIdx.equals(refreshIdx)){
@@ -133,12 +133,12 @@ public class TokenService {
         return false;
     }
 
-    public Claims getClaimsFromToken(String token){
-        return Jwts.parser().setSigningKey(appProperties.getAuth().getAccessTokenSecret()).parseClaimsJws(token).getBody();
+    public Claims getClaimsFromToken(String token, String secret){
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
     public Long getUserIdx(String accessToken){
-        return getClaimsFromToken(accessToken)
+        return getClaimsFromToken(accessToken, appProperties.getAuth().getAccessTokenSecret())
                 .get("user_idx", Long.class);
     }
 
