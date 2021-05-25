@@ -35,7 +35,7 @@ public class PostDto {
         @ApiModelProperty(value = "내용")
         private String contents;
 
-        @ApiModelProperty(value = "작성자 idx")
+//        @ApiModelProperty(value = "작성자 idx")
         private Long userIdx;
 
         @ApiModelProperty(value = "적용한 템플릿 idx")

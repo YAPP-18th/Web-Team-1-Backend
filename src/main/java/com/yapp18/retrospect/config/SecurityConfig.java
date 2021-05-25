@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/**").permitAll()
                     .antMatchers("/oauth2/authorization/**", "/signin", "/signup").anonymous()
                     .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/profile", "/login").permitAll()
-                    .antMatchers("/api/v1/posts/lists", "/api/v1/posts/idx", "/api/v1/posts/search", "/api/**","/api/v1/**","/api/v1/posts/","/api/v1/posts",
+                    .antMatchers("/api/v1/posts/lists", "/api/v1/posts/post_idx", "/api/v1/posts/search", "/api/v1/posts/new",
                                 "/v2/api-docs", "/swagger-resources/**","http://localhost:3000",
                                 "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
                     .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
