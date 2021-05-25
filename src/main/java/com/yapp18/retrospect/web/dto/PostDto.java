@@ -2,18 +2,21 @@ package com.yapp18.retrospect.web.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.yapp18.retrospect.domain.post.Post;
+import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
 
     // post 저장
@@ -32,7 +35,7 @@ public class PostDto {
         @ApiModelProperty(value = "내용")
         private String contents;
 
-        @ApiModelProperty(value = "작성자 idx")
+//        @ApiModelProperty(value = "작성자 idx")
         private Long userIdx;
 
         @ApiModelProperty(value = "적용한 템플릿 idx")
@@ -55,7 +58,6 @@ public class PostDto {
                     .build();
         }
     }
-
 
 
     @Data
@@ -133,6 +135,55 @@ public class PostDto {
             this.category = category;
             this.title = title;
             this.contents = contents;
+        }
+    }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class detailResponse{
+        @ApiModelProperty(value = "회고글 idx")
+        private Long postIdx;
+
+        @ApiModelProperty(value = "회고글 제목")
+        private String title;
+
+        @ApiModelProperty(value = "카테고리")
+        private String category;
+
+        @ApiModelProperty(value = "내용 ")
+        private String contents;
+
+        @ApiModelProperty(value = "작성자 닉네임 ")
+        private String nickname;
+
+        @ApiModelProperty(value = "작성자 프로필 사진")
+        private String profile;
+
+        @ApiModelProperty(value = "태그 String 담긴 배열 ")
+        private List<String> tag;
+
+        @ApiModelProperty(value = "조회수")
+        private int view;
+
+        @ApiModelProperty(value = "생성날짜")
+        private LocalDateTime created_at;
+
+//        @ApiModelProperty(value = "댓글 수")
+//        private Long commentCnt;
+
+        @Builder
+        public detailResponse(Post post, List<String> tag){
+            this.postIdx = post.getPostIdx();
+            this.title = post.getTitle();
+            this.category = post.getCategory();
+            this.contents = post.getContents();
+            this.nickname = post.getUser().getNickname();
+            this.profile = post.getUser().getProfile();
+            this.tag = tag;
+            this.view = post.getView();
+            this.created_at = post.getCreated_at();
         }
     }
 
