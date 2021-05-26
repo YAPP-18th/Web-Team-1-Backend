@@ -42,10 +42,7 @@ public class PostService {
 
     // 회고글 목록 조회: 최신순
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsList(Long cursorId, Integer pageSize){
-        if (cursorId == null || cursorId == 0){ // 최초 검색 시 가장 최신 post로
-            cursorId = postRepository.findTop1ByOrderByPostIdxDesc().get(0).getPostIdx();
-        }
-        Post post = postRepository.findById(cursorId).orElseThrow(()-> new NullPointerException("해당 회고글 idx가 없습니다."));
+        Post post = findRecentPost(cursorId);
 
         List<PostDto.ListResponse> result = postQueryRepository.findByPostIdx(cursorId, pageSize,post.getCreated_at()); // cursor 방식으로 페이징(시간 + id)
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
@@ -55,15 +52,26 @@ public class PostService {
 
     // 회고글 목록 조회: 누적조회순
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByView(Long cursorId, Integer pageSize){
-        if (cursorId == null || cursorId == 0){ // 최초 검색 시 누적조회순으로
-            cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
-        }
-        Post post = postRepository.findById(cursorId).orElseThrow(() -> new NullPointerException("해당 회고글 idx가 없습니다."));
-
+        Post post = findViewPost(cursorId);
         List<PostDto.ListResponse> result = postQueryRepository.findByPostIdxOrderByViewDesc(pageSize, post.getView()); // view 로 페이징
         int lastView = result.isEmpty() ? 0 : result.get(result.size()-1).getView(); // 해당 조회수보다 낮은 글이 있는지 체크
         return new ApiPagingResultResponse<>(isNextView(lastView), result);
 
+    }
+
+    // 회고글 카테고리 검색
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByContents(String category, String order, Long cursorId, Integer pageSize){
+        List<PostDto.ListResponse> result = new ArrayList<>();
+        if (order.equals("recent")){
+            Post post = findRecentPost(cursorId);
+            result = postQueryRepository.findByCategory(cursorId, pageSize,post.getCreated_at(), category); // 최신순+카테고리  검색
+        } else{
+            Post post = findViewPost(cursorId);
+            result = postQueryRepository.findByCategoryOrderByViewDesc(category,pageSize, post.getView()); // 조회순+ 카테고리 검색
+        }
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
+
+        return new ApiPagingResultResponse<>(isNext(lastIdx), result);
     }
 
     // 회고글 상세페이지
@@ -77,7 +85,7 @@ public class PostService {
 
 
     // 회고글 저장
-    public Post inputPosts(PostDto.saveResponse saveResponse, Long userIdx){
+    public Long inputPosts(PostDto.saveResponse saveResponse, Long userIdx){
         Optional<User> user = userRepository.findByUserIdx(userIdx);
         if(!user.isPresent()) throw new NullPointerException("해당 아이디는 없습니다.");
 
@@ -99,7 +107,7 @@ public class PostService {
                 tagRepository.save(Tag.builder().tag(tag).post(post).build());
             }
         }
-        return post;
+        return post.getPostIdx();
     }
 
 
@@ -140,8 +148,21 @@ public class PostService {
         return postRepository.existsByViewLessThan(view);
     }
 
-    private boolean isWriter(Long userIdx){
-        return false;
+
+    // 최신순 조회
+    private Post findRecentPost(Long cursorId){
+        if (cursorId == null || cursorId == 0){ // 최초 검색 시 가장 최신 post로
+            cursorId = postRepository.findTop1ByOrderByPostIdxDesc().get(0).getPostIdx();
+        }
+        return postRepository.findById(cursorId).orElseThrow(()-> new NullPointerException("해당 회고글 idx가 없습니다."));
+    }
+
+    // 누적순 조회
+    private Post findViewPost(Long cursorId){
+        if (cursorId == null || cursorId == 0){ // 최초 검색 시 누적조회순으로
+            cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
+        }
+        return postRepository.findById(cursorId).orElseThrow(() -> new NullPointerException("해당 회고글 idx가 없습니다."));
     }
 
 }
