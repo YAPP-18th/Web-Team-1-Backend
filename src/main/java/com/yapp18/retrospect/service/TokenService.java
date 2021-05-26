@@ -14,7 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,14 @@ public class TokenService {
 
     private final AppProperties appProperties;
     private final CustomUserDetailsService customUserDetailsService;
+
+    public String getTokenFromRequest(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 
     public String createAccessToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
@@ -141,5 +151,4 @@ public class TokenService {
         return getClaimsFromToken(accessToken, appProperties.getAuth().getAccessTokenSecret())
                 .get("user_idx", Long.class);
     }
-
 }
