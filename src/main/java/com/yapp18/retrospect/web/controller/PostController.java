@@ -58,13 +58,30 @@ public class PostController {
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_DETAIL.getResponseMessage(),post), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "main", notes = "[메인] 카테고리 필터링")
+    @GetMapping("/lists/{category}")
+    public ResponseEntity<Object> findPostsByCategory(@ApiParam(value = "카테고리", required = true, example = "design")
+                                                      @PathVariable(value = "category") String category,
+                                                      @ApiParam(value = "정렬 순서", required = true, example = "recent")
+                                                      @RequestParam(value = "order") String order,
+                                                      @ApiParam(value = "page", required = true, example = "0")
+                                                      @RequestParam(value = "page") Long page,
+                                                      @ApiParam(value = "pageSize", required = true, example = "20")
+                                                      @RequestParam(value = "pageSize") Integer pageSize
+    ){
+        if (pageSize == null) pageSize = DEFAULT_SIZE;
+        ApiPagingResultResponse<PostDto.ListResponse> post_list = postService.getPostsListByContents(category, order, page, pageSize);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,"",post_list), HttpStatus.OK);
+    }
+
+
     @ApiOperation(value = "main", notes = "[메인]회고글 저장하기")
     @PostMapping("")
     public ResponseEntity<Object> inputPosts(@RequestHeader(value="Authorization") String token,
                                              @RequestBody PostDto.saveResponse saveResponse){
         Long userIdx = tokenService.getUserIdx(token);
-        Post post = postService.inputPosts(saveResponse, userIdx);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_SAVE.getResponseMessage(), post), HttpStatus.OK);
+        Long postIdx = postService.inputPosts(saveResponse, userIdx);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_SAVE.getResponseMessage(), postIdx), HttpStatus.OK);
     }
 
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 수정하기")
