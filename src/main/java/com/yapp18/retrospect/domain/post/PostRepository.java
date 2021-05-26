@@ -11,4 +11,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findTop1ByOrderByViewDesc();
     boolean existsByPostIdxLessThan(Long cursorId);
     boolean existsByViewLessThan(int view);
+
 }

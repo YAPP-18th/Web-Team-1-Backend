@@ -71,7 +71,7 @@ public class PostController {
     ){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         ApiPagingResultResponse<PostDto.ListResponse> post_list = postService.getPostsListByContents(category, order, page, pageSize);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,"",post_list), HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_CATEGORY.getResponseMessage(),post_list), HttpStatus.OK);
     }
 
 
