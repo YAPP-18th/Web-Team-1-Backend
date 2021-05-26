@@ -1,6 +1,5 @@
 package com.yapp18.retrospect.security;
 
-import com.yapp18.retrospect.service.CustomUserDetailsService;
 import com.yapp18.retrospect.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         //가입/로그인/재발급을 제외한 모든 Request 요청은 이 필터를 거치기 때문에 토큰 정보가 없거나 유효하지 않으면 정상적으로 수행되지 않습니다.
         //그리고 요청이 정상적으로 Controller 까지 도착했다면 SecurityContext 에 Member ID 가 존재한다는 것이 보장됩니다.
         try {
-            String jwt = getJwtFromRequest(request);
+            String jwt = tokenService.getTokenFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenService.validateToken(jwt)) {
                 //매 토큰 인증마다 DB를 통해 유저 정보를 불러오는 것은 Stateless 하지 않음
@@ -51,13 +50,5 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             logger.error("Security Context에서 사용자 인증을 설정할 수 없습니다", exception);
         }
         filterChain.doFilter(request, response);
-    }
-
-    private String getJwtFromRequest(HttpServletRequest request){
-        String bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 }

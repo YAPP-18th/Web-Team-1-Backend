@@ -24,6 +24,7 @@ import java.util.Optional;
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -57,32 +58,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 throw new OAuth2AuthenticationProcessingException(
                         user.getProvider() + " 계정을 사용하기 위해서 로그인을 해야합니다.");
             }
-            user = updateExistingUser(user, oAuth2UserInfo);
+            user = userService.updateExistingUser(user, oAuth2UserInfo);
         } else {
-            user = registerNewUser(registrationId, oAuth2UserInfo);
+            user = userService.registerNewUser(registrationId, oAuth2UserInfo);
         }
 
         return UserPrincipal.create(user, oAuth2UserInfo.getAttributes());
     }
 
-    // DB에 존재하지 않을 경우 새로 등록
-    private User registerNewUser(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
-        return userRepository.save(User.builder()
-                .role(Role.MEMBER)
-                .name(oAuth2UserInfo.getName())
-                .nickname(oAuth2UserInfo.getName())
-                .email(oAuth2UserInfo.getEmail())
-                .profile(oAuth2UserInfo.getProfile())
-                .provider(registrationId)
-                .providerId(oAuth2UserInfo.getId())
-                .build()
-        );
-    }
 
-    // DB에 존재할 경우 정보 업데이트
-    private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        return userRepository.save(existingUser
-                .update(oAuth2UserInfo.getName(), oAuth2UserInfo.getProfile())
-        );
-    }
 }
