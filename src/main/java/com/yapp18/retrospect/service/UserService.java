@@ -37,4 +37,23 @@ public class UserService {
                 .simpleUpdate(oAuth2UserInfo.getName(), oAuth2UserInfo.getProfile())
         );
     }
+
+    public ProfileDto.ProfileResponse getUserProfiles(Long userIdx) {
+        return userRepository.findByUserIdx(userIdx)
+                .map(existingUser -> mapper.userToProfileResponse(existingUser))
+                .orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
+    }
+
+    public ProfileDto.ProfileResponse updateUserProfiles(Long userIdx, ProfileDto.UpdateRequest request){
+        User user = userRepository.findByUserIdx(userIdx)
+                .map(existingUser ->
+                        existingUser.updateProfile(request.getProfile(), request.getNickname(), request.getIntro(), request.getJob())).
+                        orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
+        userRepository.save(user);
+        return mapper.userToProfileResponse(user);
+    }
+
+//    protected void updateFromDto(ProfileDto dto, User user) {
+//        mapper.updateFromDto(dto, user);
+//    }
 }

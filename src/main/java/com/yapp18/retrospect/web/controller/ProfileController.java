@@ -1,22 +1,39 @@
 package com.yapp18.retrospect.web.controller;
 
-import lombok.AllArgsConstructor;
-import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.yapp18.retrospect.config.ResponseMessage;
+import com.yapp18.retrospect.service.TokenService;
+import com.yapp18.retrospect.service.UserService;
+import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
+import com.yapp18.retrospect.web.dto.ProfileDto;
+import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@AllArgsConstructor
+@Api(value = "ProfileController") // swagger 리소스 명시
+@RequestMapping("/api/v1/user")
+@RequiredArgsConstructor
 public class ProfileController {
-    private Environment env;
+    private final UserService userService;
+    private final TokenService tokenService;
 
-    @GetMapping("/profile")
-    public String getProfile() {
-        //프로젝트의 환경설정 값을 다루는 Environment Bean을 DI받아 현재 활성화된 Profile을 반환
-        return Arrays.stream(env.getActiveProfiles())
-                .findFirst()
-                .orElse("");
+    @GetMapping("/profiles")
+    public ResponseEntity<Object> getProfiles(HttpServletRequest request){
+        String token = tokenService.getTokenFromRequest(request);
+        Long userIdx = tokenService.getUserIdx(token);
+        ProfileDto.ProfileResponse response = userService.getUserProfiles(userIdx);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.PROFILE_FIND.getResponseMessage(), response), HttpStatus.OK);
+    }
+
+    @PatchMapping("/profiles")
+    public ResponseEntity<Object> updateProfiles(HttpServletRequest request, @RequestBody ProfileDto.UpdateRequest updateRequest){
+        String token = tokenService.getTokenFromRequest(request);
+        Long userIdx = tokenService.getUserIdx(token);
+        ProfileDto.ProfileResponse updated = userService.updateUserProfiles(userIdx, updateRequest);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.PROFILE_UPDATE.getResponseMessage(), updated), HttpStatus.OK);
     }
 }

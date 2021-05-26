@@ -11,7 +11,9 @@ public enum ResponseMessage {
     POST_FIND_RECENT("회고글 최신순 조회 성공"),
     POST_FIND("회고글 누적조회순 조회 성공"),
     POST_DETAIL("회고글 상세 조회 성공"),
-    POST_DELETE("회고글 삭제 성공");
+    POST_DELETE("회고글 삭제 성공"),
+    PROFILE_FIND("프로필 조회 성공"),
+    PROFILE_UPDATE("프로필 업데이트 성공");
 
     private final String ResponseMessage;
 
