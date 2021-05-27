@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,29 +78,28 @@ public class PostController {
 
     @ApiOperation(value = "main", notes = "[메인]회고글 저장하기")
     @PostMapping("")
-    public ResponseEntity<Object> inputPosts(@RequestHeader(value="Authorization") String token,
+    public ResponseEntity<Object> inputPosts(HttpServletRequest request,
                                              @RequestBody PostDto.saveResponse saveResponse){
-        Long userIdx = tokenService.getUserIdx(token);
-        Long postIdx = postService.inputPosts(saveResponse, userIdx);
+        Long postIdx = postService.inputPosts(saveResponse, tokenService.getUserIdx(tokenService.getTokenFromRequest(request)));
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_SAVE.getResponseMessage(), postIdx), HttpStatus.OK);
     }
 
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 수정하기")
     @PutMapping("/{postIdx}")
-    public ResponseEntity<Object> updatePosts(@RequestHeader(value="Authorization") String token,
+    public ResponseEntity<Object> updatePosts(HttpServletRequest request,
                                               @ApiParam(value = "회고글 post_idx", required = true, example = "1")
                                               @PathVariable(value = "postIdx") Long postIdx, @RequestBody PostDto.updateResponse requestDto){
-        Long post = postService.updatePosts(tokenService.getUserIdx(token), postIdx, requestDto);
+        Long post = postService.updatePosts(tokenService.getUserIdx(tokenService.getTokenFromRequest(request)), postIdx, requestDto);
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_UPDATE.getResponseMessage(),post),HttpStatus.OK);
     }
 
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 삭제하기")
     @DeleteMapping("")
-    public ResponseEntity<Object> deletePosts(@RequestHeader(value="Authorization") String token,
+    public ResponseEntity<Object> deletePosts(HttpServletRequest request,
                                               @ApiParam(value = "회고글 post_idx", required = true, example = "1")
                                               @RequestParam(value = "postIdx") Long postIdx){
 
-        boolean isPost = postService.deletePosts(tokenService.getUserIdx(token),postIdx);
+        boolean isPost = postService.deletePosts(tokenService.getUserIdx(tokenService.getTokenFromRequest(request)),postIdx);
         if (!isPost){
             return new ResponseEntity<>(ApiDefaultResponse.res(400,"삭제할 idx 없음..."),HttpStatus.BAD_REQUEST);
         }
