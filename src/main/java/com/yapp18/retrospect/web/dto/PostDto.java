@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.dto;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.annotations.QueryProjection;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.tag.Tag;
@@ -10,13 +11,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Getter
 @Builder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+//@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
 
     // post 저장
@@ -123,7 +125,7 @@ public class PostDto {
     @NoArgsConstructor
     @Getter
     @ApiModel(value = "회고글 수정하기 ", description = "회고글 목록 수정  모델")
-    public static class updateResponse{
+    public static class updateRequest {
         @ApiModelProperty(value = "카테고리")
         private String category;
         @ApiModelProperty(value = "제목 ")
@@ -131,7 +133,8 @@ public class PostDto {
         @ApiModelProperty(value = "내용 ")
         private String contents;
 
-        public updateResponse(String category, String title, String contents){
+        @Builder
+        public updateRequest(String category, String title, String contents){
             this.category = category;
             this.title = title;
             this.contents = contents;

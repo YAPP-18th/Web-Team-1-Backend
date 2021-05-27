@@ -43,12 +43,12 @@ dependencies {
 
 	// mapstruct
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0' // builder 패턴 사용에 필요
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 
 	// db
 	runtimeOnly 'org.postgresql:postgresql'
