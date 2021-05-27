@@ -6,6 +6,7 @@ import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.UserMapper;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.web.dto.UserDto;
+import com.yapp18.retrospect.web.dto.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,7 @@ public class UserService {
         );
     }
 
+
     public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
         return userRepository.findByUserIdx(userIdx)
                 .map(existingUser -> mapper.userToProfileResponse(existingUser))
@@ -56,4 +58,5 @@ public class UserService {
 //    protected void updateFromDto(UserDto dto, User user) {
 //        mapper.updateFromDto(dto, user);
 //    }
+
 }
