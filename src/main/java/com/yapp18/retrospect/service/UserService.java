@@ -5,6 +5,7 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.UserMapper;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
+import com.yapp18.retrospect.web.dto.UserDto;
 import com.yapp18.retrospect.web.dto.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,4 +38,25 @@ public class UserService {
                 .simpleUpdate(oAuth2UserInfo.getName(), oAuth2UserInfo.getProfile())
         );
     }
+
+
+    public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
+        return userRepository.findByUserIdx(userIdx)
+                .map(existingUser -> mapper.userToProfileResponse(existingUser))
+                .orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
+    }
+
+    public UserDto.ProfileResponse updateUserProfiles(Long userIdx, UserDto.UpdateRequest request){
+        User user = userRepository.findByUserIdx(userIdx)
+                .map(existingUser ->
+                        existingUser.updateProfile(request.getProfile(), request.getNickname(), request.getIntro(), request.getJob())).
+                        orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
+        userRepository.save(user);
+        return mapper.userToProfileResponse(user);
+    }
+
+//    protected void updateFromDto(UserDto dto, User user) {
+//        mapper.updateFromDto(dto, user);
+//    }
+
 }

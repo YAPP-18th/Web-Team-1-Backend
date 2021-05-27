@@ -48,6 +48,7 @@ dependencies {
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0' // builder 패턴 사용에 필요
 
 	// db
 	runtimeOnly 'org.postgresql:postgresql'
