@@ -1,5 +1,7 @@
 package com.yapp18.retrospect.domain.post;
 
+import com.querydsl.core.QueryResults;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yapp18.retrospect.domain.comment.QComment;
 import com.yapp18.retrospect.domain.like.QLike;
@@ -8,16 +10,29 @@ import com.yapp18.retrospect.domain.user.QUser;
 import com.yapp18.retrospect.web.dto.PostDto;
 import com.yapp18.retrospect.web.dto.QPostDto_ListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.event.ListDataEvent;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Repository
-public class PostQueryRepository {
+public class PostQueryRepository extends QuerydslRepositorySupport{
 
     private final JPAQueryFactory queryFactory;
+
+
+    public PostQueryRepository(JPAQueryFactory queryFactory) {
+        super(Post.class);
+        this.queryFactory = queryFactory;
+    }
+
 
     // 최신순 페이징
     public List<PostDto.ListResponse> findByPostIdx(Long cursorId, Integer pageSize, LocalDateTime create_at){
@@ -118,7 +133,7 @@ public class PostQueryRepository {
     }
 
     // 내 회고글
-    public List<PostDto.ListResponse> findAllByUserUserIdx(Long userIdx){
+    public List<PostDto.ListResponse> findAllByUserUserIdx(Long userIdx ,Long page, Integer pageSize, LocalDateTime create_at){
         QPost post = QPost.post;
         QUser user = QUser.user;
         QTag tag = QTag.tag1;
@@ -129,15 +144,18 @@ public class PostQueryRepository {
                 .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
                         user.nickname, user.profile, tag.tag, post.created_at, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post)
+                .from(post).where(post.user.userIdx.eq(userIdx))
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
                 .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.user.userIdx.eq(userIdx))
-                .orderBy(post.created_at.desc()) // 조회순으로 바꿔야함.
+                .where((post.created_at.eq(create_at).and(post.postIdx.lt(page)))
+                        .or(post.created_at.lt(create_at)))
+                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
+                .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
     }
+
 
 }

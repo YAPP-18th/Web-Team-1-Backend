@@ -1,8 +1,16 @@
 package com.yapp18.retrospect.config;
 
+import com.fasterxml.classmate.TypeResolver;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.Authorization;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.*;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +44,12 @@ public class SwaggerConfig {
     private String kakaoTokenEndpoint;
     @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
     private String kakaoTokenRequestEndpoint;
+    private final TypeResolver typeResolver;
+
+    public SwaggerConfig(TypeResolver typeResolver) {
+        this.typeResolver = typeResolver;
+    }
+
 
     @Bean
     public Docket api() {
@@ -56,6 +70,9 @@ public class SwaggerConfig {
         // swagger 정의
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
+                .ignoredParameterTypes(Authorization.class)
+                .alternateTypeRules(AlternateTypeRules
+                        .newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(Page.class)))
                 .select() //ApiSelectorBuilder를 생성
                 .apis(RequestHandlerSelectors.any()) // 현재 RequestMapping으로 할당된 모든 URL 리스트를 추출
                 .paths(PathSelectors.ant("/**")) // 그중 /api/** 인 URL들만 필터링
@@ -115,4 +132,17 @@ public class SwaggerConfig {
     private ApiKey apiKey() {
         return new ApiKey("Authorization", "Authorization", "header");
     }
+
+    @Getter
+    @Setter
+    @ApiModel
+    static class Page {
+        @ApiModelProperty(value = "페이지 번호(0..N)")
+        private Integer page;
+
+        @ApiModelProperty(value = "페이지 크기", allowableValues="range[0, 100]")
+        private Integer pageSize;
+
+    }
+
 }

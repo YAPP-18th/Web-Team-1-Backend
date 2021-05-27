@@ -1,6 +1,8 @@
 package com.yapp18.retrospect.domain.post;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.web.dto.PostDto;
@@ -12,6 +14,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -49,9 +53,8 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "template_idx")
     private Template template;
 
-//    @OneToMany(mappedBy = "post")
-//    @JoinColumn(name = "comment_idx")
-//    private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "post")
+    private final List<Tag> tag = new ArrayList<>();
 
     @Builder
     public Post(Long postIdx,String title, String category, String contents,
@@ -64,12 +67,11 @@ public class Post extends BaseTimeEntity {
         this.template = template;
     }
 
-    public void update(PostDto.updateResponse requestDto){
+    public void updatePost(PostDto.updateRequest requestDto){
         this.title = requestDto.getTitle();
         this.category = requestDto.getCategory();
         this.contents = requestDto.getContents();
     }
-
 
 
 }
