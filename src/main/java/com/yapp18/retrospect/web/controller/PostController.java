@@ -52,9 +52,9 @@ public class PostController {
     }
 
     @ApiOperation(value = "detail", notes = "[상세] 회고글 상세보기")
-    @GetMapping("/{post_idx}")
+    @GetMapping("/{postIdx}")
     public ResponseEntity<Object> findPostsContentById(@ApiParam(value = "상세보기 post_idx", required = true, example = "3")
-                                                       @PathVariable(value = "post_idx") Long postIdx) {
+                                                       @PathVariable(value = "postIdx") Long postIdx) {
         PostDto.detailResponse post = postService.findPostContents(postIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_DETAIL.getResponseMessage(),post), HttpStatus.OK);
     }
