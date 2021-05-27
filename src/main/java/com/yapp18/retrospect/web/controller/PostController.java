@@ -2,19 +2,16 @@ package com.yapp18.retrospect.web.controller;
 
 
 import com.yapp18.retrospect.config.ResponseMessage;
-import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.service.PostService;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
-import io.jsonwebtoken.Claims;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,8 +85,8 @@ public class PostController {
     @PutMapping("/{postIdx}")
     public ResponseEntity<Object> updatePosts(HttpServletRequest request,
                                               @ApiParam(value = "회고글 post_idx", required = true, example = "1")
-                                              @PathVariable(value = "postIdx") Long postIdx, @RequestBody PostDto.updateResponse requestDto){
-        Long post = postService.updatePosts(tokenService.getUserIdx(tokenService.getTokenFromRequest(request)), postIdx, requestDto);
+                                              @PathVariable(value = "postIdx") Long postIdx, @RequestBody PostDto.updateRequest requestDto){
+        Long post = postService.updatePosts(tokenService.getUserIdx(token), postIdx, requestDto);
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_UPDATE.getResponseMessage(),post),HttpStatus.OK);
     }
 

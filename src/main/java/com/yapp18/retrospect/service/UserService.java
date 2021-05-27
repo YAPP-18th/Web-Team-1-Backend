@@ -6,7 +6,6 @@ import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.UserMapper;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.web.dto.UserDto;
-import com.yapp18.retrospect.web.dto.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +41,7 @@ public class UserService {
 
     public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
         return userRepository.findByUserIdx(userIdx)
-                .map(existingUser -> mapper.userToProfileResponse(existingUser))
+                .map(mapper::userToProfileResponse)
                 .orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
     }
 

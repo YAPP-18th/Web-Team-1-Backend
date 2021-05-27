@@ -13,17 +13,14 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -112,17 +109,15 @@ public class PostService {
 
 
     // 회고글 수정
-    public Long updatePosts(Long userIdx,Long postIdx, PostDto.updateResponse requestDto){
+    public Long updatePosts(Long userIdx,Long postIdx, PostDto.updateRequest requestDto){
         // postIdx가 있는지 chk
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
-
         // user 체크
-        if (post.getUser().getUserIdx().equals(userIdx)) post.update(requestDto);
+        if (post.getUser().getUserIdx().equals(userIdx)) post.updatePost(requestDto);
 
         return post.getPostIdx();
     }
-
 
 
     // 회고글 삭제
@@ -150,7 +145,7 @@ public class PostService {
 
 
     // 최신순 조회
-    private Post findRecentPost(Long cursorId){
+    Post findRecentPost(Long cursorId){
         if (cursorId == null || cursorId == 0){ // 최초 검색 시 가장 최신 post로
             cursorId = postRepository.findTop1ByOrderByPostIdxDesc().get(0).getPostIdx();
         }
