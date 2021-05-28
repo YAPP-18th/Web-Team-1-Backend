@@ -58,7 +58,7 @@ public class PostService {
 
     // 회고글 카테고리 검색
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByContents(String category, String order, Long cursorId, Integer pageSize){
-        List<PostDto.ListResponse> result = new ArrayList<>();
+        List<PostDto.ListResponse> result;
         if (order.equals("recent")){
             Post post = findRecentPost(cursorId);
             result = postQueryRepository.findByCategory(cursorId, pageSize,post.getCreated_at(), category); // 최신순+카테고리  검색
@@ -72,12 +72,14 @@ public class PostService {
     }
 
     // 회고글 상세페이지
-    public PostDto.detailResponse findPostContents(Long postIdx){
+    public PostDto.detailResponse findPostContents(Long postIdx, Long userIdx){
         Post post = postRepository.findById(postIdx).orElseThrow(() -> new NullPointerException("해당 post_idx가 없습니다."));
-        List<String> tag = tagRepository.findByPostPostIdx(postIdx).stream()
+        List<String> tag = tagRepository.findByPostPostIdx(postIdx)
+                .stream()
                 .map(Tag::getTag)
                 .collect(Collectors.toList());
-        return new PostDto.detailResponse(post, tag);
+        boolean writer = userIdx != 0 && isWriter(post.getUser().getUserIdx(), userIdx);
+        return new PostDto.detailResponse(post, tag, writer);
     }
 
 
@@ -158,6 +160,10 @@ public class PostService {
             cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
         }
         return postRepository.findById(cursorId).orElseThrow(() -> new NullPointerException("해당 회고글 idx가 없습니다."));
+    }
+
+    private boolean isWriter(Long postUserIdx,Long userIdx){
+        return postUserIdx.equals(userIdx);
     }
 
 }

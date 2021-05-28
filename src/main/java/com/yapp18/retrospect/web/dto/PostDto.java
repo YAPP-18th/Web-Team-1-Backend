@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.annotations.QueryProjection;
 import com.yapp18.retrospect.domain.post.Post;
@@ -10,6 +11,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -92,6 +95,7 @@ public class PostDto {
         @ApiModelProperty(value = "조회수")
         private int view;
 
+        @JsonFormat(pattern = "MMM dd, yyyy", locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
         private LocalDateTime created_at;
 
@@ -170,14 +174,18 @@ public class PostDto {
         @ApiModelProperty(value = "조회수")
         private int view;
 
+        @JsonFormat(pattern = "MMM dd,yyyy",locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
         private LocalDateTime created_at;
+
+        @ApiModelProperty(value ="작성자 판단")
+        private boolean isWriter;
 
 //        @ApiModelProperty(value = "댓글 수")
 //        private Long commentCnt;
 
         @Builder
-        public detailResponse(Post post, List<String> tag){
+        public detailResponse(Post post, List<String> tag, boolean isWriter){
             this.postIdx = post.getPostIdx();
             this.title = post.getTitle();
             this.category = post.getCategory();
@@ -187,6 +195,7 @@ public class PostDto {
             this.tag = tag;
             this.view = post.getView();
             this.created_at = post.getCreated_at();
+            this.isWriter = isWriter;
         }
     }
 
