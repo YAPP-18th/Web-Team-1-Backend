@@ -4,6 +4,7 @@ import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.security.UserPrincipal;
+import com.yapp18.retrospect.security.oauth2.CookieUtils;
 import com.yapp18.retrospect.web.dto.AuthDto;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +57,6 @@ public class TokenService {
         claim.put(AUTHORITIES_KEY, authorities);
 
 
-
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getAccessTokenExpirationMsec());
 
@@ -66,29 +68,35 @@ public class TokenService {
                 .compact();
     }
 
-    public AuthDto.ReissueResponse reissueAccessToken(AuthDto.ReissueRequest reissueRequest) {
-        if(validateToken(reissueRequest.getRefreshToken())){
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다. 로그아웃합니다.");
+    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request) {
+
+        Optional<String> refreshOptional = CookieUtils.getCookie(request, "JWT-Request-Token")
+                 .map(Cookie::getValue);
+        if(!refreshOptional.isPresent()) {
+            throw new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다.");
         }
-        String expiredAccessToken = reissueRequest.getAccessToken();
-        String refreshToken = reissueRequest.getRefreshToken();
+        String refreshToken = refreshOptional.get();
+        String expiredAccessToken = getTokenFromRequest(request);
 
-        Claims accessClaims = getClaimsFromToken(expiredAccessToken,appProperties.getAuth().getAccessTokenSecret());
-        Claims refreshClaims = getClaimsFromToken(refreshToken, appProperties.getAuth().getRefreshTokenSecret());
-        Number accessIdx = (Number) accessClaims.get("user_idx");
-        Number refreshIdx = (Number) refreshClaims.get("user_idx");
-        if(!accessIdx.equals(refreshIdx)){
-            throw new RuntimeException("Access Token과 Refresh Token의 내용이 일치하지 않습니다. 로그아웃합니다.");
+        if(validateToken(expiredAccessToken)) {
+            Claims accessClaims = getClaimsFromToken(expiredAccessToken,appProperties.getAuth().getAccessTokenSecret());
+            Claims refreshClaims = getClaimsFromToken(refreshToken, appProperties.getAuth().getRefreshTokenSecret());
+            Number accessIdx = (Number) accessClaims.get("user_idx");
+            Number refreshIdx = (Number) refreshClaims.get("user_idx");
+            if(!accessIdx.equals(refreshIdx)){
+                throw new RuntimeException("Access Token과 Refresh Token의 내용이 일치하지 않습니다.");
+            }
+
+            Authentication authentication = getAuthentication(expiredAccessToken);
+            String reissuedAccessToken = createAccessToken(authentication);
+            AuthDto.ReissueResponse response = AuthDto.ReissueResponse
+                    .builder()
+                    .grantType(BEARER_TYPE)
+                    .accessToken(reissuedAccessToken)
+                    .build();
+            return Optional.of(response);
         }
-
-        Authentication authentication = getAuthentication(expiredAccessToken);
-        String reissuedAccessToken = createAccessToken(authentication);
-
-        return AuthDto.ReissueResponse
-                .builder()
-                .grantType(BEARER_TYPE)
-                .accessToken(reissuedAccessToken)
-                .build();
+        return Optional.empty();
     }
 
     public String createRefreshToken(Authentication authentication) {
