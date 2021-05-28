@@ -86,7 +86,7 @@ public class PostController {
     public ResponseEntity<Object> updatePosts(HttpServletRequest request,
                                               @ApiParam(value = "회고글 post_idx", required = true, example = "1")
                                               @PathVariable(value = "postIdx") Long postIdx, @RequestBody PostDto.updateRequest requestDto){
-        Long post = postService.updatePosts(tokenService.getUserIdx(token), postIdx, requestDto);
+        Long post = postService.updatePosts(tokenService.getUserIdx(tokenService.getTokenFromRequest(request)), postIdx, requestDto);
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_UPDATE.getResponseMessage(),post),HttpStatus.OK);
     }
 
