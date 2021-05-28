@@ -1,6 +1,10 @@
 package com.yapp18.retrospect.security.oauth2;
 
 import com.nimbusds.oauth2.sdk.util.StringUtils;
+import com.yapp18.retrospect.config.AppProperties;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
@@ -9,11 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
+@RequiredArgsConstructor
 //Spring OAuth2는 기본적으로 HttpSessionOAuth2AuthorizationRequestRepository를 사용해 Authorization Request를 저장한다.
 // 하지만 JWT의 경우 Session에 저장할 필요가 없으므로 HttpCookieOAuth2AuthorizationRequestRepository 클래스를 생성하여
 // Authorization Request를 Based64 encoded cookie에 저장한다.
 public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
-
+    private final AppProperties appProperties;
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     private static final int cookieExpireSeconds = 180;
@@ -40,7 +45,8 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
         //2. request에서 redirect_uri을 추출하여 redirectUriAfterLogin에 담는다.
         //3. 만약 redirectUriAfterLogin이 존재한다면 response에 "redirect_uri" 이름으로 추출한 redirectUriAfterLogin 값을 담는다.
         CookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, CookieUtils.serialize(authorizationRequest), true, cookieExpireSeconds);
-        String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
+        String redirectUriAfterLogin = appProperties.getOauth2().getRedirectUri();
+//                request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
         if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
             CookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, true, cookieExpireSeconds);
         }
