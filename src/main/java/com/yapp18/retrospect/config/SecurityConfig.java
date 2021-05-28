@@ -84,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/oauth2/authorization/**", "/signin", "/signup").anonymous()
                     .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/profile", "/login").permitAll()
                     .antMatchers("/api/v1/posts/lists", "/api/v1/posts/post_idx", "/api/v1/posts/search", "/api/v1/posts/new",
-                                "/v2/api-docs", "/swagger-resources/**","http://localhost:3000","http://52.79.235.223:80","http://52.79.235.223/",
+                                "/v2/api-docs", "/swagger-resources/**","http://localhost:3000","http://52.79.235.223:80","http://52.79.235.223",
                                 "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
                     .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
                 .and()
@@ -109,7 +109,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000","http://15.165.67.119:9000/api/v1/*","http://52.79.235.223:80","http://52.79.235.223/"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000","http://15.165.67.119:9000/api/v1/*","http://52.79.235.223:80","*"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","OPTIONS","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);

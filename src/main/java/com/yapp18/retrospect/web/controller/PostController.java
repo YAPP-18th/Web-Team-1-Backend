@@ -93,10 +93,10 @@ public class PostController {
     }
 
     @ApiOperation(value = "mypage", notes = "[마이페이지]회고글 삭제하기")
-    @DeleteMapping("/{postIdx}")
+    @DeleteMapping("")
     public ResponseEntity<Object> deletePosts(HttpServletRequest request,
                                               @ApiParam(value = "회고글 post_idx", required = true, example = "1")
-                                              @PathVariable(value = "postIdx") Long postIdx){
+                                              @RequestParam(value = "postIdx") Long postIdx){
         boolean isPost = postService.deletePosts(tokenService.getUserIdx(tokenService.getTokenFromRequest(request)),postIdx);
         if (!isPost){
             return new ResponseEntity<>(ApiDefaultResponse.res(400,"삭제할 idx 없음..."),HttpStatus.BAD_REQUEST);
