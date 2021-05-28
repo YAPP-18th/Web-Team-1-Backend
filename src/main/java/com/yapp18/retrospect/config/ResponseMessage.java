@@ -15,7 +15,8 @@ public enum ResponseMessage {
     POST_DELETE("회고글 삭제 성공"),
     PROFILE_FIND("프로필 조회 성공"),
     PROFILE_UPDATE("프로필 업데이트 성공"),
-    MY_LIST("내가 쓴 글 조회 성공");
+    MY_LIST("내가 쓴 글 조회 성공"),
+    TEMPLATE_FIND("템플릿 조회 성공 ");
 
     private final String ResponseMessage;
 
