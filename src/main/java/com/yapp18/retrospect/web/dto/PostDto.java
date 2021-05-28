@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.annotations.QueryProjection;
 import com.yapp18.retrospect.domain.post.Post;
@@ -10,6 +11,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -92,6 +95,7 @@ public class PostDto {
         @ApiModelProperty(value = "조회수")
         private int view;
 
+        @JsonFormat(pattern = "MMM dd, yyyy", locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
         private LocalDateTime created_at;
 
@@ -170,6 +174,7 @@ public class PostDto {
         @ApiModelProperty(value = "조회수")
         private int view;
 
+        @JsonFormat(pattern = "MMM dd,yyyy",locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
         private LocalDateTime created_at;
 
