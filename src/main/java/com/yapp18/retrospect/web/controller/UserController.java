@@ -1,6 +1,8 @@
 package com.yapp18.retrospect.web.controller;
 
 import com.yapp18.retrospect.config.ResponseMessage;
+import com.yapp18.retrospect.domain.user.User;
+import com.yapp18.retrospect.mapper.UserMapper;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.service.UserService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
@@ -21,10 +23,8 @@ public class UserController {
     private final UserService userService;
     private final TokenService tokenService;
 
-    @GetMapping("/profiles")
-    public ResponseEntity<Object> getProfiles(HttpServletRequest request){
-        String token = tokenService.getTokenFromRequest(request);
-        Long userIdx = tokenService.getUserIdx(token);
+    @GetMapping("/profiles/{userIdx}")
+    public ResponseEntity<Object> getProfiles(@PathVariable(value = "userIdx") Long userIdx){
         UserDto.ProfileResponse response = userService.getUserProfiles(userIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.PROFILE_FIND.getResponseMessage(), response), HttpStatus.OK);
     }
