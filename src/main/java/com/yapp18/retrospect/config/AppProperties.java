@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,8 @@ public class AppProperties {
         private long accessTokenExpirationMsec;
         private long refreshTokenExpirationMsec;
 
-        public Auth(String accessTokenSecret, String refreshTokenSecret, long accessTokenExpirationMsec, long refreshTokenExpirationMsec) {
+
+        public Auth(String accessTokenSecret, String refreshTokenSecret, long accessTokenExpirationMsec, long refreshTokenExpirationMsec, String redirectUri) {
             this.accessTokenSecret = accessTokenSecret;
             this.refreshTokenSecret = refreshTokenSecret;
             this.accessTokenExpirationMsec = accessTokenExpirationMsec;
@@ -34,15 +36,15 @@ public class AppProperties {
     }
 
     @Getter
+    @Setter
     @RequiredArgsConstructor
     public static class OAuth2 {
-        private List<String> authorrizedRedirectUris = new ArrayList<>();
+        private String redirectUri;
+        private List<String> authorizedRedirectUris = new ArrayList<>();
 
-        public OAuth2 authorizedRedirectUris(List<String> authorizedRedirectUris) {
-            this.authorrizedRedirectUris = authorrizedRedirectUris;
-            return this;
+        public OAuth2(String redirectUri, List<String> authorizedRedirectUris) {
+            this.redirectUri = redirectUri;
+            this.authorizedRedirectUris = authorizedRedirectUris;
         }
-
-
     }
 }

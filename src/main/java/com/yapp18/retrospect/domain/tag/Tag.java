@@ -4,6 +4,7 @@ import com.yapp18.retrospect.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -22,8 +23,9 @@ public class Tag {
     @Column(nullable = false)
     private String tag;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "post_idx")
+    @ToString.Exclude
     private Post post;
 
     @Builder
@@ -33,5 +35,3 @@ public class Tag {
         this.post = post;
     }
 }
-
-//@OnDelete(action = OnDeleteAction.CASCADE)

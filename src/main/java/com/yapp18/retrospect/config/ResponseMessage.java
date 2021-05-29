@@ -16,8 +16,17 @@ public enum ResponseMessage {
     // 검색
     SEARCH_TITLE("제목으로 검색 성공"),
     SEARCH_CONTENTS("내용으로 검색 성공 "),
-    SEARCH_ALL("전체로 검색 성공 ")
-    ;
+    SEARCH_ALL("전체로 검색 성공 "),
+
+    POST_FIND_CATEGORY("카테고리 필터링 조회 성공"),
+    POST_DETAIL("회고글 상세 조회 성공"),
+
+    PROFILE_FIND("프로필 조회 성공"),
+    PROFILE_UPDATE("프로필 업데이트 성공"),
+    MY_LIST("내가 쓴 글 조회 성공"),
+    AUTH_ISSUE("Access Token 발급 성공"),
+    AUTH_REISSUE("Access Token 재발급 성공"),
+    TEMPLATE_FIND("템플릿 조회 성공 ");
 
     private final String ResponseMessage;
 

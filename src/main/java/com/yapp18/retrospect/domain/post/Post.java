@@ -1,8 +1,14 @@
 package com.yapp18.retrospect.domain.post;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.image.Image;
+import com.yapp18.retrospect.domain.like.Like;
+import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
+import com.yapp18.retrospect.web.dto.PostDto;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +16,11 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @DynamicUpdate // 변경된 것만 바꾸기
@@ -47,9 +54,17 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "template_idx")
     private Template template;
 
-//    @OneToMany(mappedBy = "post")
-//    @JoinColumn(name = "comment_idx")
-//    private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "post",orphanRemoval = true,fetch = FetchType.LAZY)
+    private final List<Tag> tag = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post",orphanRemoval = true)
+    private final List<Like> like = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private final List<Image> image = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private final List<Comment> comment = new ArrayList<>();
 
     @Builder
     public Post(Long postIdx,String title, String category, String contents,
@@ -62,10 +77,11 @@ public class Post extends BaseTimeEntity {
         this.template = template;
     }
 
-    public void update(String title, String category, String contents){
-        this.title = title;
-        this.category = category;
-        this.contents = contents;
+    public void updatePost(PostDto.updateRequest requestDto){
+        this.title = requestDto.getTitle();
+        this.category = requestDto.getCategory();
+        this.contents = requestDto.getContents();
     }
+
 
 }

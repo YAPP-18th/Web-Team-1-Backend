@@ -43,7 +43,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             throw new BadRequestException("승인되지 않은 리디렉션 URI가 있어 인증을 진행할 수 없습니다.");
         }
         // authentication.getPrincipal()은 CustomOAuth2UserService.loadUser에서 리턴하는 값과 연관이 있다
-        String accessToken = TokenService.createAccessToken(authentication);
+//        String accessToken = TokenService.createAccessToken(authentication);
         String refreshToken = TokenService.createRefreshToken(authentication);
 
         if (response.isCommitted()) {
@@ -51,10 +51,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             return;
         }
 
-        clearAuthenticationAttributes(request, response);
+//        clearAuthenticationAttributes(request, response);
 
         CookieUtils.addCookie(response, "JWT-Refresh-Token", refreshToken, true, 180);
-        response.addHeader("JWT-Access-Token", accessToken);
+//        response.addHeader("JWT-Access-Token", accessToken);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -84,7 +84,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private boolean isAuthorizedRedirectUri(String uri) {
         URI clientRedirectUri = URI.create(uri);
 
-        return appProperties.getOauth2().getAuthorrizedRedirectUris() // OAuth2 객체 안에 authorrizedRedirectUris은 @ConfigurationProperties로 oauth.yaml으로 값을 읽어와 자동으로 초기화된다.
+        return appProperties.getOauth2().getAuthorizedRedirectUris() // OAuth2 객체 안에 authorrizedRedirectUris은 @ConfigurationProperties로 oauth.yaml으로 값을 읽어와 자동으로 초기화된다.
                 .stream()
                 .anyMatch(authorizedRedirectUri -> {
                     // Only validate host and port. Let the clients use different paths if they want to

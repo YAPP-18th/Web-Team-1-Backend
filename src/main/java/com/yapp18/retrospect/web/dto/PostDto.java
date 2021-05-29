@@ -1,19 +1,27 @@
 package com.yapp18.retrospect.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.annotations.QueryProjection;
 import com.yapp18.retrospect.domain.post.Post;
+import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import springfox.documentation.spring.web.json.Json;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Builder
-@AllArgsConstructor
+//@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDto {
 
     // post 저장
@@ -57,7 +65,6 @@ public class PostDto {
     }
 
 
-
     @Data
     @NoArgsConstructor
     @ApiModel(value = "회고글 목록 조회(조회순)", description = "회고글 목록 조회 모델")
@@ -88,6 +95,7 @@ public class PostDto {
         @ApiModelProperty(value = "조회수")
         private int view;
 
+        @JsonFormat(pattern = "MMM dd, yyyy", locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
         private LocalDateTime created_at;
 
@@ -100,7 +108,9 @@ public class PostDto {
 
         @QueryProjection
         public ListResponse(Long postIdx,String title, String category, String contents, String nickname,
-                            String profile, String  tag, LocalDateTime created_at, int view,
+                            String profile,
+                            String tag,
+                            LocalDateTime created_at, int view,
                             Long commentCnt, Long scrapCnt){
             this.postIdx = postIdx;
             this.title =  title;
@@ -121,7 +131,7 @@ public class PostDto {
     @NoArgsConstructor
     @Getter
     @ApiModel(value = "회고글 수정하기 ", description = "회고글 목록 수정  모델")
-    public static class updateResponse{
+    public static class updateRequest {
         @ApiModelProperty(value = "카테고리")
         private String category;
         @ApiModelProperty(value = "제목 ")
@@ -129,12 +139,70 @@ public class PostDto {
         @ApiModelProperty(value = "내용 ")
         private String contents;
 
-        public updateResponse(String category, String title, String contents){
+        @Builder
+        public updateRequest(String category, String title, String contents){
             this.category = category;
             this.title = title;
             this.contents = contents;
         }
     }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class detailResponse{
+        @ApiModelProperty(value = "회고글 idx")
+        private Long postIdx;
+
+        @ApiModelProperty(value = "회고글 제목")
+        private String title;
+
+        @ApiModelProperty(value = "카테고리")
+        private String category;
+
+        @ApiModelProperty(value = "내용 ")
+        private String contents;
+
+        @ApiModelProperty(value = "작성자 닉네임 ")
+        private String nickname;
+
+        @ApiModelProperty(value = "작성자 프로필 사진")
+        private String profile;
+
+        @ApiModelProperty(value = "태그 String 담긴 배열 ")
+        private List<String> tag;
+
+        @ApiModelProperty(value = "조회수")
+        private int view;
+
+        @JsonFormat(pattern = "MMM dd,yyyy",locale = "en_GB")
+        @ApiModelProperty(value = "생성날짜")
+        private LocalDateTime created_at;
+
+        @ApiModelProperty(value ="작성자 판단")
+        private boolean isWriter;
+
+//        @ApiModelProperty(value = "댓글 수")
+//        private Long commentCnt;
+
+        @Builder
+        public detailResponse(Post post, List<String> tag, boolean isWriter){
+            this.postIdx = post.getPostIdx();
+            this.title = post.getTitle();
+            this.category = post.getCategory();
+            this.contents = post.getContents();
+            this.nickname = post.getUser().getNickname();
+            this.profile = post.getUser().getProfile();
+            this.tag = tag;
+            this.view = post.getView();
+            this.created_at = post.getCreated_at();
+            this.isWriter = isWriter;
+        }
+    }
+
+
+
 
 
 

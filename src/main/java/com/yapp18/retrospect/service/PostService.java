@@ -18,9 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -33,56 +34,65 @@ public class PostService {
     private final TemplateRepository templateRepository;
     private final TagRepository tagRepository;
     private final ImageRepository imageRepository;
+    private final TokenService tokenService;
+
 
     // 회고글 목록 조회: 최신순
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsList(Long cursorId, Integer pageSize){
-        // 최초 idx 시 가장 최신 post로
-        if (cursorId == null || cursorId == 0){
-            cursorId = postRepository.findTop1ByOrderByPostIdxDesc().get(0).getPostIdx();
-        }
-        LocalDateTime create_at = postRepository.findById(cursorId).get().getCreated_at(); // 마지막 조회 postIdx의 생성날짜
-        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdx(cursorId, pageSize,create_at); // cursor 방식으로 페이징(시간 + id)
-        // 마지막 페이지 검사
+        Post post = findRecentPost(cursorId);
+
+        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdx(cursorId, pageSize,post.getCreated_at()); // cursor 방식으로 페이징(시간 + id)
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
 
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
     }
 
-    // 회고글 목록 조회: 누적조회순 => 그냥 pageable할까?
+    // 회고글 목록 조회: 누적조회순
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByView(Long cursorId, Integer pageSize){
-        if (cursorId == null || cursorId == 0){
-            cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
-            System.out.println("====>>>>"+ cursorId);
+        Post post = findViewPost(cursorId);
+        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdxOrderByViewDesc(pageSize, post.getView()); // view 로 페이징
+        int lastView = result.isEmpty() ? 0 : result.get(result.size()-1).getView(); // 해당 조회수보다 낮은 글이 있는지 체크
+        return new ApiPagingResultResponse<>(isNextView(lastView), result);
+
+    }
+
+    // 회고글 카테고리 검색
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByContents(String category, String order, Long cursorId, Integer pageSize){
+        List<PostDto.ListResponse> result;
+        if (order.equals("recent")){
+            Post post = findRecentPost(cursorId);
+            result = postQueryRepository.findByCategory(cursorId, pageSize,post.getCreated_at(), category); // 최신순+카테고리  검색
+        } else{
+            Post post = findViewPost(cursorId);
+            result = postQueryRepository.findByCategoryOrderByViewDesc(category,pageSize, post.getView()); // 조회순+ 카테고리 검색
         }
-        // 마지막으로 검색된 회고글의 조회수
-        int view = postRepository.findById(cursorId).get().getView();
-        System.out.println("====<<<<<"+view);
-        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdxOrderByViewDesc(cursorId, pageSize, view);
-        // lastIdx 검사
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
+
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
-
     }
 
-    // 회고글 마지막 페이지 검사
-    private boolean isNext(Long cursorId){
-        if (cursorId == null) return false;
-        return postRepository.existsByPostIdxLessThan(cursorId);
+    // 회고글 상세페이지
+    public PostDto.detailResponse findPostContents(Long postIdx, Long userIdx){
+        Post post = postRepository.findById(postIdx).orElseThrow(() -> new NullPointerException("해당 post_idx가 없습니다."));
+        List<String> tag = tagRepository.findByPostPostIdx(postIdx)
+                .stream()
+                .map(Tag::getTag)
+                .collect(Collectors.toList());
+        boolean writer = userIdx != 0 && isWriter(post.getUser().getUserIdx(), userIdx);
+        return new PostDto.detailResponse(post, tag, writer);
     }
+
 
     // 회고글 저장
-    public Post inputPosts(PostDto.saveResponse saveResponse){
-        Optional<User> user = userRepository.findByUserIdx(saveResponse.getUserIdx());
+    public Long inputPosts(PostDto.saveResponse saveResponse, Long userIdx){
+        Optional<User> user = userRepository.findByUserIdx(userIdx);
         if(!user.isPresent()) throw new NullPointerException("해당 아이디는 없습니다.");
 
-        // 자유 템플릿인 경우 template_idx 0 으로 세팅
         Optional<Template> template = templateRepository.findById(saveResponse.getTemplateIdx());
         if(!template.isPresent()) throw new NullPointerException("해당 템플릿이 없습니다.");
 
-        // post 저장
         Post post = postRepository.save(saveResponse.toEntity(user.get(), template.get()));
 
-        // image 저장
         if (!saveResponse.getImage().isEmpty()){ // image가 있을 때만 저장
             for (String url : saveResponse.getImage()) {
                 imageRepository.save(Image.builder().imageUrl(url).post(post).build());
@@ -96,54 +106,64 @@ public class PostService {
                 tagRepository.save(Tag.builder().tag(tag).post(post).build());
             }
         }
-        return post;
-    }
-
-    // 회고글 수정
-    public Long updatePosts(Long postIdx, PostDto.updateResponse requestDto){
-        // postIdx가 있는지 chk
-        Post post = postRepository.findById(postIdx)
-                .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
-
-        post.update(
-                requestDto.getTitle(),
-                requestDto.getCategory(),
-                requestDto.getContents()
-        );
-
-        // image, tag, template 모두 바꿔야함 있다면.
-//        if (!requestDto.getImage().isEmpty()) updateImage(requestDto.getImage());
-//        if (!requestDto.getTitle().isEmpty()) updateTag(requestDto.getTag());
-//        if (requestDto.getTemplateIdx() != null) updateTemplate(requestDto.getTemplateIdx());
         return post.getPostIdx();
     }
 
-    // 이미지
-    public void updateImage(List<String> imageList){
 
-    }
+    // 회고글 수정
+    public Long updatePosts(Long userIdx,Long postIdx, PostDto.updateRequest requestDto){
+        // postIdx가 있는지 chk
+        Post post = postRepository.findById(postIdx)
+                .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
+        // user 체크
+        if (post.getUser().getUserIdx().equals(userIdx)) post.updatePost(requestDto);
 
-    public void updateTag(List<String> tagList){
-
-    }
-
-    public void updateTemplate(Long templateIdx){
-        Template template = templateRepository.findById(templateIdx)
-                .orElseThrow(()-> new IllegalArgumentException("해당 템플릿이 없습니다"));
-//        template.update()
+        return post.getPostIdx();
     }
 
 
     // 회고글 삭제
-    public boolean deletePosts(Long postIdx) {
-        // id 값이 있는지 검증
-        boolean isPost = postRepository.existsById(postIdx);
-        if (isPost) {
+    public boolean deletePosts(Long userIdx,Long postIdx) {
+        Post post = postRepository.findById(postIdx)
+                .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
+        if (isWriter(post.getUser().getUserIdx(), userIdx)){
             postRepository.deleteById(postIdx);
             return true;
         }
         return false;
     }
 
+
+
+    private boolean isNext(Long cursorId){
+        if (cursorId == null) return false;
+        return postRepository.existsByPostIdxLessThan(cursorId);
+    }
+
+    private boolean isNextView(int view){
+        if (view == 0) return false;
+        return postRepository.existsByViewLessThan(view);
+    }
+
+
+    // 최신순 조회
+    Post findRecentPost(Long cursorId){
+        if (cursorId == null || cursorId == 0){ // 최초 검색 시 가장 최신 post로
+            cursorId = postRepository.findTop1ByOrderByPostIdxDesc().get(0).getPostIdx();
+        }
+        return postRepository.findById(cursorId).orElseThrow(()-> new NullPointerException("해당 회고글 idx가 없습니다."));
+    }
+
+    // 누적순 조회
+    private Post findViewPost(Long cursorId){
+        if (cursorId == null || cursorId == 0){ // 최초 검색 시 누적조회순으로
+            cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
+        }
+        return postRepository.findById(cursorId).orElseThrow(() -> new NullPointerException("해당 회고글 idx가 없습니다."));
+    }
+
+    private boolean isWriter(Long postUserIdx,Long userIdx){
+        return postUserIdx.equals(userIdx);
+    }
 
 }
