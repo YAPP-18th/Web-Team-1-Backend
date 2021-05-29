@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.security;
 
+import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
+    private final AppProperties appProperties;
 
     // API 호출은 전부 JWT를 확인한다.
 //    private RequestMatcher requestMatcher = new AntPathRequestMatcher("/api/**");
@@ -37,11 +39,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         //그리고 요청이 정상적으로 Controller 까지 도착했다면 SecurityContext 에 Member ID 가 존재한다는 것이 보장됩니다.
         try {
             String jwt = tokenService.getTokenFromRequest(request);
-
-            if (StringUtils.hasText(jwt) && tokenService.validateToken(jwt)) {
+            String secret = appProperties.getAuth().getAccessTokenSecret();
+            if (StringUtils.hasText(jwt) && tokenService.validateToken(request, jwt, secret)) {
                 //매 토큰 인증마다 DB를 통해 유저 정보를 불러오는 것은 Stateless 하지 않음
                 //SecurityContextHolder.getContext에 Authentication값을 세팅시 유저의 모든 정보를 세팅할 필요는 없고 권한 정보만 세팅해도 됩니다.
-                UsernamePasswordAuthenticationToken authentication = tokenService.getAuthentication(jwt);
+                UsernamePasswordAuthenticationToken authentication = tokenService.getAuthentication(jwt, secret);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
