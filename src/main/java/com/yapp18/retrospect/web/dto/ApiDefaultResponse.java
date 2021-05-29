@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.dto;
 
+import com.yapp18.retrospect.config.ErrorMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,4 +31,5 @@ public class ApiDefaultResponse<T> {
                 .responseMessage(responseMessage)
                 .build();
     }
+
 }
