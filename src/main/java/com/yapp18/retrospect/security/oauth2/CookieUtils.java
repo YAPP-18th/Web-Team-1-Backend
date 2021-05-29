@@ -28,6 +28,7 @@ public class CookieUtils {
         Cookie cookie = new Cookie(name, value); // 패러미터로 들어온 name과 value를 기반으로 새로운 쿠키를 생성 
         cookie.setPath("/");
         cookie.setHttpOnly(httpOnly);
+//        cookie.setSecure(true); // secure을 적용하면 https 접속에서만 동작한다.
         cookie.setMaxAge(maxAge); // Expire 설정
         response.addCookie(cookie); // response에 새로운 쿠키 추가
     }

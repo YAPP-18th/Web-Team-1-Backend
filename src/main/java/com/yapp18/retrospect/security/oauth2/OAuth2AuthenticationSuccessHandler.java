@@ -84,7 +84,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private boolean isAuthorizedRedirectUri(String uri) {
         URI clientRedirectUri = URI.create(uri);
 
-        return appProperties.getOauth2().getAuthorrizedRedirectUris() // OAuth2 객체 안에 authorrizedRedirectUris은 @ConfigurationProperties로 oauth.yaml으로 값을 읽어와 자동으로 초기화된다.
+        return appProperties.getOauth2().getAuthorizedRedirectUris() // OAuth2 객체 안에 authorrizedRedirectUris은 @ConfigurationProperties로 oauth.yaml으로 값을 읽어와 자동으로 초기화된다.
                 .stream()
                 .anyMatch(authorizedRedirectUri -> {
                     // Only validate host and port. Let the clients use different paths if they want to
