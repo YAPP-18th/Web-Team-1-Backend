@@ -40,7 +40,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = tokenService.getTokenFromRequest(request);
             String secret = appProperties.getAuth().getAccessTokenSecret();
-            if (StringUtils.hasText(jwt) && tokenService.validateToken(request, jwt, secret)) {
+            if (tokenService.validateToken(request, jwt, secret)) {
                 //매 토큰 인증마다 DB를 통해 유저 정보를 불러오는 것은 Stateless 하지 않음
                 //SecurityContextHolder.getContext에 Authentication값을 세팅시 유저의 모든 정보를 세팅할 필요는 없고 권한 정보만 세팅해도 됩니다.
                 UsernamePasswordAuthenticationToken authentication = tokenService.getAuthentication(jwt, secret);

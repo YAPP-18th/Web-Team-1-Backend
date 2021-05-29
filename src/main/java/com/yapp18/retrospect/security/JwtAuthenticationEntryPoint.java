@@ -53,6 +53,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.getWriter().println("{ \"message\" : \"" + errorInfo.getMessage()
                 + "\", \"code\" : \"" +  errorInfo.getCode()
                 + "\", \"status\" : " + errorInfo.getStatus()
-                + ", \"errors\" : [ ] }");
+                + " }");
     }
 }
