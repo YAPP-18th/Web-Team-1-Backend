@@ -1,12 +1,15 @@
 package com.yapp18.retrospect.domain.user;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.domain.like.Like;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +46,9 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+//    @OneToMany(mappedBy = "user")
+//    private final List<Like> like = new ArrayList<>();
 
     @Builder
     public User(Role role, String name, String nickname, String intro, String email,

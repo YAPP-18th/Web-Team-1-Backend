@@ -99,8 +99,8 @@ public class PostController {
                                               @PathVariable(value = "postIdx") Long postIdx){
         boolean isPost = postService.deletePosts(tokenService.getUserIdx(tokenService.getTokenFromRequest(request)),postIdx);
         if (!isPost){
-            return new ResponseEntity<>(ApiDefaultResponse.res(400,"삭제할 idx 없음..."),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ApiDefaultResponse.res(400,"삭제할 idx 없음...", false),HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.POST_DELETE.getResponseMessage(),""),HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.POST_DELETE.getResponseMessage(), true),HttpStatus.OK);
     }
 }

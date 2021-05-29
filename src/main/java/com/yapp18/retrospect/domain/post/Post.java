@@ -2,6 +2,8 @@ package com.yapp18.retrospect.domain.post;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.image.Image;
+import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
@@ -53,8 +55,14 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "template_idx")
     private Template template;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",orphanRemoval = true)
     private final List<Tag> tag = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "post",orphanRemoval = true)
+//    private final List<Like> like = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private final List<Image> image = new ArrayList<>();
 
     @Builder
     public Post(Long postIdx,String title, String category, String contents,
