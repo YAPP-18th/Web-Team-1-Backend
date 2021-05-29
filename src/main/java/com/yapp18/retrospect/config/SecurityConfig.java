@@ -83,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.OPTIONS, "*").permitAll()
                     .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
                     .antMatchers("/oauth2/authorization/**").anonymous()
-                    .antMatchers("/login/oauth2/code/**", "/api/v1/auth/**").permitAll()
+                    .antMatchers("/login/oauth2/code/**", "/api/v1/auth/**", "/api/v1/spring/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/user/profiles").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/v1/user/profiles").hasRole(Role.MEMBER.name())
                     .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
