@@ -38,9 +38,10 @@ public class UserService {
         );
     }
 
+
     public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
         return userRepository.findByUserIdx(userIdx)
-                .map(existingUser -> mapper.userToProfileResponse(existingUser))
+                .map(mapper::userToProfileResponse)
                 .orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
     }
 
@@ -56,4 +57,5 @@ public class UserService {
 //    protected void updateFromDto(UserDto dto, User user) {
 //        mapper.updateFromDto(dto, user);
 //    }
+
 }
