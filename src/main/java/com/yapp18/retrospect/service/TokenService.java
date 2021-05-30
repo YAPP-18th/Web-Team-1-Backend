@@ -52,8 +52,8 @@ public class TokenService {
 
         claim.put("user_idx", userPrincipal.getUserIdx());
         claim.put("nickname", userPrincipal.getNickname());
+        claim.put("isnew", userPrincipal.getIsNew());
         claim.put(AUTHORITIES_KEY, authorities);
-
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getAccessTokenExpirationMsec());

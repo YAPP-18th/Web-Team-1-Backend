@@ -3,11 +3,13 @@ package com.yapp18.retrospect.security.oauth2;
 import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.exception.BadRequestException;
 import com.yapp18.retrospect.service.TokenService;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+import sun.tools.jstat.Token;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -58,10 +60,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String accessToken = TokenService.createAccessToken(authentication);
         String refreshToken = TokenService.createRefreshToken(authentication);
+        Claims claims = TokenService.getClaimsFromToken(accessToken, appProperties.getAuth().getAccessTokenSecret());
+        boolean isNew = (boolean) claims.get("isnew");
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
+                .queryParam("isNew", String.valueOf(isNew))
                 .build().toUriString();
     }
 
