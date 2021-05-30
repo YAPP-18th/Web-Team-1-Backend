@@ -52,6 +52,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
         User user;
+        boolean isNew = false;
         if(userOptional.isPresent()) {
             user = userOptional.get();
             if(!user.getProvider().equals(AuthProvider.valueOf(registrationId).toString())) {
@@ -60,10 +61,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
             user = userService.updateExistingUser(user, oAuth2UserInfo);
         } else {
+            isNew = true;
             user = userService.registerNewUser(registrationId, oAuth2UserInfo);
         }
 
-        return UserPrincipal.create(user, oAuth2UserInfo.getAttributes());
+        return UserPrincipal.create(user, oAuth2UserInfo.getAttributes(), isNew);
     }
 
 
