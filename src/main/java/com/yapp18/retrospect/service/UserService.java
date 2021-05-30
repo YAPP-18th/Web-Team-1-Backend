@@ -34,7 +34,7 @@ public class UserService {
     // DB에 존재할 경우 정보 업데이트
     public User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         return userRepository.save(existingUser
-                .simpleUpdate(oAuth2UserInfo.getName(), oAuth2UserInfo.getProfile())
+                .simpleUpdate(oAuth2UserInfo.getName())
         );
     }
 
