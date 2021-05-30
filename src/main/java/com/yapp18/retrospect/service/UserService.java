@@ -10,6 +10,8 @@ import com.yapp18.retrospect.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -52,6 +54,11 @@ public class UserService {
                         orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
         userRepository.save(user);
         return mapper.userToProfileResponse(user);
+    }
+
+    public boolean findUserByNickname(String nickname){
+        User user = userRepository.findByNickname(nickname);
+        return user != null;
     }
 
 //    protected void updateFromDto(UserDto dto, User user) {
