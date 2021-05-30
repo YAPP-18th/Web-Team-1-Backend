@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.List;
 public class AppProperties {
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
+    private final DefaultValue defaultValue = new DefaultValue();
 
     @Getter
     @Setter
@@ -26,8 +26,7 @@ public class AppProperties {
         private long accessTokenExpirationMsec;
         private long refreshTokenExpirationMsec;
 
-
-        public Auth(String accessTokenSecret, String refreshTokenSecret, long accessTokenExpirationMsec, long refreshTokenExpirationMsec, String redirectUri) {
+        public Auth(String accessTokenSecret, String refreshTokenSecret, long accessTokenExpirationMsec, long refreshTokenExpirationMsec) {
             this.accessTokenSecret = accessTokenSecret;
             this.refreshTokenSecret = refreshTokenSecret;
             this.accessTokenExpirationMsec = accessTokenExpirationMsec;
@@ -45,6 +44,17 @@ public class AppProperties {
         public OAuth2(String redirectUri, List<String> authorizedRedirectUris) {
             this.redirectUri = redirectUri;
             this.authorizedRedirectUris = authorizedRedirectUris;
+        }
+    }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class DefaultValue {
+        private String profileUrl;
+
+        public DefaultValue(String profileUrl) {
+            this.profileUrl = profileUrl;
         }
     }
 }
