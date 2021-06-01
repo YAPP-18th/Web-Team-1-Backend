@@ -26,7 +26,8 @@ public enum ResponseMessage {
     MY_LIST("내가 쓴 글 조회 성공"),
     AUTH_ISSUE("Access Token 발급 성공"),
     AUTH_REISSUE("Access Token 재발급 성공"),
-    TEMPLATE_FIND("템플릿 조회 성공 ");
+    TEMPLATE_FIND("템플릿 조회 성공 "),
+    NICKNAME_FIND("닉네임 중복 여부 조회 성공 (중복됨 = true)");
 
     private final String ResponseMessage;
 
