@@ -35,9 +35,10 @@ public class SearchService {
 
     // 제목으로 검색
     @Transactional
-    public List<SearchDto.SearchListResponse> findPostsByTitle(String title){
-        List<SearchDto.ListResponse> result = postQueryRepository.findAllByTitle(title);
+    public List<SearchDto.SearchListResponse> findPostsByTitle(String title, String type){
+        List<SearchDto.ListResponse> result = postQueryRepository.findAllByTitle(title, type);
         List<SearchDto.SearchListResponse> test = new ArrayList<>();
+
         for (SearchDto.ListResponse res: result){
             test.add(new SearchDto.SearchListResponse(res, tagRepository.findByPostPostIdx(res.getPostIdx())
                     .stream()

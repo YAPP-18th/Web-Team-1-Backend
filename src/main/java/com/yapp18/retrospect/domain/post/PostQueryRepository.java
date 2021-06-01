@@ -1,16 +1,15 @@
 package com.yapp18.retrospect.domain.post;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yapp18.retrospect.domain.comment.QComment;
 import com.yapp18.retrospect.domain.like.QLike;
 import com.yapp18.retrospect.domain.tag.QTag;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.user.QUser;
-import com.yapp18.retrospect.web.dto.PostDto;
-import com.yapp18.retrospect.web.dto.QPostDto_ListResponse;
-import com.yapp18.retrospect.web.dto.QSearchDto_ListResponse;
-import com.yapp18.retrospect.web.dto.SearchDto;
+import com.yapp18.retrospect.web.dto.*;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -172,28 +171,45 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
     }
 
 
-    // 내 회고글
-    public List<SearchDto.ListResponse> findAllByTitle(String title){
+    // 검색
+    public List<SearchDto.ListResponse> findAllByTitle(String keyword, String type){
         QPost post = QPost.post;
         QUser user = QUser.user;
         QComment comment = QComment.comment1;
         QLike like = QLike.like;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (type.equals("title")) builder.and(post.title.contains(keyword));
+        if (type.equals("contents")) builder.and(post.contents.contains(keyword));
+        if (type.equals("all")) builder.and(post.title.contains(keyword).or(post.contents.contains(keyword)));
+
 
         List<SearchDto.ListResponse> result =  queryFactory
                 .select(new QSearchDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
                         user.nickname, user.profile,post.created_at, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post).where(post.title.contains(title))
+                .from(post).where(builder)
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
                 .leftJoin(post.tag)
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
                 .groupBy(post, user, comment, like)
                 .fetch();
-        System.out.println(result.get(0).getTag());
         return result;
     }
 
+//    BooleanBuilder builder = new BooleanBuilder();
+//if(param.getId() != null){
+//        builder.and(member.id.eq(param.getId()));
+//    }
+//if(param.getName() != null){
+//        builder.and(member.name.contains(param.getName()));
+//    }
+//
+//    List<Member> list =
+//            queryFactory.selectFrom(member)
+//                    .where(booleanBuilder)
+//                    .fetch();
 
 
 

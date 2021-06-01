@@ -20,13 +20,13 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @ApiOperation(value = "search" ,notes = "[검색] 제목으로 검색")
+    @ApiOperation(value = "search" ,notes = "[검색] 검색하기 ")
     @GetMapping("")
     public ResponseEntity<Object> findByTitle(@ApiParam(value = "검색할 제목키워드", required = true, example = "st")
-            @RequestParam(value = "title") String title){
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "type") String type){
         return new ResponseEntity<>(ApiDefaultResponse.res(200,
                 ResponseMessage.SEARCH_TITLE.getResponseMessage(),
-                searchService.findPostsByTitle(title)), HttpStatus.OK);
+                searchService.findPostsByTitle(keyword, type)), HttpStatus.OK);
     }
 
 }

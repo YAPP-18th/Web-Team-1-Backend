@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import com.yapp18.retrospect.domain.tag.Tag;
@@ -43,8 +44,8 @@ public class SearchDto {
         @ApiModelProperty(value = "작성자 프로필 사진")
         private String profile;
 
-        @ApiModelProperty(value = "키워드 ")
-        private List<Tag> tag = new ArrayList<>();
+//        @ApiModelProperty(value = "키워드 ")
+//        private List<Tag> tag = new ArrayList<>();
 
         @ApiModelProperty(value = "조회수")
         private int view;
@@ -140,4 +141,5 @@ public class SearchDto {
 
 
     }
+
 }
