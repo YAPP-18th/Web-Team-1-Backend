@@ -2,6 +2,7 @@ package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
+import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.post.PostQueryRepository;
 import com.yapp18.retrospect.domain.post.PostRepository;
@@ -11,14 +12,16 @@ import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.template.TemplateRepository;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
+import com.yapp18.retrospect.mapper.PostMapper;
+import com.yapp18.retrospect.web.dto.ApiIsResultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,58 +32,55 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final PostQueryRepository postQueryRepository;
     private final UserRepository userRepository;
     private final TemplateRepository templateRepository;
     private final TagRepository tagRepository;
     private final ImageRepository imageRepository;
-    private final TokenService tokenService;
+    private final LikeRepository likeRepository;
+    private final PostMapper postMapper;
 
 
-    // 회고글 목록 조회: 최신순
-    public ApiPagingResultResponse<PostDto.ListResponse> getPostsList(Long cursorId, Integer pageSize){
-        Post post = findRecentPost(cursorId);
+    // 최신순
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListRecent(Long cursorId, Pageable page){
+        List<PostDto.ListResponse> result = getPostsRecent(cursorId, page).stream().map(postMapper::postToListResponse)
+                .collect(Collectors.toList());
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
 
-        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdx(cursorId, pageSize,post.getCreated_at()); // cursor 방식으로 페이징(시간 + id)
-        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
-
-        return new ApiPagingResultResponse<>(isNext(lastIdx), result);
+        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
     }
 
-    // 회고글 목록 조회: 누적조회순
-    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByView(Long cursorId, Integer pageSize){
-        Post post = findViewPost(cursorId);
-        List<PostDto.ListResponse> result = postQueryRepository.findByPostIdxOrderByViewDesc(pageSize, post.getView()); // view 로 페이징
-        int lastView = result.isEmpty() ? 0 : result.get(result.size()-1).getView(); // 해당 조회수보다 낮은 글이 있는지 체크
-        return new ApiPagingResultResponse<>(isNextView(lastView), result);
-
-    }
-
-    // 회고글 카테고리 검색
-    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByContents(String category, String order, Long cursorId, Integer pageSize){
-        List<PostDto.ListResponse> result;
-        if (order.equals("recent")){
-            Post post = findRecentPost(cursorId);
-            result = postQueryRepository.findByCategory(cursorId, pageSize,post.getCreated_at(), category); // 최신순+카테고리  검색
-        } else{
-            Post post = findViewPost(cursorId);
-            result = postQueryRepository.findByCategoryOrderByViewDesc(category,pageSize, post.getView()); // 조회순+ 카테고리 검색
-        }
-        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
-
+    // 조회순
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page){
+        List<PostDto.ListResponse> result = getPostsView(cursorId, page).stream().map(postMapper::postToListResponse)
+                .collect(Collectors.toList());
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 조회수 체크
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
     }
 
     // 회고글 상세페이지
-    public PostDto.detailResponse findPostContents(Long postIdx, Long userIdx){
+    public ApiIsResultResponse<PostDto.detailResponse> findPostContents(Long postIdx, Long userIdx){
         Post post = postRepository.findById(postIdx).orElseThrow(() -> new NullPointerException("해당 post_idx가 없습니다."));
-        List<String> tag = tagRepository.findByPostPostIdx(postIdx)
-                .stream()
-                .map(Tag::getTag)
-                .collect(Collectors.toList());
-        boolean writer = userIdx != 0 && isWriter(post.getUser().getUserIdx(), userIdx);
-        return new PostDto.detailResponse(post, tag, writer);
+        return new ApiIsResultResponse<>(isWriter(post.getUser().getUserIdx(),userIdx),
+                isScrap(post, userIdx),
+                postMapper.postToDetailResponse(post)); // 작성자 판단
     }
+
+
+
+    // 회고글 카테고리 검색
+//    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByContents(String category, String order, Long cursorId, Integer pageSize){
+//        List<PostDto.ListResponse> result;
+//        if (order.equals("recent")){
+//            Post post = findRecentPost(cursorId);
+//            result = postQueryRepository.findByCategory(cursorId, pageSize,post.getCreatedAt(), category); // 최신순+카테고리  검색
+//        } else{
+//            Post post = findViewPost(cursorId);
+//            result = postQueryRepository.findByCategoryOrderByViewDesc(category,pageSize, post.getView()); // 조회순+ 카테고리 검색
+//        }
+//        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
+//
+//        return new ApiPagingResultResponse<>(isNext(lastIdx), result);
+//    }
 
 
     // 회고글 저장
@@ -135,35 +135,34 @@ public class PostService {
 
 
 
+    // 다음 페이지 여부 확인
     private boolean isNext(Long cursorId){
         if (cursorId == null) return false;
         return postRepository.existsByPostIdxLessThan(cursorId);
     }
 
-    private boolean isNextView(int view){
-        if (view == 0) return false;
-        return postRepository.existsByViewLessThan(view);
+    // 최신순 페이징
+    private List<Post> getPostsRecent(Long cursorId, Pageable page) {
+        return cursorId == null || cursorId == 0 ?
+                postRepository.findAllByOrderByPostIdxDesc(page) : // 가장 최초 포스트
+                postRepository.findRecent(cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
     }
 
-
-    // 최신순 조회
-    Post findRecentPost(Long cursorId){
-        if (cursorId == null || cursorId == 0){ // 최초 검색 시 가장 최신 post로
-            cursorId = postRepository.findTop1ByOrderByPostIdxDesc().get(0).getPostIdx();
-        }
-        return postRepository.findById(cursorId).orElseThrow(()-> new NullPointerException("해당 회고글 idx가 없습니다."));
+    // 누적순 페이징
+    private List<Post> getPostsView(Long cursorId, Pageable page){
+        return cursorId == null || cursorId == 0 ?
+                postRepository.findAllByOrderByViewDesc(page) :
+                postRepository.findView(postRepository.findViewByPostIdx(cursorId).getView(), page,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
     }
 
-    // 누적순 조회
-    private Post findViewPost(Long cursorId){
-        if (cursorId == null || cursorId == 0){ // 최초 검색 시 누적조회순으로
-            cursorId = postRepository.findTop1ByOrderByViewDesc().get(0).getPostIdx();
-        }
-        return postRepository.findById(cursorId).orElseThrow(() -> new NullPointerException("해당 회고글 idx가 없습니다."));
-    }
-
+    // 작성자 판별
     private boolean isWriter(Long postUserIdx,Long userIdx){
+        // userIdx = 0일때?
         return postUserIdx.equals(userIdx);
+    }
+
+    private boolean isScrap(Post post, Long userIdx){
+        return likeRepository.findByPostAndUserUserIdx(post, userIdx).isPresent();
     }
 
 }

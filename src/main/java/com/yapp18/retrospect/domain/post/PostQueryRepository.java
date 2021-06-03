@@ -35,140 +35,106 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
     }
 
 
-    // 최신순 페이징
-    public List<PostDto.ListResponse> findByPostIdx(Long cursorId, Integer pageSize, LocalDateTime create_at){
-        QPost post = QPost.post;
-        QUser user = QUser.user;
-        QTag tag = QTag.tag1;
-        QComment comment = QComment.comment1;
-        QLike like = QLike.like;
-
-        return queryFactory
-                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
-                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .distinct()
-                .from(post)
-                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(post.tag).fetchJoin()
-                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
-                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where((post.created_at.eq(create_at).and(post.postIdx.lt(cursorId))).or(post.created_at.lt(create_at)))
-                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
-                .limit(pageSize)
-                .groupBy(post, user, tag, comment, like)
-                .fetch();
-
-
-    }
-
-//    public List<Order> findAllByUserName(String userName) {
-//        return from(order)
-//                .join(order.orderItems, orderItem).fetchJoin()
-//                .where(order.userName.eq(userName))
+//
+//    // 누적 조회수
+//    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Integer pageSize, int view){
+//        QPost post = QPost.post;
+//        QUser user = QUser.user;
+//        QTag tag = QTag.tag1;
+//        QComment comment = QComment.comment1;
+//        QLike like = QLike.like;
+//
+//        return queryFactory
+//                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
+//                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
+//                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
+//                .from(post)
+//                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
+//                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
+//                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
+//                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
+//                .where(post.view.loe(view))
+//                .orderBy(post.view.desc())
+//                .limit(pageSize)
 //                .distinct()
+//                .groupBy(post, user, tag, comment, like)
+//                .fetch().stream().distinct().collect(Collectors.toList());
+//    }
+
+    // 최신순 카테고리 페이징
+//    public List<PostDto.ListResponse> findByCategory(Long cursorId, Integer pageSize, LocalDateTime create_at,
+//                                                     String category){
+//        QPost post = QPost.post;
+//        QUser user = QUser.user;
+//        QTag tag = QTag.tag1;
+//        QComment comment = QComment.comment1;
+//        QLike like = QLike.like;
+//
+//        return queryFactory
+//                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
+//                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
+//                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
+//                .from(post).where(post.category.eq(category))
+//                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
+//                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
+//                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
+//                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
+//                .where((post.createdAt.eq(create_at).and(post.postIdx.lt(cursorId)))
+//                        .or(post.createdAt.lt(create_at)))
+//                .orderBy(post.createdAt.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
+//                .limit(pageSize)
+//                .groupBy(post, user, tag, comment, like)
 //                .fetch();
 //    }
 
-    // 누적 조회수
-    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Integer pageSize, int view){
-        QPost post = QPost.post;
-        QUser user = QUser.user;
-        QTag tag = QTag.tag1;
-        QComment comment = QComment.comment1;
-        QLike like = QLike.like;
-
-        return queryFactory
-                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
-                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post)
-                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
-                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
-                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.view.loe(view))
-                .orderBy(post.view.desc())
-                .limit(pageSize)
-                .distinct()
-                .groupBy(post, user, tag, comment, like)
-                .fetch().stream().distinct().collect(Collectors.toList());
-    }
-
-    // 최신순 카테고리 페이징
-    public List<PostDto.ListResponse> findByCategory(Long cursorId, Integer pageSize, LocalDateTime create_at,
-                                                     String category){
-        QPost post = QPost.post;
-        QUser user = QUser.user;
-        QTag tag = QTag.tag1;
-        QComment comment = QComment.comment1;
-        QLike like = QLike.like;
-
-        return queryFactory
-                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
-                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post).where(post.category.eq(category))
-                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
-                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
-                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where((post.created_at.eq(create_at).and(post.postIdx.lt(cursorId)))
-                        .or(post.created_at.lt(create_at)))
-                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
-                .limit(pageSize)
-                .groupBy(post, user, tag, comment, like)
-                .fetch();
-    }
-
-    // 누적 조회수 카테고리
-    public List<PostDto.ListResponse> findByCategoryOrderByViewDesc(String category,Integer pageSize, int view){
-        QPost post = QPost.post;
-        QUser user = QUser.user;
-        QTag tag = QTag.tag1;
-        QComment comment = QComment.comment1;
-        QLike like = QLike.like;
-
-        return queryFactory
-                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
-                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post).where(post.category.eq(category)).orderBy(post.view.desc())
-                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
-                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
-                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.view.loe(view))
-                .orderBy(post.view.desc())
-                .limit(pageSize)
-                .groupBy(post, user, tag, comment, like)
-                .fetch();
-    }
-
-    // 내 회고글
-    public List<PostDto.ListResponse> findAllByUserUserIdx(Long userIdx ,Long page, Integer pageSize, LocalDateTime create_at){
-        QPost post = QPost.post;
-        QUser user = QUser.user;
-        QTag tag = QTag.tag1;
-        QComment comment = QComment.comment1;
-        QLike like = QLike.like;
-
-        return queryFactory
-                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
-                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post).where(post.user.userIdx.eq(userIdx))
-                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
-                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
-                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where((post.created_at.eq(create_at).and(post.postIdx.lt(page)))
-                        .or(post.created_at.lt(create_at)))
-                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
-                .limit(pageSize)
-                .groupBy(post, user, tag, comment, like)
-                .fetch();
-    }
+//    // 누적 조회수 카테고리
+//    public List<PostDto.ListResponse> findByCategoryOrderByViewDesc(String category,Integer pageSize, int view){
+//        QPost post = QPost.post;
+//        QUser user = QUser.user;
+//        QTag tag = QTag.tag1;
+//        QComment comment = QComment.comment1;
+//        QLike like = QLike.like;
+//
+//        return queryFactory
+//                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
+//                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
+//                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
+//                .from(post).where(post.category.eq(category)).orderBy(post.view.desc())
+//                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
+//                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
+//                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
+//                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
+//                .where(post.view.loe(view))
+//                .orderBy(post.view.desc())
+//                .limit(pageSize)
+//                .groupBy(post, user, tag, comment, like)
+//                .fetch();
+//    }
+//
+//    // 내 회고글
+//    public List<PostDto.ListResponse> findAllByUserUserIdx(Long userIdx ,Long page, Integer pageSize, LocalDateTime createdAt){
+//        QPost post = QPost.post;
+//        QUser user = QUser.user;
+//        QTag tag = QTag.tag1;
+//        QComment comment = QComment.comment1;
+//        QLike like = QLike.like;
+//
+//        return queryFactory
+//                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
+//                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
+//                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
+//                .from(post).where(post.user.userIdx.eq(userIdx))
+//                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
+//                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
+//                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
+//                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
+//                .where((post.createdAt.eq(createdAt).and(post.postIdx.lt(page)))
+//                        .or(post.createdAt.lt(createdAt)))
+//                .orderBy(post.createdAt.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
+//                .limit(pageSize)
+//                .groupBy(post, user, tag, comment, like)
+//                .fetch();
+//    }
 
 
     // 검색
@@ -186,11 +152,11 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
 
         List<SearchDto.ListResponse> result =  queryFactory
                 .select(new QSearchDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile,post.created_at, post.view,
+                        user.nickname, user.profile,post.createdAt, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
                 .from(post).where(builder)
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(post.tag)
+                .leftJoin(post)
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
                 .groupBy(post, user, comment, like)

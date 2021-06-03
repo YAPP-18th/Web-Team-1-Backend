@@ -10,13 +10,12 @@ import com.yapp18.retrospect.web.dto.PostDto;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,8 +33,8 @@ public class PostController {
                                       @RequestParam(value = "page", defaultValue = "0") Long page,
                                 @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
-        ApiPagingResultResponse<PostDto.ListResponse> posts_list = postService.getPostsList(page, pageSize);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_RECENT.getResponseMessage(), posts_list), HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_RECENT.getResponseMessage(),
+                postService.getPostsListRecent(page, PageRequest.of(0, pageSize))), HttpStatus.OK);
     }
 
     @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 누적조회순")
@@ -44,9 +43,10 @@ public class PostController {
                                                @RequestParam(value = "page", defaultValue = "0") Long page,
                                                @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
-        ApiPagingResultResponse<PostDto.ListResponse> post_list = postService.getPostsListByView(page, pageSize);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND.getResponseMessage(), post_list), HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND.getResponseMessage(),
+                postService.getPostsListView(page, PageRequest.of(0,pageSize))), HttpStatus.OK);
     }
+
 
     @ApiOperation(value = "detail", notes = "[상세] 회고글 상세보기")
     @GetMapping("/{postIdx}")
@@ -54,25 +54,25 @@ public class PostController {
                                                        @ApiParam(value = "상세보기 post_idx", required = true, example = "3")
                                                        @PathVariable(value = "postIdx") Long postIdx) {
         Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        PostDto.detailResponse post = postService.findPostContents(postIdx, userIdx);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_DETAIL.getResponseMessage(),post), HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_DETAIL.getResponseMessage(),
+                postService.findPostContents(postIdx, userIdx)), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "main", notes = "[메인] 카테고리 필터링")
-    @GetMapping("/lists/{category}")
-    public ResponseEntity<Object> findPostsByCategory(@ApiParam(value = "카테고리", required = true, example = "design")
-                                                      @PathVariable(value = "category") String category,
-                                                      @ApiParam(value = "정렬 순서", required = true, example = "recent")
-                                                      @RequestParam(value = "order") String order,
-                                                      @ApiParam(value = "page", required = true, example = "0")
-                                                      @RequestParam(value = "page") Long page,
-                                                      @ApiParam(value = "pageSize", required = true, example = "20")
-                                                      @RequestParam(value = "pageSize") Integer pageSize
-    ){
-        if (pageSize == null) pageSize = DEFAULT_SIZE;
-        ApiPagingResultResponse<PostDto.ListResponse> post_list = postService.getPostsListByContents(category, order, page, pageSize);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_CATEGORY.getResponseMessage(),post_list), HttpStatus.OK);
-    }
+//    @ApiOperation(value = "main", notes = "[메인] 카테고리 필터링")
+//    @GetMapping("/lists/{category}")
+//    public ResponseEntity<Object> findPostsByCategory(@ApiParam(value = "카테고리", required = true, example = "design")
+//                                                      @PathVariable(value = "category") String category,
+//                                                      @ApiParam(value = "정렬 순서", required = true, example = "recent")
+//                                                      @RequestParam(value = "order") String order,
+//                                                      @ApiParam(value = "page", required = true, example = "0")
+//                                                      @RequestParam(value = "page") Long page,
+//                                                      @ApiParam(value = "pageSize", required = true, example = "20")
+//                                                      @RequestParam(value = "pageSize") Integer pageSize
+//    ){
+//        if (pageSize == null) pageSize = DEFAULT_SIZE;
+//        ApiPagingResultResponse<PostDto.ListResponse> post_list = postService.getPostsListByContents(category, order, page, pageSize);
+//        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_CATEGORY.getResponseMessage(),post_list), HttpStatus.OK);
+//    }
 
 
     @ApiOperation(value = "main", notes = "[메인]회고글 저장하기")
