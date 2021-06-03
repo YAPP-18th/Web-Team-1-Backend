@@ -4,7 +4,6 @@ import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
 import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
-import com.yapp18.retrospect.domain.post.PostQueryRepository;
 import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.tag.TagRepository;
@@ -20,8 +19,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+//import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,6 +41,7 @@ public class PostService {
 
 
     // 최신순
+    @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListRecent(Long cursorId, Pageable page){
         List<PostDto.ListResponse> result = getPostsRecent(cursorId, page).stream().map(postMapper::postToListResponse)
                 .collect(Collectors.toList());
@@ -50,6 +51,7 @@ public class PostService {
     }
 
     // 조회순
+    @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page){
         List<PostDto.ListResponse> result = getPostsView(cursorId, page).stream().map(postMapper::postToListResponse)
                 .collect(Collectors.toList());
@@ -58,13 +60,14 @@ public class PostService {
     }
 
     // 회고글 상세페이지
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ApiIsResultResponse<PostDto.detailResponse> findPostContents(Long postIdx, Long userIdx){
         Post post = postRepository.findById(postIdx).orElseThrow(() -> new NullPointerException("해당 post_idx가 없습니다."));
+        post.updateview(post.getView()); // 조회수 증가
         return new ApiIsResultResponse<>(isWriter(post.getUser().getUserIdx(),userIdx),
                 isScrap(post, userIdx),
                 postMapper.postToDetailResponse(post)); // 작성자 판단
     }
-
 
 
     // 회고글 카테고리 검색
@@ -132,7 +135,6 @@ public class PostService {
         }
         return false;
     }
-
 
 
     // 다음 페이지 여부 확인
