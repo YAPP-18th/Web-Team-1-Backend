@@ -55,6 +55,7 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "template_idx")
     private Template template;
 
+
     @JsonIgnore
     @OneToMany(mappedBy = "post",orphanRemoval = true)
     private List<Tag> tagList = new ArrayList<>();
@@ -63,13 +64,18 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post",orphanRemoval = true)
     private  List<Like> like = new ArrayList<>();
 
+
     @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private  List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private final List<Comment> comment = new ArrayList<>();
+
     @Builder
     public Post(Long postIdx,String title, String category, String contents,
                 User user, Template template, List<Tag> tagList, List<Like> like, List<Comment>comments) {
+
         this.postIdx = postIdx;
         this.title = title;
         this.category = category;
@@ -79,6 +85,7 @@ public class Post extends BaseTimeEntity {
         this.tagList = tagList;
         this.like = like;
         this.comments = comments;
+
     }
 
     public void updatePost(PostDto.updateRequest requestDto){
