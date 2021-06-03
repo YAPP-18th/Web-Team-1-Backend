@@ -5,6 +5,8 @@ import com.yapp18.retrospect.domain.post.PostQueryRepository;
 import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.tag.TagRepository;
+import com.yapp18.retrospect.mapper.PostMapper;
+import com.yapp18.retrospect.web.dto.MypageDto;
 import com.yapp18.retrospect.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
 
@@ -14,18 +16,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class ListService {
 
     private final PostService postService;
-    private final PostQueryRepository postQueryRepository;
+    private final PostMapper postMapper;
+    private final PostRepository postRepository;
 
-    public List<PostDto.ListResponse> findAllPostsByUserIdx(Long userIdx,Long page, Integer pageSize ){
-        Post post = postService.findRecentPost(page);
-        return postQueryRepository.findAllByUserUserIdx(userIdx, page, pageSize, post.getCreated_at());
+    @Transactional
+    public List<MypageDto> findAllPostsByUserIdx(Long userIdx){
+
+        return postRepository.findAllByUserUserIdx(userIdx)
+                .stream().map(postMapper::postToListResponse)
+                .collect(Collectors.toList());
     }
 
 }

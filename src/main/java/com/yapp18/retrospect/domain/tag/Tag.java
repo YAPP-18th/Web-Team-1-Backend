@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Table(name="tag_tb")
-
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +33,6 @@ public class Tag {
         this.tag = tag;
         this.post = post;
     }
+
+
 }

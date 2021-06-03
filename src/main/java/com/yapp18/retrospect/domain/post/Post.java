@@ -1,8 +1,8 @@
 package com.yapp18.retrospect.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.comment.Comment;
-import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
@@ -25,6 +25,7 @@ import java.util.List;
 @Entity
 @DynamicUpdate // 변경된 것만 바꾸기
 @Table(name="post_tb")
+//@Builder
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,28 +55,37 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "template_idx")
     private Template template;
 
-    @OneToMany(mappedBy = "post",orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<Tag> tag = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "post",orphanRemoval = true)
-    private final List<Like> like = new ArrayList<>();
+    private List<Tag> tagList = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "post",orphanRemoval = true)
+    private  List<Like> like = new ArrayList<>();
+
+
+    @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)
-    private final List<Image> image = new ArrayList<>();
+    private  List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private final List<Comment> comment = new ArrayList<>();
 
     @Builder
     public Post(Long postIdx,String title, String category, String contents,
-                User user, Template template, List<Tag> tag) {
+                User user, Template template, List<Tag> tagList, List<Like> like, List<Comment>comments) {
+
         this.postIdx = postIdx;
         this.title = title;
         this.category = category;
         this.contents = contents;
         this.user = user;
         this.template = template;
-        this.tag = tag;
+        this.tagList = tagList;
+        this.like = like;
+        this.comments = comments;
+
     }
 
     public void updatePost(PostDto.updateRequest requestDto){
