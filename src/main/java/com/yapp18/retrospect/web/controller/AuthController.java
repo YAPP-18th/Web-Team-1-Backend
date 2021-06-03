@@ -34,35 +34,34 @@ import java.util.Optional;
 public class AuthController {
     private final TokenService tokenService;
 
-    @ApiOperation(value = "auth", notes = "[인증] Access Token 발급")
-    @GetMapping("/issue")
-    public ResponseEntity<Object> issue (HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-        HttpHeaders headers = new HttpHeaders();
+//    @ApiOperation(value = "auth", notes = "[인증] Access Token 발급")
+//    @GetMapping("/issue")
+//    public ResponseEntity<Object> issue (HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
+//        HttpHeaders headers = new HttpHeaders();
+//        Optional cookieOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token");
+//        if(cookieOptional.isPresent()){
+//            Cookie cookie = (Cookie) cookieOptional.get();
+//            CookieUtils.addCookie(response, "JWT-Refresh-Token", cookie.getValue(), true, 180);
+//        }
+//        headers.setLocation(new URI("http://localhost:3000"));
+//        return new ResponseEntity<>(ApiDefaultResponse.res(200,
+//                ResponseMessage.AUTH_ISSUE.getResponseMessage(),
+//                tokenService.issueAccessToken(request)),
+//                headers,
+//                HttpStatus.OK);
+//    }
+
+    @ApiOperation(value = "auth", notes = "[인증] Access Token 재발급, 쿠키에 JWT-Refresh-Token 필요")
+    @PostMapping("/reissue")
+    public ResponseEntity<Object> reissue (HttpServletRequest request, HttpServletResponse response) {
         Optional cookieOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token");
         if(cookieOptional.isPresent()){
             Cookie cookie = (Cookie) cookieOptional.get();
             CookieUtils.addCookie(response, "JWT-Refresh-Token", cookie.getValue(), true, 180);
         }
-        headers.setLocation(new URI("http://localhost:3000"));
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,
-                ResponseMessage.AUTH_ISSUE.getResponseMessage(),
-                tokenService.issueAccessToken(request)),
-                headers,
-                HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "auth", notes = "[인증] Access Token 재발급")
-    @PostMapping("/reissue")
-    public ResponseEntity<Object> reissue (HttpServletRequest request) {
         return new ResponseEntity<>(ApiDefaultResponse.res(200,
                 ResponseMessage.AUTH_REISSUE.getResponseMessage(),
                 tokenService.reissueAccessToken(request)),
                 HttpStatus.OK);
     }
-
-//    @PostMapping("/reissue")
-//    public ResponseEntity<AuthDto.ReissueResponse> reissue (@ApiParam(value = "만료된 Access Token과 유효한 Refresh Token", required = true)
-//                                                            @RequestBody AuthDto.ReissueRequest request) {
-//        return ResponseEntity.ok(tokenService.reissueAccessToken(request));
-//    }
 }

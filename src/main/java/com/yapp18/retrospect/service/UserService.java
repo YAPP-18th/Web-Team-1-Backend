@@ -19,7 +19,7 @@ public class UserService {
     private final UserMapper mapper;
     private final UserRepository userRepository;
 
-    // DB에 존재하지 않을 경우 새로 등록
+    // DB에 존재하지 않을 경우 회원 가입
     @Transactional
     public User registerNewUser(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
         return userRepository.save(User.builder()
@@ -34,7 +34,7 @@ public class UserService {
         );
     }
 
-    // DB에 존재할 경우 정보 업데이트
+    // DB에 존재할 경우 회원 정보 업데이트
     @Transactional
     public User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         return userRepository.save(existingUser
@@ -43,12 +43,14 @@ public class UserService {
     }
 
 
+    // userId로 회원 프로필 정보 조회
     public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
         return userRepository.findByUserIdx(userIdx)
                 .map(mapper::userToProfileResponse)
                 .orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
     }
 
+    // 회원 프로필 정보 업데이트
     public UserDto.ProfileResponse updateUserProfiles(Long userIdx, UserDto.UpdateRequest request){
         User user = userRepository.findByUserIdx(userIdx)
                 .map(existingUser ->
