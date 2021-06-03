@@ -126,7 +126,7 @@ public class PostService {
     public boolean deletePosts(Long userIdx,Long postIdx) {
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
-        if (post.getUser().getUserIdx().equals(userIdx) ) {
+        if (isWriter(post.getUser().getUserIdx(), userIdx)){
             postRepository.deleteById(postIdx);
             return true;
         }

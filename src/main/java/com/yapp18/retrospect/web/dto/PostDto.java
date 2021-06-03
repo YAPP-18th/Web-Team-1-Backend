@@ -40,7 +40,7 @@ public class PostDto {
         @ApiModelProperty(value = "내용")
         private String contents;
 
-//        @ApiModelProperty(value = "작성자 idx")
+        @ApiModelProperty(value = "작성자 idx")
         private Long userIdx;
 
         @ApiModelProperty(value = "적용한 템플릿 idx")
@@ -108,7 +108,9 @@ public class PostDto {
 
         @QueryProjection
         public ListResponse(Long postIdx,String title, String category, String contents, String nickname,
-                            String profile, String  tag, LocalDateTime created_at, int view,
+                            String profile,
+                            String tag,
+                            LocalDateTime created_at, int view,
                             Long commentCnt, Long scrapCnt){
             this.postIdx = postIdx;
             this.title =  title;
@@ -198,6 +200,9 @@ public class PostDto {
             this.isWriter = isWriter;
         }
     }
+
+
+
 
 
 

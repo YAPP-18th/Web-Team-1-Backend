@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.service;
 
+import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class UserService {
     private final UserMapper mapper;
     private final UserRepository userRepository;
+    private final AppProperties appProperties;
 
     // DB에 존재하지 않을 경우 회원 가입
     @Transactional
@@ -58,6 +60,11 @@ public class UserService {
                         orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
         userRepository.save(user);
         return mapper.userToProfileResponse(user);
+    }
+
+    public boolean findUserByNickname(String nickname){
+        User user = userRepository.findByNickname(nickname);
+        return user != null;
     }
 
 //    protected void updateFromDto(UserDto dto, User user) {
