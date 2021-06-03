@@ -158,8 +158,8 @@ public class PostService {
     }
 
     // 작성자 판별
-    private boolean isWriter(Long postUserIdx,Long userIdx){
-        // userIdx = 0일때?
+    private boolean isWriter(Long postUserIdx, Long userIdx){
+        if (userIdx == 0L) return false;
         return postUserIdx.equals(userIdx);
     }
 
