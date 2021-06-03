@@ -10,6 +10,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthDto {
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class IssueResponse {
+        @ApiModelProperty(value = "권한 타입 (Bearer)")
+        private String grantType;
+        @ApiModelProperty(value = "Access Token")
+        private String accessToken;
+    }
+
+    @Getter
     @NoArgsConstructor
     public static class ReissueRequest {
         @ApiModelProperty(value = "유효하지 않은 Access Token")

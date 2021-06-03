@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface PostRepository extends JpaRepository<Post, Long>  {
+public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findTop1ByOrderByPostIdxDesc();
     List<Post> findTop1ByOrderByViewDesc();
     boolean existsByPostIdxLessThan(Long cursorId);

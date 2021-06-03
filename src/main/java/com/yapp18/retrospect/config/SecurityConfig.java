@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.config;
 
+import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.security.JwtAccessDeniedHandler;
 import com.yapp18.retrospect.security.JwtAuthenticationEntryPoint;
 import com.yapp18.retrospect.security.TokenAuthenticationFilter;
@@ -80,11 +81,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight는 인증하지 않고 pass(권한이 모두 null로 들어오기 때문에)
                     .antMatchers(HttpMethod.OPTIONS, "*").permitAll()
-                    .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/**").permitAll()
-                    .antMatchers("/oauth2/authorization/**", "/signin", "/signup").anonymous()
-                    .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**", "/profile", "/login").permitAll()
-                    .antMatchers("/api/v1/posts/lists", "/api/v1/posts/post_idx", "/api/v1/posts/search", "/api/v1/posts/new",
-                                "/v2/api-docs", "/swagger-resources/**","http://localhost:3000",
+                    .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
+                    .antMatchers("/oauth2/authorization/**").anonymous()
+                    .antMatchers("/login/oauth2/code/**", "/api/v1/auth/**", "/api/v1/spring/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/v1/user/profiles").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/v1/user/profiles").hasRole(Role.MEMBER.name())
+                    .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
+                    .antMatchers("/api/v1/posts/lists/**", "/api/v1/posts/post_idx", "/api/v1/posts/search/*", "/api/v1/posts/new",
+                                "/v2/api-docs", "/swagger-resources/**","http://localhost:3000","http://52.79.235.223:80","http://52.79.235.223",
                                 "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
                     .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
                 .and()

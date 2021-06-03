@@ -24,15 +24,17 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     // 여기까지 OAuth2User, UserDetails 구현체 필수, 아래는 직접 추가한것
     private Long userIdx;
     private String nickname;
+    private boolean isNew;
 
     @Builder
-    public UserPrincipal(String providerId, String email, String password, Collection<? extends GrantedAuthority> authorities, Long userIdx, String nickname) {
+    public UserPrincipal(String providerId, String email, String password, Collection<? extends GrantedAuthority> authorities, Long userIdx, String nickname, boolean isNew) {
         this.providerId = providerId;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
         this.userIdx = userIdx;
         this.nickname = nickname;
+        this.isNew = isNew;
     }
 
 
@@ -50,9 +52,10 @@ public class UserPrincipal implements OAuth2User, UserDetails {
                 .build();
     }
 
-    public static UserPrincipal create(User user, Map<String, Object> attributes) {
+    public static UserPrincipal create(User user, Map<String, Object> attributes, boolean isNew) {
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         userPrincipal.setAttributes(attributes);
+        userPrincipal.setNew(isNew);
         return userPrincipal;
     }
 
@@ -98,6 +101,14 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    public boolean getIsNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
     }
 
     @Override

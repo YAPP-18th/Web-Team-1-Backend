@@ -15,6 +15,7 @@ import java.util.List;
 public class AppProperties {
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
+    private final DefaultValue defaultValue = new DefaultValue();
 
     @Getter
     @Setter
@@ -34,15 +35,26 @@ public class AppProperties {
     }
 
     @Getter
+    @Setter
     @RequiredArgsConstructor
     public static class OAuth2 {
-        private List<String> authorrizedRedirectUris = new ArrayList<>();
+        private String redirectUri;
+        private List<String> authorizedRedirectUris = new ArrayList<>();
 
-        public OAuth2 authorizedRedirectUris(List<String> authorizedRedirectUris) {
-            this.authorrizedRedirectUris = authorrizedRedirectUris;
-            return this;
+        public OAuth2(String redirectUri, List<String> authorizedRedirectUris) {
+            this.redirectUri = redirectUri;
+            this.authorizedRedirectUris = authorizedRedirectUris;
         }
+    }
 
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class DefaultValue {
+        private String profileUrl;
 
+        public DefaultValue(String profileUrl) {
+            this.profileUrl = profileUrl;
+        }
     }
 }

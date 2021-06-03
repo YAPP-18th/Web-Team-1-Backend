@@ -1,12 +1,16 @@
 package com.yapp18.retrospect.domain.user;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.like.Like;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -44,6 +48,12 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
+//    @OneToMany(mappedBy = "user")
+//    private final List<Like> like = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user")
+//    private final List<Comment> comments = new ArrayList<>();
+
     @Builder
     public User(Role role, String name, String nickname, String intro, String email,
                 String profile, String provider, String providerId, String job) {
@@ -58,9 +68,8 @@ public class User extends BaseTimeEntity {
         this.job = job;
     }
 
-    public User simpleUpdate(String name, String profile){
+    public User simpleUpdate(String name){
         this.name = name;
-        this.profile = profile;
         return this;
     }
 
