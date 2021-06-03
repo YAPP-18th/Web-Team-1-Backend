@@ -2,6 +2,7 @@ package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
+import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.post.PostQueryRepository;
 import com.yapp18.retrospect.domain.post.PostRepository;
@@ -12,8 +13,8 @@ import com.yapp18.retrospect.domain.template.TemplateRepository;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.PostMapper;
+import com.yapp18.retrospect.web.dto.ApiIsResultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
-import com.yapp18.retrospect.web.dto.PostListDto;
 import com.yapp18.retrospect.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,30 +32,37 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final PostQueryRepository postQueryRepository;
     private final UserRepository userRepository;
     private final TemplateRepository templateRepository;
     private final TagRepository tagRepository;
     private final ImageRepository imageRepository;
-    private final TokenService tokenService;
+    private final LikeRepository likeRepository;
     private final PostMapper postMapper;
 
 
     // 최신순
-    public ApiPagingResultResponse<PostListDto> getPostsListRecent(Long cursorId, Pageable page){
-        List<PostListDto> result = getPostsRecent(cursorId, page).stream().map(postMapper::postToListResponse)
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListRecent(Long cursorId, Pageable page){
+        List<PostDto.ListResponse> result = getPostsRecent(cursorId, page).stream().map(postMapper::postToListResponse)
                 .collect(Collectors.toList());
-        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
 
-        return new ApiPagingResultResponse<>(isNext(lastIdx), result);
+        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
     }
 
     // 조회순
-    public ApiPagingResultResponse<PostListDto> getPostsListView(Long cursorId, Pageable page){
-        List<PostListDto> result = getPostsView(cursorId, page).stream().map(postMapper::postToListResponse)
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page){
+        List<PostDto.ListResponse> result = getPostsView(cursorId, page).stream().map(postMapper::postToListResponse)
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 조회수 체크
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
+    }
+
+    // 회고글 상세페이지
+    public ApiIsResultResponse<PostDto.detailResponse> findPostContents(Long postIdx, Long userIdx){
+        Post post = postRepository.findById(postIdx).orElseThrow(() -> new NullPointerException("해당 post_idx가 없습니다."));
+        return new ApiIsResultResponse<>(isWriter(post.getUser().getUserIdx(),userIdx),
+                isScrap(post, userIdx),
+                postMapper.postToDetailResponse(post)); // 작성자 판단
     }
 
 
@@ -75,17 +81,6 @@ public class PostService {
 //
 //        return new ApiPagingResultResponse<>(isNext(lastIdx), result);
 //    }
-
-    // 회고글 상세페이지
-    public PostDto.detailResponse findPostContents(Long postIdx, Long userIdx){
-        Post post = postRepository.findById(postIdx).orElseThrow(() -> new NullPointerException("해당 post_idx가 없습니다."));
-        List<String> tag = tagRepository.findByPostPostIdx(postIdx)
-                .stream()
-                .map(Tag::getTag)
-                .collect(Collectors.toList());
-        boolean writer = userIdx != 0 && isWriter(post.getUser().getUserIdx(), userIdx);
-        return new PostDto.detailResponse(post, tag, writer);
-    }
 
 
     // 회고글 저장
@@ -162,7 +157,12 @@ public class PostService {
 
     // 작성자 판별
     private boolean isWriter(Long postUserIdx,Long userIdx){
+        // userIdx = 0일때?
         return postUserIdx.equals(userIdx);
+    }
+
+    private boolean isScrap(Post post, Long userIdx){
+        return likeRepository.findByPostAndUserUserIdx(post, userIdx).isPresent();
     }
 
 }

@@ -55,7 +55,6 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "template_idx")
     private Template template;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "post",orphanRemoval = true)
     private List<Tag> tagList = new ArrayList<>();
@@ -63,7 +62,6 @@ public class Post extends BaseTimeEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "post",orphanRemoval = true)
     private  List<Like> like = new ArrayList<>();
-
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)

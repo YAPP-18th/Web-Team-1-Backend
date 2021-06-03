@@ -3,6 +3,7 @@ package com.yapp18.retrospect.domain.like;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

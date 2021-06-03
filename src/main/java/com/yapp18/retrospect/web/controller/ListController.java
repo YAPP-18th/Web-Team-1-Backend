@@ -5,7 +5,7 @@ import com.yapp18.retrospect.mapper.PostMapper;
 import com.yapp18.retrospect.service.ListService;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
-import com.yapp18.retrospect.web.dto.PostListDto;
+import com.yapp18.retrospect.web.dto.PostDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class ListController {
 //                                              @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize
     ){
         Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
-        List<PostListDto> myPostsList = listService.findAllPostsByUserIdx(userIdx);
+        List<PostDto.ListResponse> myPostsList = listService.findAllPostsByUserIdx(userIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.MY_LIST.getResponseMessage(), myPostsList), HttpStatus.OK);
     }
 

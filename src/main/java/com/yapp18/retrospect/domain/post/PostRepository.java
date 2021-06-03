@@ -28,4 +28,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "SELECT * FROM post_tb  WHERE (post_tb.created_at =:currentAt AND post_tb.view <:view) " +
             "OR (post_tb.created_at<:currentAt) ORDER BY post_tb.view DESC,post_tb.created_at DESC", nativeQuery = true)
     List<Post> findView(int view, Pageable pageable, LocalDateTime currentAt);
+
 }

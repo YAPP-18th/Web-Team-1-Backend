@@ -6,12 +6,10 @@ import com.yapp18.retrospect.service.PostService;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
-import com.yapp18.retrospect.web.dto.PostListDto;
 import com.yapp18.retrospect.web.dto.PostDto;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +33,8 @@ public class PostController {
                                       @RequestParam(value = "page", defaultValue = "0") Long page,
                                 @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
-        ApiPagingResultResponse<PostListDto> posts_list = postService.getPostsListRecent(page, PageRequest.of(0, pageSize));
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_RECENT.getResponseMessage(), posts_list), HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_RECENT.getResponseMessage(),
+                postService.getPostsListRecent(page, PageRequest.of(0, pageSize))), HttpStatus.OK);
     }
 
     @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 누적조회순")
@@ -45,11 +43,10 @@ public class PostController {
                                                @RequestParam(value = "page", defaultValue = "0") Long page,
                                                @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
-        ApiPagingResultResponse<PostListDto> post_list = postService.getPostsListView(page, PageRequest.of(0,pageSize));
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND.getResponseMessage(), post_list), HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND.getResponseMessage(),
+                postService.getPostsListView(page, PageRequest.of(0,pageSize))), HttpStatus.OK);
     }
 
-    
 
     @ApiOperation(value = "detail", notes = "[상세] 회고글 상세보기")
     @GetMapping("/{postIdx}")
@@ -57,8 +54,8 @@ public class PostController {
                                                        @ApiParam(value = "상세보기 post_idx", required = true, example = "3")
                                                        @PathVariable(value = "postIdx") Long postIdx) {
         Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        PostDto.detailResponse post = postService.findPostContents(postIdx, userIdx);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_DETAIL.getResponseMessage(),post), HttpStatus.OK);
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_DETAIL.getResponseMessage(),
+                postService.findPostContents(postIdx, userIdx)), HttpStatus.OK);
     }
 
 //    @ApiOperation(value = "main", notes = "[메인] 카테고리 필터링")
