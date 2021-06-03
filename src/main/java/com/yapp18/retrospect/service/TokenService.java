@@ -99,7 +99,8 @@ public class TokenService {
         String expiredAccessToken = getTokenFromRequest(request);
         String accessSecret = appProperties.getAuth().getAccessTokenSecret();
         String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
-        if(validateToken(request, expiredAccessToken, accessSecret)) {
+        if(validateExpiredToken(request, expiredAccessToken, accessSecret) &&
+                validateToken(request, refreshToken, refreshSecret)) {
             Claims accessClaims = getClaimsFromToken(expiredAccessToken, accessSecret);
             Claims refreshClaims = getClaimsFromToken(refreshToken, refreshSecret);
             Number accessIdx = (Number) accessClaims.get("user_idx");
@@ -149,8 +150,6 @@ public class TokenService {
 
         UserDetails userDetails = customUserDetailsService.loadUserByUserIdx(userIdx);// OK
 
-//        UserDetails principal = new User(claims.getSubject(), "", authorities);
-//        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
@@ -162,6 +161,30 @@ public class TokenService {
             System.out.println(e.getMessage());
             logger.error(ErrorInfo.EXPIRED_JWT.getMessage());
             request.setAttribute("exception", ErrorInfo.EXPIRED_JWT.getCode());
+        } catch (SignatureException e) {
+            System.out.println(e.getMessage());
+            logger.error(ErrorInfo.INVALID_SIGNATURE.getMessage());
+            request.setAttribute("exception", ErrorInfo.INVALID_SIGNATURE.getCode());
+        } catch (MalformedJwtException e) {
+            System.out.println(e.getMessage());
+            logger.error(ErrorInfo.MALFORMED_JWT.getCode());
+            request.setAttribute("exception", ErrorInfo.MALFORMED_JWT.getCode());
+        }  catch (UnsupportedJwtException e) {
+            System.out.println(e.getMessage());
+            logger.error(ErrorInfo.UNSUPPORTED_JWT.getMessage());
+            request.setAttribute("exception", ErrorInfo.UNSUPPORTED_JWT.getCode());
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            logger.error(ErrorInfo.ILLEGAL_ARGUMENT.getMessage());
+            request.setAttribute("exception", ErrorInfo.ILLEGAL_ARGUMENT.getCode());
+        }
+        return false;
+    }
+
+    public boolean validateExpiredToken(HttpServletRequest request, String token, String secret) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
         } catch (SignatureException e) {
             System.out.println(e.getMessage());
             logger.error(ErrorInfo.INVALID_SIGNATURE.getMessage());
