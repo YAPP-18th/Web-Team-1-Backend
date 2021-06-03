@@ -4,11 +4,13 @@ import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.UserMapper;
+import com.yapp18.retrospect.security.oauth2.AuthProvider;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     // DB에 존재하지 않을 경우 새로 등록
+    @Transactional
     public User registerNewUser(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
         return userRepository.save(User.builder()
                 .role(Role.MEMBER)
@@ -25,13 +28,14 @@ public class UserService {
                 .nickname(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
                 .profile(oAuth2UserInfo.getProfile())
-                .provider(registrationId)
+                .provider(AuthProvider.valueOf(registrationId))
                 .providerId(oAuth2UserInfo.getId())
                 .build()
         );
     }
 
     // DB에 존재할 경우 정보 업데이트
+    @Transactional
     public User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         return userRepository.save(existingUser
                 .simpleUpdate(oAuth2UserInfo.getName())

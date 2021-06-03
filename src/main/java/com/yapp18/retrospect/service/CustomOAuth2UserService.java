@@ -55,7 +55,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         boolean isNew = false;
         if(userOptional.isPresent()) {
             user = userOptional.get();
-            if(!user.getProvider().equals(AuthProvider.valueOf(registrationId).toString())) {
+            if(!user.getProvider().equals(AuthProvider.valueOf(registrationId))) {
                 throw new OAuth2AuthenticationProcessingException(
                         user.getProvider() + " 계정을 사용하기 위해서 로그인을 해야합니다.");
             }
@@ -67,6 +67,4 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         return UserPrincipal.create(user, oAuth2UserInfo.getAttributes(), isNew);
     }
-
-
 }

@@ -1,6 +1,8 @@
 package com.yapp18.retrospect.domain.user;
 
+import com.sun.istack.NotNull;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.security.oauth2.AuthProvider;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,8 +36,9 @@ public class User extends BaseTimeEntity {
 
     private String intro;
 
-    @Column(length = 20, nullable = false)
-    private String provider;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
 
     @Column(nullable = false)
     private String providerId;
@@ -46,7 +49,7 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(Role role, String name, String nickname, String intro, String email,
-                String profile, String provider, String providerId, String job) {
+                String profile, AuthProvider provider, String providerId, String job) {
         this.role = role;
         this.name = name;
         this.nickname = nickname;
