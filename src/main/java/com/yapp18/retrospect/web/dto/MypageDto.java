@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.dto;
 
+import com.yapp18.retrospect.domain.tag.Tag;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -22,7 +23,7 @@ public class MypageDto {
     @ApiModelProperty(value = "카테고리")
     private String category;
 
-    @ApiModelProperty(value = "내용 ")
+    @ApiModelProperty(value = "내용")
     private String contents;
 
     @ApiModelProperty(value = "작성자 닉네임 ")
@@ -32,7 +33,7 @@ public class MypageDto {
     private String profile;
 
     @ApiModelProperty(value = "키워드 ")
-    private List<String> tag;
+    private List<TagDto> tagList;
 
     @ApiModelProperty(value = "조회수")
     private int view;

@@ -7,6 +7,7 @@ import com.yapp18.retrospect.mapper.PostMapper;
 import com.yapp18.retrospect.service.ListService;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
+import com.yapp18.retrospect.web.dto.MypageDto;
 import com.yapp18.retrospect.web.dto.PostDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,13 +36,13 @@ public class ListController {
 
     @ApiOperation(value = "mypage", notes = "[마이페이지] 내가 쓴 글 보기")
     @GetMapping("")
-    public ResponseEntity<Object> findMyPosts(HttpServletRequest request,
-                                              @RequestParam(value = "page", defaultValue = "0") Long page,
-                                              @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize){
-        List<PostDto.ListResponse> myPostsList = listService.findAllPostsByUserIdx(tokenService.getUserIdx(tokenService.getTokenFromRequest(request)), page, pageSize);
+    public ResponseEntity<Object> findMyPosts(HttpServletRequest request
+//                                              @RequestParam(value = "page", defaultValue = "0") Long page,
+//                                              @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize
+    ){
+        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
+        List<MypageDto> myPostsList = listService.findAllPostsByUserIdx(userIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.MY_LIST.getResponseMessage(), myPostsList), HttpStatus.OK);
     }
-
-//    postMapper.postToListResponse(listService.findAllPostsByUserIdx(userIdx)
 
 }

@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.domain.user;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.like.Like;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,6 +50,9 @@ public class User extends BaseTimeEntity {
 
 //    @OneToMany(mappedBy = "user")
 //    private final List<Like> like = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user")
+//    private final List<Comment> comments = new ArrayList<>();
 
     @Builder
     public User(Role role, String name, String nickname, String intro, String email,
