@@ -75,7 +75,6 @@ public class Post extends BaseTimeEntity {
     @Builder
     public Post(Long postIdx,String title, String category, String contents,
                 User user, Template template, List<Tag> tagList, List<Like> like, List<Comment>comments) {
-
         this.postIdx = postIdx;
         this.title = title;
         this.category = category;

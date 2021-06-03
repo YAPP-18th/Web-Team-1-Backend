@@ -34,6 +34,9 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
         this.queryFactory = queryFactory;
     }
 
+    // 최신순 조회
+
+
 
     // 최신순 페이징
     public List<PostDto.ListResponse> findByPostIdx(Long cursorId, Integer pageSize, LocalDateTime create_at){
@@ -45,16 +48,16 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
 
         return queryFactory
                 .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
+                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
                 .distinct()
                 .from(post)
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(post.tag).fetchJoin()
+                .leftJoin(post).fetchJoin()
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where((post.created_at.eq(create_at).and(post.postIdx.lt(cursorId))).or(post.created_at.lt(create_at)))
-                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
+                .where((post.createdAt.eq(create_at).and(post.postIdx.lt(cursorId))).or(post.createdAt.lt(create_at)))
+                .orderBy(post.createdAt.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
@@ -80,7 +83,7 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
 
         return queryFactory
                 .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
+                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
                 .from(post)
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
@@ -106,16 +109,16 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
 
         return queryFactory
                 .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
+                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
                 .from(post).where(post.category.eq(category))
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
                 .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where((post.created_at.eq(create_at).and(post.postIdx.lt(cursorId)))
-                        .or(post.created_at.lt(create_at)))
-                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
+                .where((post.createdAt.eq(create_at).and(post.postIdx.lt(cursorId)))
+                        .or(post.createdAt.lt(create_at)))
+                .orderBy(post.createdAt.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
@@ -131,7 +134,7 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
 
         return queryFactory
                 .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
+                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
                 .from(post).where(post.category.eq(category)).orderBy(post.view.desc())
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
@@ -146,7 +149,7 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
     }
 
     // 내 회고글
-    public List<PostDto.ListResponse> findAllByUserUserIdx(Long userIdx ,Long page, Integer pageSize, LocalDateTime create_at){
+    public List<PostDto.ListResponse> findAllByUserUserIdx(Long userIdx ,Long page, Integer pageSize, LocalDateTime createdAt){
         QPost post = QPost.post;
         QUser user = QUser.user;
         QTag tag = QTag.tag1;
@@ -155,16 +158,16 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
 
         return queryFactory
                 .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
+                        user.nickname, user.profile, tag.tag, post.createdAt, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
                 .from(post).where(post.user.userIdx.eq(userIdx))
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
                 .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where((post.created_at.eq(create_at).and(post.postIdx.lt(page)))
-                        .or(post.created_at.lt(create_at)))
-                .orderBy(post.created_at.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
+                .where((post.createdAt.eq(createdAt).and(post.postIdx.lt(page)))
+                        .or(post.createdAt.lt(createdAt)))
+                .orderBy(post.createdAt.desc(),post.postIdx.desc()) // 조회순으로 바꿔야함.
                 .limit(pageSize)
                 .groupBy(post, user, tag, comment, like)
                 .fetch();
@@ -186,11 +189,11 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
 
         List<SearchDto.ListResponse> result =  queryFactory
                 .select(new QSearchDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile,post.created_at, post.view,
+                        user.nickname, user.profile,post.createdAt, post.view,
                         comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
                 .from(post).where(builder)
                 .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(post.tag)
+                .leftJoin(post)
                 .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
                 .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
                 .groupBy(post, user, comment, like)

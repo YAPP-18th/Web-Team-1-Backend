@@ -1,20 +1,10 @@
 package com.yapp18.retrospect.mapper;
 
-import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.post.Post;
-import com.yapp18.retrospect.domain.tag.Tag;
-import com.yapp18.retrospect.service.ListService;
-import com.yapp18.retrospect.web.dto.MypageDto;
-import com.yapp18.retrospect.web.dto.PostDto;
-import org.mapstruct.BeforeMapping;
+import com.yapp18.retrospect.web.dto.PostListDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @Mapper(componentModel="spring", uses = {TagMapper.class})
 public interface PostMapper{
@@ -25,6 +15,10 @@ public interface PostMapper{
     @Mapping(target = "profile", expression = "java(post.getUser().getProfile())")
     @Mapping(target = "commentCnt", expression = "java((long)post.getComments().size())")
     @Mapping(target = "scrapCnt", expression = "java((long)post.getLike().size())")
-    MypageDto postToListResponse(Post post);
+    @Mapping(target = "createdAt", expression = "java(post.getCreatedAt())")
+    PostListDto postToListResponse(Post post);
+
+    // dto -> entity
+
 
 }

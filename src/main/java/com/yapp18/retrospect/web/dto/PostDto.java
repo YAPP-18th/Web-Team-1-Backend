@@ -196,7 +196,7 @@ public class PostDto {
             this.profile = post.getUser().getProfile();
             this.tag = tag;
             this.view = post.getView();
-            this.created_at = post.getCreated_at();
+            this.created_at = post.getCreatedAt();
             this.isWriter = isWriter;
         }
     }
