@@ -126,6 +126,7 @@ public class PostService {
 
 
     // 회고글 삭제
+    @Transactional
     public boolean deletePosts(Long userIdx,Long postIdx) {
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
