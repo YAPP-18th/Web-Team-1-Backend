@@ -91,5 +91,9 @@ public class Post extends BaseTimeEntity {
         this.contents = requestDto.getContents();
     }
 
+    public void updateview(int view){
+        this.view = getView() + 1;
+    }
+
 
 }
