@@ -1,24 +1,15 @@
 package com.yapp18.retrospect.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.annotations.QueryProjection;
 import com.yapp18.retrospect.domain.post.Post;
-import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-import springfox.documentation.spring.web.json.Json;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Getter
 @Builder
@@ -121,13 +112,6 @@ public class PostDto {
         @ApiModelProperty(value = "태그")
         private List<String> tagList;
 
-//        @Builder
-//        public updateRequest(String category, String title, String contents, List<PostDto> tagList){
-//            this.category = category;
-//            this.title = title;
-//            this.contents = contents;
-//            this.tagList = tagList;
-//        }
     }
 
 
