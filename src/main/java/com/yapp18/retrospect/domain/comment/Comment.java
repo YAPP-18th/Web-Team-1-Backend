@@ -3,6 +3,7 @@ package com.yapp18.retrospect.domain.comment;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,5 +30,11 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "user_idx")
     private User user;
 
-
+    @Builder
+    public Comment(Long commentIdx, String comment, Post post, User user) {
+        this.commentIdx = commentIdx;
+        this.comment = comment;
+        this.post = post;
+        this.user = user;
+    }
 }

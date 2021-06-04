@@ -1,20 +1,22 @@
 package com.yapp18.retrospect.domain.post;
 
-import ch.qos.logback.classic.db.names.TableName;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface  PostRepository extends JpaRepository<Post, Long> {
+    Optional<Post> findByPostIdx(Long postIdx);
+
     boolean existsByPostIdxLessThan(Long cursorId);
 
     List<Post> findAllByUserUserIdxOrderByCreatedAtDesc(Long userIdx);
 
     // 쓴 날짜 찾기
-    Post findCreatedAtByPostIdx(Long PostIdx);
+    Post findCreatedAtByPostIdx(Long postIdx);
     Post findViewByPostIdx(Long postIdx);
 
     // 최신 조회
