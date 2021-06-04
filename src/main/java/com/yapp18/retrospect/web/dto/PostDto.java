@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -47,7 +48,7 @@ public class PostDto {
         private String profile;
 
         @ApiModelProperty(value = "키워드 ")
-        private List<TagDto> tagList;
+        private List<TagDto.FirstTagDto> tagList;
 
         @ApiModelProperty(value = "조회수")
         private int view;
@@ -64,6 +65,7 @@ public class PostDto {
 //
 //        @ApiModelProperty(value = "스크랩 여부")
 //        private boolean isScrap;
+
 
     }
 
@@ -83,9 +85,6 @@ public class PostDto {
 
         @ApiModelProperty(value = "내용")
         private String contents;
-
-        @ApiModelProperty(value = "작성자 idx")
-        private Long userIdx;
 
         @ApiModelProperty(value = "적용한 템플릿 idx")
         private Long templateIdx;
@@ -109,10 +108,8 @@ public class PostDto {
     }
 
 
-
-
-    @NoArgsConstructor
     @Getter
+    @Setter
     @ApiModel(value = "회고글 수정하기 ", description = "회고글 목록 수정  모델")
     public static class updateRequest {
         @ApiModelProperty(value = "카테고리")
@@ -121,19 +118,23 @@ public class PostDto {
         private String title;
         @ApiModelProperty(value = "내용 ")
         private String contents;
+        @ApiModelProperty(value = "태그")
+        private List<String> tagList;
 
-        @Builder
-        public updateRequest(String category, String title, String contents){
-            this.category = category;
-            this.title = title;
-            this.contents = contents;
-        }
+//        @Builder
+//        public updateRequest(String category, String title, String contents, List<PostDto> tagList){
+//            this.category = category;
+//            this.title = title;
+//            this.contents = contents;
+//            this.tagList = tagList;
+//        }
     }
 
 
     @Getter
     @Setter
     @NoArgsConstructor
+    @ApiModel(value = "회고글 상세조회", description = "회고글 상세조회 response 값 ")
     public static class detailResponse{
         @ApiModelProperty(value = "회고글 idx")
         private Long postIdx;

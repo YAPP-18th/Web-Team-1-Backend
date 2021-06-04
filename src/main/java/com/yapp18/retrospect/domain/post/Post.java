@@ -3,6 +3,7 @@ package com.yapp18.retrospect.domain.post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
@@ -17,7 +18,9 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -67,8 +70,9 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private  List<Comment> comments = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)
-    private final List<Comment> comment = new ArrayList<>();
+    private final List<Image> images = new ArrayList<>();
 
     @Builder
     public Post(Long postIdx,String title, String category, String contents,

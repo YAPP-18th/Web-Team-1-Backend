@@ -29,6 +29,9 @@ public interface PostMapper{
     @Mapping(target = "createdAt", expression = "java(post.getCreatedAt())")
     PostDto.detailResponse postToDetailResponse(Post post);
 
+    // 수정하기
+//    Post updateToPost(PostDto.updateRequest request);
+
     // dto -> entity
 
 }
