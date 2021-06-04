@@ -108,10 +108,8 @@ public class PostDto {
     }
 
 
-
-
-    @NoArgsConstructor
     @Getter
+    @Setter
     @ApiModel(value = "회고글 수정하기 ", description = "회고글 목록 수정  모델")
     public static class updateRequest {
         @ApiModelProperty(value = "카테고리")
@@ -120,13 +118,16 @@ public class PostDto {
         private String title;
         @ApiModelProperty(value = "내용 ")
         private String contents;
+        @ApiModelProperty(value = "태그")
+        private List<String> tagList;
 
-        @Builder
-        public updateRequest(String category, String title, String contents){
-            this.category = category;
-            this.title = title;
-            this.contents = contents;
-        }
+//        @Builder
+//        public updateRequest(String category, String title, String contents, List<PostDto> tagList){
+//            this.category = category;
+//            this.title = title;
+//            this.contents = contents;
+//            this.tagList = tagList;
+//        }
     }
 
 

@@ -13,5 +13,8 @@ import java.util.List;
 public interface TagMapper {
     TagMapper instance = Mappers.getMapper(TagMapper.class);
 
+    // entity -> dto
     TagDto tagToDto(Tag tag);
+    // dto -> entity
+    Tag DtoToTag(TagDto tagDto);
 }

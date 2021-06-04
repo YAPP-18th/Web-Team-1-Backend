@@ -15,6 +15,7 @@ import com.yapp18.retrospect.mapper.PostMapper;
 import com.yapp18.retrospect.web.dto.ApiIsResultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
+import com.yapp18.retrospect.web.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 //import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +42,7 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final PostMapper postMapper;
 
+    // post idx 조회 나중에 method로 뺄 것
 
     // 최신순
     @Transactional(readOnly = true)
@@ -103,24 +107,24 @@ public class PostService {
         }
 
         // tag 저장
-        if (! saveResponse.getTag().isEmpty()){ // tag가 있을 때만 저장
-            for (String tag : saveResponse.getTag()){
-                System.out.println("해시태그 내용" + tag);
-                tagRepository.save(Tag.builder().tag(tag).post(post).build());
-            }
-        }
+        saveTagList(saveResponse.getTag(), post);
         return post.getPostIdx();
     }
 
 
     // 회고글 수정
+    @Transactional
     public Long updatePosts(Long userIdx,Long postIdx, PostDto.updateRequest requestDto){
-        // postIdx가 있는지 chk
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
-        // user 체크
-        if (post.getUser().getUserIdx().equals(userIdx)) post.updatePost(requestDto);
+        List<String> tagList = post.getTagList().stream().map(Tag::getTag).collect(Collectors.toList()); // 기존 태그 목록
 
+        // 수정할 tag 목록이 있고, 기존과 다른 내용이다. => tag 내용 수정해야함.
+        if (!requestDto.getTagList().isEmpty()){
+            delTagList(compareList(tagList, requestDto.getTagList()), post); // 기존- 공통 = 삭제
+            saveTagList(compareList(requestDto.getTagList(), tagList), post); // 새로운 - 공통 = 추가
+        }
+        if (post.getUser().getUserIdx().equals(userIdx)) post.updatePost(requestDto);
         return post.getPostIdx();
     }
 
@@ -164,8 +168,33 @@ public class PostService {
         return postUserIdx.equals(userIdx);
     }
 
+    // 스크랩 여부 판별
     private boolean isScrap(Post post, Long userIdx){
         return likeRepository.findByPostAndUserUserIdx(post, userIdx).isPresent();
     }
+
+    // 리스트 비교
+    private List<String> compareList(List<String> tagList, List<String> compareList){
+        return tagList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
+    }
+
+    // tag 저장
+    private void saveTagList(List<String> tagList, Post post){
+        if (!tagList.isEmpty()){ // tag가 있을 때만 저장
+            for (String tag : tagList){
+                tagRepository.save(Tag.builder().tag(tag).post(post).build());
+            }
+        }
+    }
+
+    private void delTagList(List<String> tagList, Post post){
+        System.out.println(tagList);
+        if (!tagList.isEmpty()){ // 삭제할 것이 있는 것의 tagIdx
+            List<Long> result = post.getTagList().stream().filter(tag -> tagList.contains(tag.getTag())).map(Tag::getTagIdx).collect(Collectors.toList());
+            System.out.println("삭제해야할 태그 인덱스"+result);
+            tagRepository.deleteAllByTagIdxInQuery(result);
+        }
+    }
+
 
 }
