@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Post findViewByPostIdx(Long postIdx);
 
     // 최신 조회
-    List<Post> findAllByOrderByPostIdxDesc(Pageable page);
+    List<Post> findAllByOrderByPostIdxDesc(Pageable page); // 첫 조회일 때
     @Query(value = "SELECT * FROM post_tb  WHERE (post_tb.created_at =:currentAt AND post_tb.post_idx <:cursorId) " +
             "OR (post_tb.created_at<:currentAt) ORDER BY post_tb.created_at DESC, post_tb.post_idx DESC", nativeQuery = true)
     List<Post> findRecent(Long cursorId, Pageable page, LocalDateTime currentAt);

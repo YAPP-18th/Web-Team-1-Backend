@@ -143,7 +143,7 @@ public class PostService {
 
 
     // 다음 페이지 여부 확인
-    private boolean isNext(Long cursorId){
+    public boolean isNext(Long cursorId){
         if (cursorId == null) return false;
         return postRepository.existsByPostIdxLessThan(cursorId);
     }
