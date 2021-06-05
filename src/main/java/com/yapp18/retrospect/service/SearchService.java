@@ -25,19 +25,19 @@ public class SearchService {
 
     // 제목으로 검색: 최신순 반환.
     @Transactional
-    public ApiPagingResultResponse<PostDto.ListResponse> findPostsByTitle(String title, String type, Pageable page){
-        List<PostDto.ListResponse> result = postQueryRepository.findAllByTitleFirst(title, type, page)
+    public ApiPagingResultResponse<PostDto.ListResponse> findPostsByTitle(String title, String type,Long cursorId,Pageable page){
+        List<PostDto.ListResponse> result = findAllByTitle(title, type,cursorId ,page)
                 .stream().map(postMapper::postToListResponse)
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
         return new ApiPagingResultResponse<>(postService.isNext(lastIdx), result);
     }
 
-//    private List<Post> findAllByTitle(String title, String type, Long cursorId, Pageable page){
-//        return cursorId == null || cursorId == 0 ?
-//                postQueryRepository.findAllByTitleFirst(title, type, page):
-//                postQueryRepository.findAllByTitle(title, type, cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-//    }
+    private List<Post> findAllByTitle(String title, String type, Long cursorId, Pageable page){
+        return cursorId == null || cursorId == 0 ?
+                postQueryRepository.findAllByTitleFirst(title, type, page):
+                postQueryRepository.findAllByTitle(title, type, cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
+    }
 
 
 }

@@ -27,12 +27,12 @@ public class SearchController {
     @GetMapping("")
     public ResponseEntity<Object> findByTitle(@ApiParam(value = "검색할 제목키워드", required = true, example = "st")
             @RequestParam(value = "keyword") String keyword, @RequestParam(value = "type") String type,
-                                              @RequestParam(value = "page", defaultValue = "0") int page,
+                                              @RequestParam(value = "page", defaultValue = "0") Long page,
                                               @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         return new ResponseEntity<>(ApiDefaultResponse.res(200,
                 ResponseMessage.SEARCH_TITLE.getResponseMessage(),
-                searchService.findPostsByTitle(keyword, type, PageRequest.of(page, pageSize))), HttpStatus.OK);
+                searchService.findPostsByTitle(keyword, type, page, PageRequest.of(0, pageSize))), HttpStatus.OK);
     }
 
 }
