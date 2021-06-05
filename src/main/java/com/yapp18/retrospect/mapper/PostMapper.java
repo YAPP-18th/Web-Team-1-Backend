@@ -23,6 +23,7 @@ public interface PostMapper{
     PostDto.ListResponse postToListResponse(Post post);
 
     // 상세보기
+    @Mapping(target = "templateIdx", expression = "java(post.getTemplate().getTemplateIdx())")
     @Mapping(target ="nickname", expression= "java(post.getUser().getNickname())")
     @Mapping(target = "profile", expression = "java(post.getUser().getProfile())")
     @Mapping(target = "commentCnt", expression = "java((long)post.getComments().size())")
