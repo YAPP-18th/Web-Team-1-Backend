@@ -120,7 +120,7 @@ public class PostService {
         List<String> tagList = post.getTagList().stream().map(Tag::getTag).collect(Collectors.toList()); // 기존 태그 목록
 
         // 수정할 tag 목록이 있고, 기존과 다른 내용이다. => tag 내용 수정해야함.
-        if (!requestDto.getTagList().isEmpty()){
+        if (!requestDto.getTagList().isEmpty() && !tagList.equals(requestDto.getTagList())){
             delTagList(compareList(tagList, requestDto.getTagList()), post); // 기존- 공통 = 삭제
             saveTagList(compareList(requestDto.getTagList(), tagList), post); // 새로운 - 공통 = 추가
         }

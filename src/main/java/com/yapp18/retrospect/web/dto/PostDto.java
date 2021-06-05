@@ -123,6 +123,9 @@ public class PostDto {
         @ApiModelProperty(value = "회고글 idx")
         private Long postIdx;
 
+        @ApiModelProperty(value = "템플릿 idx")
+        private Long templateIdx;
+
         @ApiModelProperty(value = "회고글 제목")
         private String title;
 
