@@ -46,8 +46,8 @@ public class PostService {
 
     // 최신순
     @Transactional(readOnly = true)
-    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListRecent(Long cursorId, Pageable page){
-        List<PostDto.ListResponse> result = getPostsRecent(cursorId, page).stream().map(postMapper::postToListResponse)
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListRecent(Long cursorId, Pageable page, Long userIdx){
+        List<PostDto.ListResponse> result = getPostsRecent(cursorId, page).stream().map(post -> postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
 
@@ -56,8 +56,8 @@ public class PostService {
 
     // 조회순
     @Transactional(readOnly = true)
-    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page){
-        List<PostDto.ListResponse> result = getPostsView(cursorId, page).stream().map(postMapper::postToListResponse)
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page, Long userIdx){
+        List<PostDto.ListResponse> result = getPostsView(cursorId, page).stream().map(post->postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 조회수 체크
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);

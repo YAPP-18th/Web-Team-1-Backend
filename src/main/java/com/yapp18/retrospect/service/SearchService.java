@@ -25,9 +25,9 @@ public class SearchService {
 
     // 제목으로 검색: 최신순 반환.
     @Transactional
-    public ApiPagingResultResponse<PostDto.ListResponse> findPostsByTitle(String title, String type, Pageable page){
+    public ApiPagingResultResponse<PostDto.ListResponse> findPostsByTitle(String title, String type, Pageable page, Long userIdx){
         List<PostDto.ListResponse> result = postQueryRepository.findAllByTitleFirst(title, type, page)
-                .stream().map(postMapper::postToListResponse)
+                .stream().map(post->postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
         return new ApiPagingResultResponse<>(postService.isNext(lastIdx), result);

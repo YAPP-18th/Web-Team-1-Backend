@@ -53,10 +53,9 @@ public class PostDto {
 
         @ApiModelProperty(value = "스크랩 수 ")
         private Long scrapCnt;
-//
-//        @ApiModelProperty(value = "스크랩 여부")
-//        private boolean isScrap;
 
+        @ApiModelProperty(value = "스크랩 여부")
+        private boolean scrap;
 
     }
 
