@@ -35,14 +35,14 @@ public class CommentController {
                 commentService.inputComments(commentRequest, userIdx)), HttpStatus.OK);
     }
 
-//    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 목록 조회") // api tag, 설명
-//    @GetMapping("/lists")
-//    public ResponseEntity<Object> getCommentsByPostIdx(@ApiParam(value = "post_idx", required = true, example = "20")
-//                                                           @RequestParam(value = "postIdx") Long postIdx,
-//                                                       @RequestParam(value = "page", defaultValue = "0") Long page,
-//                                                       @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize) {
-//        if (pageSize == null) pageSize = DEFAULT_SIZE;
-//        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
-//                commentService.getCommmentsListByPostIdx(page, PageRequest.of(0,pageSize))), HttpStatus.OK);
-//    }
+    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 목록 조회") // api tag, 설명
+    @GetMapping("/lists")
+    public ResponseEntity<Object> getCommentsByPostIdx(@ApiParam(value = "post_idx", required = true, example = "20")
+                                                           @RequestParam(value = "postIdx") Long postIdx,
+                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                       @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize) {
+        if (pageSize == null) pageSize = DEFAULT_SIZE;
+        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
+                commentService.getCommmentsListByPostIdx(postIdx, PageRequest.of(page, pageSize))), HttpStatus.OK);
+    }
 }

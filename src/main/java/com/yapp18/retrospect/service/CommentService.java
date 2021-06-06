@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.service;
 
+import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.comment.CommentRepository;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.post.PostRepository;
@@ -36,15 +37,13 @@ public class CommentService {
         return commentRepository.save(commentRequest.toEntity(user, post)).getCommentIdx();
     }
 
-//    @Transactional(readOnly = true)
-//    public List<CommentDto.ListResponse> getCommmentsListByPostIdx(Long postIdx, Pageable page){
-//        return commentRepository.findAllByPostIdx(postIdx, page)
-//                .stream()
-//                .map(commentMapper::commentToListResponse)
-//                .collect(Collectors.toList());
-//
-//        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
-//    }
+    @Transactional(readOnly = true)
+    public List<CommentDto.ListResponse> getCommmentsListByPostIdx(Long postIdx, Pageable page){
+        return commentRepository.findAllByPost(postIdx, page)
+                .stream()
+                .map(commentMapper::commentToListResponse)
+                .collect(Collectors.toList());
+    }
 
 //    public boolean isNext(Long cursorId){
 //        if (cursorId == null) return false;

@@ -20,7 +20,7 @@ public class Comment extends BaseTimeEntity {
     private Long commentIdx;
 
     @Column(nullable = false)
-    private String comment;
+    private String comments;
 
     @ManyToOne
     @JoinColumn(name = "post_idx")
@@ -31,9 +31,9 @@ public class Comment extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Comment(Long commentIdx, String comment, Post post, User user) {
+    public Comment(Long commentIdx, String comments, Post post, User user) {
         this.commentIdx = commentIdx;
-        this.comment = comment;
+        this.comments = comments;
         this.post = post;
         this.user = user;
     }
