@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -16,6 +17,7 @@ public class AppProperties {
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
     private final DefaultValue defaultValue = new DefaultValue();
+    private final PermitUrl permitUrl = new PermitUrl();
 
     @Getter
     @Setter
@@ -52,9 +54,25 @@ public class AppProperties {
     @RequiredArgsConstructor
     public static class DefaultValue {
         private String profileUrl;
-
         public DefaultValue(String profileUrl) {
             this.profileUrl = profileUrl;
+        }
+    }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class PermitUrl {
+        private List<String> all = new ArrayList<>();
+        private List<String> member = new ArrayList<>();
+        private List<String> admin = new ArrayList<>();
+        private List<String> anonymous = new ArrayList<>();
+
+        public PermitUrl(List<String> all, List<String> member, List<String> admin, List<String> anonymous) {
+            this.all = all;
+            this.member = member;
+            this.admin = admin;
+            this.anonymous = anonymous;
         }
     }
 }
