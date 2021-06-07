@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 public interface CommentMapper {
     CommentMapper instance = Mappers.getMapper(CommentMapper.class);
 
-    CommentDto.ListResponse commentToListResponse(Comment comment);
+    CommentDto.CommentResponse commentToListResponse(Comment comment);
 
 //    @Mapping(target = "userIdx", expression = "java((long)userIdx)")
 //    Comment commentRequestToEntity(CommentDto.CommentRequest commentRequest, Long userIdx);

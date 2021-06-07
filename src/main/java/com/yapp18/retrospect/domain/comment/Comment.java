@@ -37,4 +37,21 @@ public class Comment extends BaseTimeEntity {
         this.post = post;
         this.user = user;
     }
+
+    public Comment update(String comments, Post post, User user) {
+        this.comments = comments;
+        this.post = post;
+        this.user = user;
+
+        return this;
+    }
+
+    public Comment update(Comment com) {
+        this.commentIdx = com.getCommentIdx();
+        this.comments = com.getComments();
+        this.post = com.getPost();
+        this.user = com.getUser();
+
+        return this;
+    }
 }

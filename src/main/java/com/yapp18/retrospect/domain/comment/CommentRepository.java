@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query(value = "SELECT * FROM comment_tb  WHERE (comment_tb.post_idx =:postIdx) " +
             "ORDER BY comment_tb.created_at", nativeQuery = true)
-    List<Comment> findAllByPost(Long postIdx, Pageable page);
+    Optional<List<Comment>> findAllByPost(Long postIdx, Pageable page);
 }

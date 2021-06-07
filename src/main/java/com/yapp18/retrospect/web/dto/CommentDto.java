@@ -13,23 +13,44 @@ import java.time.LocalDateTime;
 
 @Getter
 public class CommentDto {
-
     @Getter
-    public static class CommentRequest {
+    public static class CommentInputRequest {
         @ApiModelProperty(value = "회고글 idx")
         private final Long postIdx;
-        @ApiModelProperty(value = "내용")
+        @ApiModelProperty(value = "댓글 내용")
         private final String comments;
 
         @Builder
-        public CommentRequest(Long postIdx, String comments) {
+        public CommentInputRequest(Long postIdx, String comments) {
             this.postIdx = postIdx;
             this.comments = comments;
         }
 
-        public Comment toEntity(User user, Post post){
+        public Comment toEntity(Post post, User user){
             return Comment.builder()
                     .comments(this.comments)
+                    .post(post)
+                    .user(user)
+                    .build();
+        }
+    }
+
+    @Getter
+    public static class CommentUpdateRequest {
+        @ApiModelProperty(value = "댓글 내용")
+        private final String comments;
+        @ApiModelProperty(value = "회고글 idx")
+        private final Long postIdx;
+
+        @Builder
+        public CommentUpdateRequest(String comments, Long postIdx) {
+            this.comments = comments;
+            this.postIdx = postIdx;
+        }
+
+        public Comment toEntity(User user, Post post){
+            return Comment.builder()
+                    .comments(comments)
                     .user(user)
                     .post(post)
                     .build();
@@ -37,7 +58,7 @@ public class CommentDto {
     }
 
     @Getter
-    public static class ListResponse {
+    public static class CommentResponse {
         @ApiModelProperty(value = "댓글 idx")
         private final Long commentIdx;
 
@@ -47,6 +68,9 @@ public class CommentDto {
         @JsonIgnore
         @ApiModelProperty(value = "작성자")
         private final User user;
+
+        @ApiModelProperty(value = "작성자 idx")
+        private final Long userIdx;
 
         @ApiModelProperty(value = "작성자 닉네임")
         private final String nickname;
@@ -63,10 +87,11 @@ public class CommentDto {
         private final LocalDateTime modifiedAt;
 
         @Builder
-        public ListResponse(Long commentIdx, String comments, User user, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        public CommentResponse(Long commentIdx, String comments, User user, LocalDateTime createdAt, LocalDateTime modifiedAt) {
             this.commentIdx = commentIdx;
             this.comments = comments;
             this.user = user;
+            this.userIdx = user.getUserIdx();
             this.nickname = user.getNickname();
             this.profile = user.getProfile();
             this.createdAt = createdAt;
