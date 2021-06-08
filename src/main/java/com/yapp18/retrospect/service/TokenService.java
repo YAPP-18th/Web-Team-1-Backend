@@ -88,14 +88,42 @@ public class TokenService {
         return Optional.empty();
     }
 
-    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request) {
+//    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request) {
+//
+//        Optional<String> refreshOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token")
+//                 .map(Cookie::getValue);
+//        if(!refreshOptional.isPresent()) {
+//            throw new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다.");
+//        }
+//        String refreshToken = refreshOptional.get();
+//        String expiredAccessToken = getTokenFromRequest(request);
+//        String accessSecret = appProperties.getAuth().getAccessTokenSecret();
+//        String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
+//        if(validateExpiredToken(request, expiredAccessToken, accessSecret) &&
+//                validateToken(request, refreshToken, refreshSecret)) {
+//            Claims accessClaims = getClaimsFromToken(expiredAccessToken, accessSecret);
+//            Claims refreshClaims = getClaimsFromToken(refreshToken, refreshSecret);
+//            Number accessIdx = (Number) accessClaims.get("user_idx");
+//            Number refreshIdx = (Number) refreshClaims.get("user_idx");
+//            if(!accessIdx.equals(refreshIdx)){
+//                throw new RuntimeException("Access Token과 Refresh Token의 내용이 일치하지 않습니다.");
+//            }
+//
+//            Authentication authentication = getAuthentication(expiredAccessToken, accessSecret);
+//            String reissuedAccessToken = createAccessToken(authentication);
+//            AuthDto.ReissueResponse response = AuthDto.ReissueResponse
+//                    .builder()
+//                    .grantType(BEARER_TYPE)
+//                    .accessToken(reissuedAccessToken)
+//                    .build();
+//            return Optional.of(response);
+//        }
+//        return Optional.empty();
+//    }
 
-        Optional<String> refreshOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token")
-                 .map(Cookie::getValue);
-        if(!refreshOptional.isPresent()) {
-            throw new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다.");
-        }
-        String refreshToken = refreshOptional.get();
+    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request, AuthDto.ReissueRequest reissueRequest) {
+
+        String refreshToken = reissueRequest.getRefreshToken();
         String expiredAccessToken = getTokenFromRequest(request);
         String accessSecret = appProperties.getAuth().getAccessTokenSecret();
         String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
