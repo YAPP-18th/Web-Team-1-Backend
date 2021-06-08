@@ -9,7 +9,9 @@ import com.yapp18.retrospect.security.oauth2.OAuth2AuthenticationFailureHandler;
 import com.yapp18.retrospect.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.yapp18.retrospect.service.CustomOAuth2UserService;
 import com.yapp18.retrospect.service.CustomUserDetailsService;
+import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.mapping.Collection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -67,7 +69,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // 여기에 EndPoint의 접근 제한을 커스텀할 수 있음.
         http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 // 토큰을 사용하기 위해 sessionCreationPolicy를 STATELESS로 설정 (Session 비활성화)
@@ -83,17 +84,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight는 인증하지 않고 pass(권한이 모두 null로 들어오기 때문에)
+                    .antMatchers(appProperties.getPermitUrl().getAll().toArray(new String[0])).permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .antMatchers("/", "/csrf/**", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
-                    .antMatchers("/oauth2/authorization/**").anonymous()
-                    .antMatchers("/login/oauth2/code/**", "/api/v1/auth/**", "/api/v1/spring/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/v1/user/profiles").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/v1/user/profiles").hasRole(Role.MEMBER.name())
-                    .antMatchers("/", "/favicon.ico/**", "/css/**", "/image/**", "/js/**", "/h2-console/**").permitAll()
-                    .antMatchers("/api/v1/posts/lists/**", "/api/v1/posts/search/*","/api/v1/posts/lists/new",
-                                "/v2/api-docs", "/swagger-resources/**","http://localhost:3000","http://doraboda.com/",
-                                "/swagger-ui.html/**", "swagger-ui.html#/**", "/webjars/**", "/swagger/**").permitAll()
+                    .antMatchers(appProperties.getPermitUrl().getAnonymous().toArray(new String[0])).anonymous()
                     .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
                 .and()
                     .logout()

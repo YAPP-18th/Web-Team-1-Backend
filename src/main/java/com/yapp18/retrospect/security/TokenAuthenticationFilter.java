@@ -9,7 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -30,6 +30,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     // API 호출은 전부 JWT를 확인한다.
 //    private RequestMatcher requestMatcher = new AntPathRequestMatcher("/api/**");
 
+    private AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
     @Override
@@ -52,5 +53,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             logger.error("Security Context에서 사용자 인증을 설정할 수 없습니다", exception);
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return appProperties.getPermitUrl().getAll()
+                .stream()
+                .anyMatch(p -> pathMatcher.match(p, request.getRequestURI()));
     }
 }
