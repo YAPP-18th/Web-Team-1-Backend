@@ -28,7 +28,7 @@ public class UserController {
     private final TokenService tokenService;
 
     @ApiOperation(value = "user", notes = "[사용자] 등록된 닉네임 조회") // api tag, 설명
-    @GetMapping("/find")
+    @GetMapping("")
     public ResponseEntity<Object> findNickname(@ApiParam (value = "닉네임", required = true, example = "dok2")
                                                @RequestParam(value = "nickname") String nickname) throws UnsupportedEncodingException {
 //        nickname = URLDecoder.decode(nickname, "UTF-8");
