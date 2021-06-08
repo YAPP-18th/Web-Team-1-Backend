@@ -39,4 +39,5 @@ public interface  PostRepository extends JpaRepository<Post, Long> {
             "OR (post_tb.created_at<:currentAt) ORDER BY post_tb.created_at DESC, post_tb.post_idx DESC", nativeQuery = true)
     List<Post> findCategory(Long cursorId,Pageable page, List<String> query, LocalDateTime currentAt);
 
+
 }
