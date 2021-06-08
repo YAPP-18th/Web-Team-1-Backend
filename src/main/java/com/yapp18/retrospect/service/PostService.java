@@ -4,6 +4,7 @@ import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
 import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
+import com.yapp18.retrospect.domain.post.PostQueryRepository;
 import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.tag.TagRepository;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 //import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostQueryRepository postQueryRepository;
     private final UserRepository userRepository;
     private final TemplateRepository templateRepository;
     private final TagRepository tagRepository;
@@ -63,6 +66,15 @@ public class PostService {
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
     }
 
+
+    // 회고글 카테고리 검색
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsByCategory(String query, Long cursorId, Pageable page, Long userIdx){
+        List<PostDto.ListResponse> result = getPostCategory(cursorId, page, query).stream().map(post->postMapper.postToListResponse(post, userIdx))
+                .collect(Collectors.toList());
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
+        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
+    }
+
     // 회고글 상세페이지
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ApiIsResultResponse<PostDto.detailResponse> findPostContents(Long postIdx, Long userIdx){
@@ -72,22 +84,6 @@ public class PostService {
                 isScrap(post, userIdx),
                 postMapper.postToDetailResponse(post)); // 작성자 판단
     }
-
-
-    // 회고글 카테고리 검색
-//    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListByContents(String category, String order, Long cursorId, Integer pageSize){
-//        List<PostDto.ListResponse> result;
-//        if (order.equals("recent")){
-//            Post post = findRecentPost(cursorId);
-//            result = postQueryRepository.findByCategory(cursorId, pageSize,post.getCreatedAt(), category); // 최신순+카테고리  검색
-//        } else{
-//            Post post = findViewPost(cursorId);
-//            result = postQueryRepository.findByCategoryOrderByViewDesc(category,pageSize, post.getView()); // 조회순+ 카테고리 검색
-//        }
-//        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
-//
-//        return new ApiPagingResultResponse<>(isNext(lastIdx), result);
-//    }
 
 
     // 회고글 저장
@@ -155,6 +151,14 @@ public class PostService {
                 postRepository.findRecent(cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
     }
 
+    // 카테고리 페이징
+    private List<Post> getPostCategory(Long cursorId, Pageable page, String query) {
+        List<String> queryList = Arrays.asList(query.split(","));
+        return cursorId == null || cursorId == 0 ?
+                postRepository.findAllByCategoryInOrderByPostIdxDesc(page, queryList) : // 가장 최초 포스트
+                postRepository.findCategory(cursorId, page, queryList,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
+    }
+
     // 누적순 페이징
     private List<Post> getPostsView(Long cursorId, Pageable page){
         return cursorId == null || cursorId == 0 ?
@@ -187,6 +191,7 @@ public class PostService {
         }
     }
 
+    // tag 삭제
     private void delTagList(List<String> tagList, Post post){
         System.out.println(tagList);
         if (!tagList.isEmpty()){ // 삭제할 것이 있는 것의 tagIdx
