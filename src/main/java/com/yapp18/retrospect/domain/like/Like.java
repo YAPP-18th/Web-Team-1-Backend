@@ -27,4 +27,11 @@ public class Like extends BaseTimeEntity {
     @JoinColumn(name = "user_idx")
     private User user;
 
+    @Builder
+    public Like(Long likeIdx, Post post, User user){
+        this.likeIdx = likeIdx;
+        this.post = post;
+        this.user = user;
+    }
+
 }

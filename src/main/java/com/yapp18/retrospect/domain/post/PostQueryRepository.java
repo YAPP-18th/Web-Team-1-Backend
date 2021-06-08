@@ -2,6 +2,7 @@ package com.yapp18.retrospect.domain.post;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -59,5 +60,6 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
                 .orderBy(post.createdAt.desc(), post.postIdx.desc())
                 .fetch();
     }
+
 
 }

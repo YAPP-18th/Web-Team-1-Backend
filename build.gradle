@@ -60,8 +60,10 @@ dependencies {
 	implementation 'com.querydsl:querydsl-core'
 
 	// swagger
-	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'io.swagger:swagger-annotations:1.5.21'
+	implementation 'io.swagger:swagger-models:1.5.21'
 
 	// test
 	runtimeOnly 'com.h2database:h2'

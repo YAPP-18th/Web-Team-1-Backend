@@ -53,10 +53,9 @@ public class PostDto {
 
         @ApiModelProperty(value = "스크랩 수 ")
         private Long scrapCnt;
-//
-//        @ApiModelProperty(value = "스크랩 여부")
-//        private boolean isScrap;
 
+        @ApiModelProperty(value = "스크랩 여부")
+        private boolean scrap;
 
     }
 
@@ -122,6 +121,9 @@ public class PostDto {
     public static class detailResponse{
         @ApiModelProperty(value = "회고글 idx")
         private Long postIdx;
+
+        @ApiModelProperty(value = "템플릿 idx")
+        private Long templateIdx;
 
         @ApiModelProperty(value = "회고글 제목")
         private String title;
