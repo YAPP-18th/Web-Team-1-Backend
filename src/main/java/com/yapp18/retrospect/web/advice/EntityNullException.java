@@ -7,20 +7,18 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class EntityNullException extends NullPointerException {
-    private ErrorMessage errorMessage;
+    private String code;
     private String message;
-    private HttpStatus status;
+
 
     public EntityNullException(ErrorMessage errorMessage) {
-        this.errorMessage = errorMessage;
+        this.code = errorMessage.getErrorCode();
         this.message = errorMessage.getErrorMessage();
-        this.status = errorMessage.getStatusCode();
     }
 
     public EntityNullException(String s, ErrorMessage errorMessage) {
         super(s);
-        this.errorMessage = errorMessage;
+        this.code = errorMessage.getErrorCode();
         this.message = errorMessage.getErrorMessage();
-        this.status = errorMessage.getStatusCode();
     }
 }

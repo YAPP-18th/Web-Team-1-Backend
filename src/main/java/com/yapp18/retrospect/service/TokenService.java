@@ -90,12 +90,9 @@ public class TokenService {
 
     public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request) {
 
-        Optional<String> refreshOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token")
-                 .map(Cookie::getValue);
-        if(!refreshOptional.isPresent()) {
-            throw new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다.");
-        }
-        String refreshToken = refreshOptional.get();
+        String refreshToken = CookieUtils.getCookie(request, "JWT-Refresh-Token")
+                .map(Cookie::getValue)
+                .orElseThrow(() -> new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다."));
         String expiredAccessToken = getTokenFromRequest(request);
         String accessSecret = appProperties.getAuth().getAccessTokenSecret();
         String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
