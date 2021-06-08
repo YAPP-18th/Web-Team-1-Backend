@@ -31,4 +31,12 @@ public interface  PostRepository extends JpaRepository<Post, Long> {
             "OR (post_tb.created_at<:currentAt) ORDER BY post_tb.view DESC,post_tb.created_at DESC", nativeQuery = true)
     List<Post> findView(int view, Pageable pageable, LocalDateTime currentAt);
 
+    // 카테고리
+    @Query(value = "SELECT * FROM post_tb WHERE post_tb.category IN (:query) ORDER BY post_tb.created_at DESC", nativeQuery = true)
+    List<Post> findAllByCategoryInOrderByPostIdxDesc(Pageable page, List<String> query);
+
+    @Query(value = "SELECT * FROM post_tb  WHERE (post_tb.category IN (:query)) AND (post_tb.created_at =:currentAt AND post_tb.post_idx <:cursorId) " +
+            "OR (post_tb.created_at<:currentAt) ORDER BY post_tb.created_at DESC, post_tb.post_idx DESC", nativeQuery = true)
+    List<Post> findCategory(Long cursorId,Pageable page, List<String> query, LocalDateTime currentAt);
+
 }
