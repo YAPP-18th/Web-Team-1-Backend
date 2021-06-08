@@ -10,8 +10,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +38,7 @@ public class SearchController {
         Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
         return new ResponseEntity<>(ApiDefaultResponse.res(200,
                 ResponseMessage.SEARCH_TITLE.getResponseMessage(),
-                searchService.findPostsByTitle(keyword, type,page, PageRequest.of(0, pageSize), userIdx)), HttpStatus.OK);
+                searchService.findPostsByKeyword(keyword, type,page, PageRequest.of(0, pageSize), userIdx)), HttpStatus.OK);
     }
 
     @ApiOperation(value = "search" ,notes = "[검색] 카테고리(해시태그) 검색하기 ")
@@ -59,6 +57,22 @@ public class SearchController {
                 postService.getPostsByCategory(query, page, PageRequest.of(0,pageSize), userIdx)), HttpStatus.OK);
     }
 
+
+    @ApiOperation(value = "search" ,notes = "[검색] 해시태그  검색하기 ")
+    @GetMapping("/tag")
+    public ResponseEntity<Object> findPostsByHashTag(HttpServletRequest request,
+                                                      @ApiParam(value = "태그", required = true, example = "난나")
+                                                      @RequestParam(value = "tag") String tag,
+                                                      @ApiParam(value = "page", required = true, example = "0")
+                                                      @RequestParam(value = "page") Long page,
+                                                      @ApiParam(value = "pageSize", required = true, example = "20")
+                                                      @RequestParam(value = "pageSize") Integer pageSize
+    ){
+        if (pageSize == null) pageSize = DEFAULT_SIZE;
+        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_CATEGORY.getResponseMessage(),
+                searchService.getPostsByHashTag(tag, page, PageRequest.of(0,pageSize), userIdx)), HttpStatus.OK);
+    }
 
 
 }
