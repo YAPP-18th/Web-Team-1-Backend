@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 //@RequiredArgsConstructor
 public enum ResponseMessage {
+    // banner
+    BANNER_GET("추천 배너 조회 성공"),
     // 회고글 crud
     POST_SAVE("회고글 저장 성공"),
     POST_UPDATE("회고글 수정 성공"),

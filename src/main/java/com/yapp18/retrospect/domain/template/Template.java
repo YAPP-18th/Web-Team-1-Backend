@@ -26,7 +26,6 @@ public class Template extends BaseTimeEntity {
     @Column(nullable = false)
     private String template;
 
-
     @Builder
     public Template(Long templateIdx, String templateName,String template) {
         this.templateIdx = templateIdx;
