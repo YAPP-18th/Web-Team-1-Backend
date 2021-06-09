@@ -68,6 +68,7 @@ public class CommentService {
         return commentMapper.commentToListResponse(commentRepository.save(comment));
     }
 
+    @Transactional
     public void deleteCommentsByIdx(Long commentIdx){
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));

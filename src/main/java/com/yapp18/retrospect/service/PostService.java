@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.service;
 
+import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
 import com.yapp18.retrospect.domain.like.LikeRepository;
@@ -13,6 +14,7 @@ import com.yapp18.retrospect.domain.template.TemplateRepository;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.PostMapper;
+import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.ApiIsResultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
@@ -78,7 +80,8 @@ public class PostService {
     // 회고글 상세페이지
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ApiIsResultResponse<PostDto.detailResponse> findPostContents(Long postIdx, Long userIdx){
-        Post post = postRepository.findById(postIdx).orElseThrow(() -> new NullPointerException("해당 post_idx가 없습니다."));
+        Post post = postRepository.findById(postIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         post.updateview(post.getView()); // 조회수 증가
         return new ApiIsResultResponse<>(isWriter(post.getUser().getUserIdx(),userIdx),
                 isScrap(post, userIdx),
@@ -88,20 +91,19 @@ public class PostService {
 
     // 회고글 저장
     public Long inputPosts(PostDto.saveResponse saveResponse, Long userIdx){
-        Optional<User> user = userRepository.findByUserIdx(userIdx);
-        if(!user.isPresent()) throw new NullPointerException("해당 아이디는 없습니다.");
+        User user = userRepository.findByUserIdx(userIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        Optional<Template> template = templateRepository.findById(saveResponse.getTemplateIdx());
-        if(!template.isPresent()) throw new NullPointerException("해당 템플릿이 없습니다.");
+        Template template = templateRepository.findById(saveResponse.getTemplateIdx())
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.TEMPLATE_NULL));
 
-        Post post = postRepository.save(saveResponse.toEntity(user.get(), template.get()));
+        Post post = postRepository.save(saveResponse.toEntity(user, template));
 
         if (!saveResponse.getImage().isEmpty()){ // image가 있을 때만 저장
             for (String url : saveResponse.getImage()) {
                 imageRepository.save(Image.builder().imageUrl(url).post(post).build());
             }
         }
-
         // tag 저장
         saveTagList(saveResponse.getTag(), post);
         return post.getPostIdx();
@@ -112,7 +114,7 @@ public class PostService {
     @Transactional
     public Long updatePosts(Long userIdx,Long postIdx, PostDto.updateRequest requestDto){
         Post post = postRepository.findById(postIdx)
-                .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         List<String> tagList = post.getTagList().stream().map(Tag::getTag).collect(Collectors.toList()); // 기존 태그 목록
 
         // 수정할 tag 목록이 있고, 기존과 다른 내용이다. => tag 내용 수정해야함.
@@ -129,7 +131,7 @@ public class PostService {
     @Transactional
     public boolean deletePosts(Long userIdx,Long postIdx) {
         Post post = postRepository.findById(postIdx)
-                .orElseThrow(()-> new IllegalArgumentException("해당 회고글이 없습니다."));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         if (isWriter(post.getUser().getUserIdx(), userIdx)){
             postRepository.deleteById(postIdx);
             return true;
@@ -200,6 +202,4 @@ public class PostService {
             tagRepository.deleteAllByTagIdxInQuery(result);
         }
     }
-
-
 }
