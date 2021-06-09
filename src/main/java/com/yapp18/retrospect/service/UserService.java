@@ -1,12 +1,14 @@
 package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.config.AppProperties;
+import com.yapp18.retrospect.config.ErrorMessage;
 import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.UserMapper;
 import com.yapp18.retrospect.security.oauth2.AuthProvider;
 import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
+import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class UserService {
                 .name(oAuth2UserInfo.getName())
                 .nickname(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
-                .profile(oAuth2UserInfo.getProfile())
+                .profile(appProperties.getDefaultValue().getProfileUrl())
                 .provider(AuthProvider.valueOf(registrationId))
                 .providerId(oAuth2UserInfo.getId())
                 .build()
@@ -39,17 +41,14 @@ public class UserService {
     // DB에 존재할 경우 회원 정보 업데이트
     @Transactional
     public User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        return userRepository.save(existingUser
-                .simpleUpdate(oAuth2UserInfo.getName())
-        );
+        return userRepository.save(existingUser.simpleUpdate(oAuth2UserInfo.getName()));
     }
-
 
     // userId로 회원 프로필 정보 조회
     public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
         return userRepository.findByUserIdx(userIdx)
                 .map(mapper::userToProfileResponse)
-                .orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
+                .orElseThrow(() -> new EntityNullException(ErrorMessage.USER_NULL));
     }
 
     // 회원 프로필 정보 업데이트
@@ -57,7 +56,7 @@ public class UserService {
         User user = userRepository.findByUserIdx(userIdx)
                 .map(existingUser ->
                         existingUser.updateProfile(request.getProfile(), request.getNickname(), request.getIntro(), request.getJob())).
-                        orElseThrow(() -> new NullPointerException("해당 아이디는 없습니다."));
+                        orElseThrow(() -> new EntityNullException(ErrorMessage.USER_NULL));
         userRepository.save(user);
         return mapper.userToProfileResponse(user);
     }
@@ -66,9 +65,4 @@ public class UserService {
         User user = userRepository.findByNickname(nickname);
         return user != null;
     }
-
-//    protected void updateFromDto(UserDto dto, User user) {
-//        mapper.updateFromDto(dto, user);
-//    }
-
 }

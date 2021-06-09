@@ -3,7 +3,6 @@ package com.yapp18.retrospect.service;
 import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.security.UserPrincipal;
-import com.yapp18.retrospect.security.oauth2.CookieUtils;
 import com.yapp18.retrospect.web.dto.AuthDto;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
