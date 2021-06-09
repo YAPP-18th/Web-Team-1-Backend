@@ -2,6 +2,8 @@ package com.yapp18.retrospect.domain.post;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yapp18.retrospect.domain.tag.QTag;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -59,5 +61,30 @@ public class PostQueryRepository extends QuerydslRepositorySupport{
                 .orderBy(post.createdAt.desc(), post.postIdx.desc())
                 .fetch();
     }
+
+    // 해시태그로 검색
+    public List<Post> findAllByHashTag(String hashtag,Pageable page){
+        QPost post = QPost.post;
+        QTag tag = QTag.tag1;
+
+        return queryFactory.select(post)
+                .from(post).where(post.tagList.any().tag.eq(hashtag))
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .orderBy(post.createdAt.desc())
+                .fetch();
+    }
+
+    public List<Post> findCursorIdByHashTag(Long cursorId,Pageable page,String hashtag,LocalDateTime createdAt){
+        QPost post = QPost.post;
+
+        return queryFactory.select(post)
+                .from(post).where(post.tagList.any().tag.eq(hashtag).and((post.createdAt.eq(createdAt)).and(post.postIdx.lt(cursorId))).or(post.createdAt.lt(createdAt)))
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .orderBy(post.createdAt.desc(), post.postIdx.desc())
+                .fetch();
+    }
+
 
 }

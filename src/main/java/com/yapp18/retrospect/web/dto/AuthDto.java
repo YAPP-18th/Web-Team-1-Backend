@@ -23,8 +23,6 @@ public class AuthDto {
     @Getter
     @NoArgsConstructor
     public static class ReissueRequest {
-        @ApiModelProperty(value = "유효하지 않은 Access Token")
-        private String accessToken;
         @ApiModelProperty(value = "유효한 Refresh Token")
         private String refreshToken;
     }

@@ -66,47 +66,54 @@ public class TokenService {
                 .compact();
     }
 
-    public Optional<AuthDto.IssueResponse> issueAccessToken(HttpServletRequest request) {
-
-        Optional<String> refreshOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token")
-                .map(Cookie::getValue);
-        if(!refreshOptional.isPresent()) {
-            throw new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다.");
-        }
-        String refreshToken = refreshOptional.get();
-        String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
-        if(validateToken(request, refreshToken, refreshSecret)) {
-            Authentication authentication = getAuthentication(refreshToken, refreshSecret);
-            String accessToken = createAccessToken(authentication);
-            AuthDto.IssueResponse response = AuthDto.IssueResponse
-                    .builder()
-                    .grantType(BEARER_TYPE)
-                    .accessToken(accessToken)
-                    .build();
-            return Optional.of(response);
-        }
-        return Optional.empty();
-    }
-
-    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request) {
-
-        String refreshToken = CookieUtils.getCookie(request, "JWT-Refresh-Token")
-                .map(Cookie::getValue)
-                .orElseThrow(() -> new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다."));
+//    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request) {
+//
+//        Optional<String> refreshOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token")
+//                 .map(Cookie::getValue);
+//        if(!refreshOptional.isPresent()) {
+//            throw new RuntimeException("쿠키에 Refresh Token이 존재하지 않습니다.");
+//        }
+//        String refreshToken = refreshOptional.get();
+//        String expiredAccessToken = getTokenFromRequest(request);
+//        String accessSecret = appProperties.getAuth().getAccessTokenSecret();
+//        String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
+//        if(validateExpiredToken(request, expiredAccessToken, accessSecret) &&
+//                validateToken(request, refreshToken, refreshSecret)) {
+//            Claims accessClaims = getClaimsFromToken(expiredAccessToken, accessSecret);
+//            Claims refreshClaims = getClaimsFromToken(refreshToken, refreshSecret);
+//            Number accessIdx = (Number) accessClaims.get("user_idx");
+//            Number refreshIdx = (Number) refreshClaims.get("user_idx");
+//            if(!accessIdx.equals(refreshIdx)){
+//                throw new RuntimeException("Access Token과 Refresh Token의 내용이 일치하지 않습니다.");
+//            }
+//
+//            Authentication authentication = getAuthentication(expiredAccessToken, accessSecret);
+//            String reissuedAccessToken = createAccessToken(authentication);
+//            AuthDto.ReissueResponse response = AuthDto.ReissueResponse
+//                    .builder()
+//                    .grantType(BEARER_TYPE)
+//                    .accessToken(reissuedAccessToken)
+//                    .build();
+//            return Optional.of(response);
+//        }
+//        return Optional.empty();
+//    }
+  
+    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request, AuthDto.ReissueRequest reissueRequest) {
+        String refreshToken = reissueRequest.getRefreshToken();
         String expiredAccessToken = getTokenFromRequest(request);
         String accessSecret = appProperties.getAuth().getAccessTokenSecret();
         String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
         if(validateExpiredToken(request, expiredAccessToken, accessSecret) &&
                 validateToken(request, refreshToken, refreshSecret)) {
-            Claims accessClaims = getClaimsFromToken(expiredAccessToken, accessSecret);
+            Number accessIdx = (Number) getUserIdxFromExpiredToken(expiredAccessToken, accessSecret);
             Claims refreshClaims = getClaimsFromToken(refreshToken, refreshSecret);
-            Number accessIdx = (Number) accessClaims.get("user_idx");
             Number refreshIdx = (Number) refreshClaims.get("user_idx");
             if(!accessIdx.equals(refreshIdx)){
                 throw new RuntimeException("Access Token과 Refresh Token의 내용이 일치하지 않습니다.");
             }
 
-            Authentication authentication = getAuthentication(expiredAccessToken, accessSecret);
+            Authentication authentication = getAuthentication(refreshToken, refreshSecret);
             String reissuedAccessToken = createAccessToken(authentication);
             AuthDto.ReissueResponse response = AuthDto.ReissueResponse
                     .builder()
@@ -181,6 +188,7 @@ public class TokenService {
     public boolean validateExpiredToken(HttpServletRequest request, String token, String secret) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
             return true;
         } catch (SignatureException e) {
             System.out.println(e.getMessage());
@@ -204,6 +212,15 @@ public class TokenService {
 
     public Claims getClaimsFromToken(String token, String secret){
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    }
+
+    public Object getUserIdxFromExpiredToken(String token, String secret){
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e){
+            return e.getClaims().get("user_idx");
+        }
+        return null;
     }
 
     public Long getUserIdx(String accessToken){

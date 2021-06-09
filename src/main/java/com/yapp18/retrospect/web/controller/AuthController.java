@@ -34,34 +34,27 @@ import java.util.Optional;
 public class AuthController {
     private final TokenService tokenService;
 
-//    @ApiOperation(value = "auth", notes = "[인증] Access Token 발급")
-//    @GetMapping("/issue")
-//    public ResponseEntity<Object> issue (HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-//        HttpHeaders headers = new HttpHeaders();
+//    @ApiOperation(value = "auth", notes = "[인증] Access Token 재발급, 쿠키에 JWT-Refresh-Token 필요")
+//    @PostMapping("/reissue")
+//    public ResponseEntity<Object> reissue (HttpServletRequest request, HttpServletResponse response) {
 //        Optional cookieOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token");
 //        if(cookieOptional.isPresent()){
 //            Cookie cookie = (Cookie) cookieOptional.get();
 //            CookieUtils.addCookie(response, "JWT-Refresh-Token", cookie.getValue(), true, 180);
 //        }
-//        headers.setLocation(new URI("http://localhost:3000"));
 //        return new ResponseEntity<>(ApiDefaultResponse.res(200,
-//                ResponseMessage.AUTH_ISSUE.getResponseMessage(),
-//                tokenService.issueAccessToken(request)),
-//                headers,
+//                ResponseMessage.AUTH_REISSUE.getResponseMessage(),
+//                tokenService.reissueAccessToken(request)),
 //                HttpStatus.OK);
 //    }
 
     @ApiOperation(value = "auth", notes = "[인증] Access Token 재발급, 쿠키에 JWT-Refresh-Token 필요")
     @PostMapping("/reissue")
-    public ResponseEntity<Object> reissue (HttpServletRequest request, HttpServletResponse response) {
-        Optional cookieOptional = CookieUtils.getCookie(request, "JWT-Refresh-Token");
-        if(cookieOptional.isPresent()){
-            Cookie cookie = (Cookie) cookieOptional.get();
-            CookieUtils.addCookie(response, "JWT-Refresh-Token", cookie.getValue(), true, 180);
-        }
+    public ResponseEntity<Object> reissue (HttpServletRequest request,
+                                           @RequestBody AuthDto.ReissueRequest reissueRequest) {
         return new ResponseEntity<>(ApiDefaultResponse.res(200,
                 ResponseMessage.AUTH_REISSUE.getResponseMessage(),
-                tokenService.reissueAccessToken(request)),
+                tokenService.reissueAccessToken(request, reissueRequest)),
                 HttpStatus.OK);
     }
 }

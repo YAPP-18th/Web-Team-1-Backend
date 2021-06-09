@@ -16,4 +16,5 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     @Modifying
     @Query("DELETE FROM Tag t where t.tagIdx in :tagList")
     void deleteAllByTagIdxInQuery(List<Long> tagList);
+
 }

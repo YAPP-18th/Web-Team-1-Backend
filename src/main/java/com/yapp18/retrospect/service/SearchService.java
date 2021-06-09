@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,21 +24,41 @@ public class SearchService {
     private final PostService postService;
     private final PostMapper postMapper;
 
-    // 제목으로 검색: 최신순 반환.
+    // 통합 검색
     @Transactional
-    public ApiPagingResultResponse<PostDto.ListResponse> findPostsByTitle(String title, String type, Pageable page, Long userIdx){
-        List<PostDto.ListResponse> result = postQueryRepository.findAllByTitleFirst(title, type, page)
+    public ApiPagingResultResponse<PostDto.ListResponse> findPostsByKeyword(String title, String type, Long cursorId, Pageable page, Long userIdx){
+        List<PostDto.ListResponse> result = findAllByTitle(title, type,cursorId, page)
                 .stream().map(post->postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
         return new ApiPagingResultResponse<>(postService.isNext(lastIdx), result);
     }
 
-//    private List<Post> findAllByTitle(String title, String type, Long cursorId, Pageable page){
-//        return cursorId == null || cursorId == 0 ?
-//                postQueryRepository.findAllByTitleFirst(title, type, page):
-//                postQueryRepository.findAllByTitle(title, type, cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-//    }
 
+    // 해시태그로 검색
+    @Transactional(readOnly = true)
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsByHashTag(String tag, Long cursorId, Pageable page, Long userIdx){
+        List<PostDto.ListResponse> result = findAllByTag(cursorId, page, tag).stream()
+                .map(post->postMapper.postToListResponse(post, userIdx))
+                .collect(Collectors.toList());
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
+        return new ApiPagingResultResponse<>(postService.isNext(lastIdx), result);
+    }
+
+
+    // 검색
+    private List<Post> findAllByTitle(String title, String type, Long cursorId, Pageable page){
+        return cursorId == null || cursorId == 0 ?
+                postQueryRepository.findAllByTitleFirst(title, type, page):
+                postQueryRepository.findAllByTitle(title, type, cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
+    }
+
+    // 해시태그 검색
+    private List<Post> findAllByTag(Long cursorId, Pageable page, String tag){
+        System.out.println("=====>>>>>" + tag);
+        return cursorId == null || cursorId == 0 ?
+                postQueryRepository.findAllByHashTag(tag, page) : // 가장 최초 포스트
+                postQueryRepository.findCursorIdByHashTag(cursorId, page, tag,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
+    }
 
 }
