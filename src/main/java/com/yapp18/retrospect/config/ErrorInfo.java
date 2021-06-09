@@ -4,20 +4,15 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorInfo {
-    EXPIRED_JWT(401, "TokenExpiredError", "만료된 JWT"),
-    INVALID_SIGNATURE(401, "SignatureException", "유효하지 않은 JWT 서명"),
-    MALFORMED_JWT(401, "MalformedJwtException", "올바르지 않은 JWT 구성"),
-    UNSUPPORTED_JWT(401, "UnsupportedJwtException", "지원하지 않는 JWT 형식"),
-    ILLEGAL_ARGUMENT(401, "IllegalArgumentException", "비어있는 Authortization 헤더"),
-    ACCESS_DENIED(403, " AccessDenied", "접근이 거부됨");
+    USER_NULL("E001","존재하지 않는 사용자입니다."),
+    POST_NULL("E002", "존재하지 않는 게시물입니다."),
+    COMMENT_NULL("E003", "존재하지 않는 댓글입니다.");
 
-    private final int status;
-    private final String code;
-    private final String message;
+    private final String errorCode;
+    private final String errorMessage;
 
-    ErrorInfo(int status, String code, String message) {
-        this.status = status;
-        this.code = code;
-        this.message = message;
+    ErrorInfo(String errorCode, String errorMessage) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
     }
 }

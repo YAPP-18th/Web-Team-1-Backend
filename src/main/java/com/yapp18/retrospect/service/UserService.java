@@ -1,7 +1,7 @@
 package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.config.AppProperties;
-import com.yapp18.retrospect.config.ErrorMessage;
+import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -48,7 +47,7 @@ public class UserService {
     public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
         return userRepository.findByUserIdx(userIdx)
                 .map(mapper::userToProfileResponse)
-                .orElseThrow(() -> new EntityNullException(ErrorMessage.USER_NULL));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
     }
 
     // 회원 프로필 정보 업데이트
@@ -56,7 +55,7 @@ public class UserService {
         User user = userRepository.findByUserIdx(userIdx)
                 .map(existingUser ->
                         existingUser.updateProfile(request.getProfile(), request.getNickname(), request.getIntro(), request.getJob())).
-                        orElseThrow(() -> new EntityNullException(ErrorMessage.USER_NULL));
+                        orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
         userRepository.save(user);
         return mapper.userToProfileResponse(user);
     }

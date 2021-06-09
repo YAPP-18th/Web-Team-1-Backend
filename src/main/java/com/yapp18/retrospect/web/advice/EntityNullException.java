@@ -1,9 +1,7 @@
 package com.yapp18.retrospect.web.advice;
 
-import com.yapp18.retrospect.config.ErrorMessage;
-import lombok.Builder;
+import com.yapp18.retrospect.config.ErrorInfo;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class EntityNullException extends NullPointerException {
@@ -11,14 +9,14 @@ public class EntityNullException extends NullPointerException {
     private String message;
 
 
-    public EntityNullException(ErrorMessage errorMessage) {
-        this.code = errorMessage.getErrorCode();
-        this.message = errorMessage.getErrorMessage();
+    public EntityNullException(ErrorInfo errorInfo) {
+        this.code = errorInfo.getErrorCode();
+        this.message = errorInfo.getErrorMessage();
     }
 
-    public EntityNullException(String s, ErrorMessage errorMessage) {
+    public EntityNullException(String s, ErrorInfo errorInfo) {
         super(s);
-        this.code = errorMessage.getErrorCode();
-        this.message = errorMessage.getErrorMessage();
+        this.code = errorInfo.getErrorCode();
+        this.message = errorInfo.getErrorMessage();
     }
 }

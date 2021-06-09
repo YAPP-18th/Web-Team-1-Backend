@@ -1,6 +1,6 @@
 package com.yapp18.retrospect.service;
 
-import com.yapp18.retrospect.config.ErrorMessage;
+import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.comment.CommentRepository;
 import com.yapp18.retrospect.domain.post.Post;
@@ -29,10 +29,10 @@ public class CommentService {
     @Transactional
     public Long inputComments(CommentDto.CommentInputRequest commentInputRequest, Long userIdx){
         User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorMessage.USER_NULL));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
         Post post = postRepository.findByPostIdx(commentInputRequest.getPostIdx())
-                .orElseThrow(() -> new EntityNullException(ErrorMessage.POST_NULL));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
 
         return commentRepository.save(commentInputRequest.toEntity(post, user)).getCommentIdx();
     }
@@ -40,7 +40,7 @@ public class CommentService {
     @Transactional(readOnly = true)
     public List<CommentDto.CommentResponse> getCommmentsListByPostIdx(Long postIdx, Pageable page){
         return commentRepository.findAllByPost(postIdx, page)
-                .orElseThrow(() ->  new EntityNullException(ErrorMessage.COMMENT_NULL))
+                .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL))
                 .stream()
                 .map(commentMapper::commentToListResponse)
                 .collect(Collectors.toList());
@@ -50,16 +50,16 @@ public class CommentService {
     public CommentDto.CommentResponse getCommmentsByIdx(Long commentIdx){
         return commentRepository.findById(commentIdx)
                 .map(commentMapper::commentToListResponse)
-                .orElseThrow(() ->  new EntityNullException(ErrorMessage.COMMENT_NULL));
+                .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL));
     }
 
     @Transactional
     public CommentDto.CommentResponse updateCommentsByIdx(CommentDto.CommentUpdateRequest commentUpdateRequest, Long commentIdx, Long userIdx){
         User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorMessage.USER_NULL));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
         Post post = postRepository.findByPostIdx(commentUpdateRequest.getPostIdx())
-                .orElseThrow(() -> new EntityNullException(ErrorMessage.POST_NULL));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
 
         Comment comment = commentRepository.findById(commentIdx)
                 .map(entity -> entity.update(commentUpdateRequest.getComments(), post, user))
@@ -70,7 +70,7 @@ public class CommentService {
 
     public void deleteCommentsByIdx(Long commentIdx){
         Comment comment = commentRepository.findById(commentIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorMessage.COMMENT_NULL));
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
         commentRepository.delete(comment);
     }
 }
