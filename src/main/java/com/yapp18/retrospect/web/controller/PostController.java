@@ -10,6 +10,7 @@ import com.yapp18.retrospect.web.dto.PostDto;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
+import org.mapstruct.Context;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class PostController {
     @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 누적조회순")
     @GetMapping("/lists")
     public ResponseEntity<Object> getMainPostsOrderByView(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
-                                                                      HttpServletRequest request,
+                                                              HttpServletRequest request,
                                                @RequestParam(value = "page", defaultValue = "0") Long page,
                                                @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
