@@ -55,6 +55,9 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+	// s3
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
+
 	// jpa
 	implementation 'com.querydsl:querydsl-jpa'
 	implementation 'com.querydsl:querydsl-core'
