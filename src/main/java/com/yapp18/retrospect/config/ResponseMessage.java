@@ -35,7 +35,8 @@ public enum ResponseMessage {
     COMMENT_SAVE("댓글 작성 성공"),
     COMMENT_UPDATE("댓글 수정 성공"),
     COMMENT_DELETE("댓글 삭제 성공"),
-    COMMENT_FIND_POSTIDX("회고글에 달린 댓글 리스트 조회 성공");
+    COMMENT_FIND_POSTIDX("회고글에 달린 댓글 리스트 조회 성공"),
+    COMMENT_COUNT_POSTIDX("회고글에 달린 댓글 갯수 조회 성공");
 
     private final String ResponseMessage;
 

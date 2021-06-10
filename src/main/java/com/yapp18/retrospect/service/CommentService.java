@@ -27,45 +27,55 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     @Transactional
-    public Long inputComments(CommentDto.CommentInputRequest commentInputRequest, Long userIdx){
+    public Long inputComments(CommentDto.InputRequest inputRequest, Long userIdx){
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        Post post = postRepository.findByPostIdx(commentInputRequest.getPostIdx())
+        Post post = postRepository.findByPostIdx(inputRequest.getPostIdx())
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
 
-        return commentRepository.save(commentInputRequest.toEntity(post, user)).getCommentIdx();
+        return commentRepository.save(inputRequest.toEntity(post, user)).getCommentIdx();
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto.CommentResponse> getCommmentsListByPostIdx(Long postIdx, Pageable page){
-        return commentRepository.findAllByPost(postIdx, page)
-                .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL))
+    public List<CommentDto.BasicResponse> getCommmentsListByPostIdx(Long postIdx, Long userIdx, Pageable page){
+        Post post = postRepository.findByPostIdx(userIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL)); // 없으면 post 존재하지 않을때도 그냥 빈 배열 반환
+
+        return commentRepository.findAllByPost(post, page)
+                .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL)) // exception 안하는게 나을지도
                 .stream()
-                .map(commentMapper::commentToListResponse)
+                .map(comment -> commentMapper.commentToBasicResponse(comment, isWriter(comment.getUser().getUserIdx(), userIdx)))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public CommentDto.CommentResponse getCommmentsByIdx(Long commentIdx){
+    public Long getCommmentsCountByPostIdx(Long postIdx){
+        Post post = postRepository.findByPostIdx(postIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
+        return commentRepository.countCommentByPost(post);
+    }
+
+    @Transactional(readOnly = true)
+    public CommentDto.BasicResponse getCommmentsByIdx(Long commentIdx){
         return commentRepository.findById(commentIdx)
-                .map(commentMapper::commentToListResponse)
+                .map(commentMapper::commentToBasicResponse)
                 .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL));
     }
 
     @Transactional
-    public CommentDto.CommentResponse updateCommentsByIdx(CommentDto.CommentUpdateRequest commentUpdateRequest, Long commentIdx, Long userIdx){
+    public CommentDto.BasicResponse updateCommentsByIdx(CommentDto.UpdateRequest updateRequest, Long commentIdx, Long userIdx){
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        Post post = postRepository.findByPostIdx(commentUpdateRequest.getPostIdx())
+        Post post = postRepository.findByPostIdx(updateRequest.getPostIdx())
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
 
         Comment comment = commentRepository.findById(commentIdx)
-                .map(entity -> entity.update(commentUpdateRequest.getComments(), post, user))
-                .orElse(commentUpdateRequest.toEntity(user, post));
+                .map(entity -> entity.update(updateRequest.getComments(), post, user))
+                .orElse(updateRequest.toEntity(user, post));
 
-        return commentMapper.commentToListResponse(commentRepository.save(comment));
+        return commentMapper.commentToBasicResponse(commentRepository.save(comment));
     }
 
     @Transactional
@@ -73,5 +83,11 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
         commentRepository.delete(comment);
+    }
+
+    // 작성자 판별
+    private boolean isWriter(Long commentUserIdx, Long userIdx){
+        if (userIdx == 0L) return false;
+        return commentUserIdx.equals(userIdx);
     }
 }
