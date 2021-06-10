@@ -41,6 +41,7 @@ public enum ResponseMessage {
     IMAGE_UPLOAD("이미지 업로드 성공 ")
     ;
 
+
     private final String ResponseMessage;
 
     ResponseMessage(String ResponseMessage) {

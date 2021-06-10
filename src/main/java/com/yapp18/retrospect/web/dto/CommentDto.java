@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @Getter
 public class CommentDto {
     @Getter
-    public static class CommentInputRequest {
+    public static class InputRequest {
         @ApiModelProperty(value = "회고글 idx")
         private final Long postIdx;
         @ApiModelProperty(value = "댓글 내용")
         private final String comments;
 
         @Builder
-        public CommentInputRequest(Long postIdx, String comments) {
+        public InputRequest(Long postIdx, String comments) {
             this.postIdx = postIdx;
             this.comments = comments;
         }
@@ -36,14 +36,14 @@ public class CommentDto {
     }
 
     @Getter
-    public static class CommentUpdateRequest {
+    public static class UpdateRequest {
         @ApiModelProperty(value = "댓글 내용")
         private final String comments;
         @ApiModelProperty(value = "회고글 idx")
         private final Long postIdx;
 
         @Builder
-        public CommentUpdateRequest(String comments, Long postIdx) {
+        public UpdateRequest(String comments, Long postIdx) {
             this.comments = comments;
             this.postIdx = postIdx;
         }
@@ -58,7 +58,21 @@ public class CommentDto {
     }
 
     @Getter
-    public static class CommentResponse {
+    public static class ListResponse<T> {
+        @ApiModelProperty(value = "작성자 여부")
+        private final boolean isWriter;
+        @ApiModelProperty(value = "댓글 내용")
+        private T result;
+
+        @Builder
+        public ListResponse(boolean isWriter, T result) {
+            this.isWriter = isWriter;
+            this.result = result;
+        }
+    }
+
+    @Getter
+    public static class BasicResponse {
         @ApiModelProperty(value = "댓글 idx")
         private final Long commentIdx;
 
@@ -78,6 +92,9 @@ public class CommentDto {
         @ApiModelProperty(value = "작성자 프로필 사진")
         private final String profile;
 
+        @ApiModelProperty(value = "작성자 여부")
+        private final boolean writer;
+
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
         private final LocalDateTime createdAt;
@@ -87,13 +104,14 @@ public class CommentDto {
         private final LocalDateTime modifiedAt;
 
         @Builder
-        public CommentResponse(Long commentIdx, String comments, User user, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        public BasicResponse(Long commentIdx, String comments, User user, boolean writer, LocalDateTime createdAt, LocalDateTime modifiedAt) {
             this.commentIdx = commentIdx;
             this.comments = comments;
             this.user = user;
             this.userIdx = user.getUserIdx();
             this.nickname = user.getNickname();
             this.profile = user.getProfile();
+            this.writer = writer;
             this.createdAt = createdAt;
             this.modifiedAt = modifiedAt;
         }

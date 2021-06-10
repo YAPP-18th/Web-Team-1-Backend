@@ -8,13 +8,11 @@ import lombok.Data;
 public class ApiIsResultResponse<T> {
     private boolean isWriter; // 내가 작성자인지?
     private boolean isScrap;
-    private  T result;
+    private T result;
 
     public ApiIsResultResponse(boolean isWriter, boolean isScrap, T result){
         this.isWriter = isWriter;
         this.isScrap = isScrap;
         this.result = result;
-
     }
-
 }
