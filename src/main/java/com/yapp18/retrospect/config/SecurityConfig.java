@@ -88,11 +88,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight는 인증하지 않고 pass(권한이 모두 null로 들어오기 때문에)
-
                     .antMatchers(HttpMethod.GET, allUrls.get("GET").toArray(new String[0])).permitAll()
                     .antMatchers(HttpMethod.POST, allUrls.get("POST").toArray(new String[0])).permitAll()
                     .antMatchers(HttpMethod.OPTIONS, allUrls.get("OPTIONS").toArray(new String[0])).permitAll()
-
                     .antMatchers(HttpMethod.GET, memberUrls.get("GET").toArray(new String[0])).hasRole(Role.MEMBER.name())
                     .antMatchers(HttpMethod.POST, memberUrls.get("POST").toArray(new String[0])).hasRole(Role.MEMBER.name())
                     .antMatchers(HttpMethod.PUT, memberUrls.get("PUT").toArray(new String[0])).hasRole(Role.MEMBER.name())
