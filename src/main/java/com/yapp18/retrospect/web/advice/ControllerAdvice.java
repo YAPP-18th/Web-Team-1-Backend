@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.web.advice;
 
 import com.yapp18.retrospect.config.ResponseMessage;
+import com.yapp18.retrospect.exception.OAuth2AuthenticationProcessingException;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.ErrorDefaultResponse;
 import com.yapp18.retrospect.web.dto.ErrorDto;
@@ -31,10 +32,20 @@ public class ControllerAdvice {
         ), HttpStatus.NOT_FOUND);
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(RuntimeException.class)
-    public void runtimeExceptionHandler(RuntimeException e) {
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public void illegalArgumentExceptionHandler(IllegalArgumentException e) {
+//    }
+
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(OAuth2AuthenticationProcessingException.class)
+//    public void oauthAuthenticationProcessingExceptionHandler(OAuth2AuthenticationProcessingException e){
+//    }
+
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(RuntimeException.class)
+//    public void runtimeExceptionHandler(RuntimeException e) {
+//    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> illegalArgumentExceptionHandler(IllegalArgumentException e) {

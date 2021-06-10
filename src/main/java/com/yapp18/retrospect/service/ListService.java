@@ -20,10 +20,8 @@ public class ListService {
 
     @Transactional
     public List<PostDto.ListResponse> findAllPostsByUserIdx(Long userIdx){
-
         return postRepository.findAllByUserUserIdxOrderByCreatedAtDesc(userIdx)
                 .stream().map(post->postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
     }
-
 }

@@ -15,5 +15,5 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate:
         format_sql: true # sql prettier
-    show-sql: true
+#    show-sql: true
     open-in-view: false # 안쓰면 warning 뜸
