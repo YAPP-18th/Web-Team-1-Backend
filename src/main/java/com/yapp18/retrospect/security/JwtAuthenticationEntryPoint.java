@@ -20,20 +20,20 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         final Logger logger = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
-        String code = (String)request.getAttribute("code");
+        String errorCode = (String)request.getAttribute("errorCode");
 
-        logger.error(code);
-        if(code.equals(TokenErrorInfo.ILLEGAL_ARGUMENT.getCode())){ // 헤더에 토큰이 없는 경우
+        logger.error(errorCode);
+        if(errorCode.equals(TokenErrorInfo.ILLEGAL_ARGUMENT.getCode())){ // 헤더에 토큰이 없는 경우
             setResponse(response, TokenErrorInfo.ILLEGAL_ARGUMENT);
-        } else if(code.equals(TokenErrorInfo.ILLEGAL_GRANTTYPE.getCode())){
+        } else if(errorCode.equals(TokenErrorInfo.ILLEGAL_GRANTTYPE.getCode())){
             setResponse(response, TokenErrorInfo.ILLEGAL_GRANTTYPE);
-        } else if(code.equals(TokenErrorInfo.EXPIRED_JWT.getCode())) {
+        } else if(errorCode.equals(TokenErrorInfo.EXPIRED_JWT.getCode())) {
             setResponse(response, TokenErrorInfo.EXPIRED_JWT);
-        } else if(code.equals(TokenErrorInfo.INVALID_SIGNATURE.getCode())) {
+        } else if(errorCode.equals(TokenErrorInfo.INVALID_SIGNATURE.getCode())) {
             setResponse(response, TokenErrorInfo.INVALID_SIGNATURE);
-        } else if(code.equals(TokenErrorInfo.MALFORMED_JWT.getCode())) {
+        } else if(errorCode.equals(TokenErrorInfo.MALFORMED_JWT.getCode())) {
             setResponse(response, TokenErrorInfo.MALFORMED_JWT);
-        } else if(code.equals(TokenErrorInfo.UNSUPPORTED_JWT.getCode())) {
+        } else if(errorCode.equals(TokenErrorInfo.UNSUPPORTED_JWT.getCode())) {
             setResponse(response, TokenErrorInfo.UNSUPPORTED_JWT);
         }
     }
