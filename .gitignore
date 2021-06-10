@@ -4,6 +4,7 @@ application-real.yaml
 src/main/resources/application-real.yaml
 src/main/resources/application-oauth.yaml
 src/main/resources/application-key.yaml
+src/main/resources/application-aws.yaml
 
 HELP.md
 .gradle

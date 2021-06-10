@@ -1,6 +1,6 @@
 spring:
-#  profiles:
-#    active: dev1
+  profiles:
+    include: aws
   freemarker:
     check-template-location: false
   error:
@@ -17,3 +17,25 @@ spring:
         format_sql: true # sql prettier
 #    show-sql: true
     open-in-view: false # 안쓰면 warning 뜸
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
+cloud:
+  aws:
+    s3:
+      bucket: s3doraboda
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      instance-profile: true
+
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error

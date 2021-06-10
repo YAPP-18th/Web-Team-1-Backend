@@ -88,10 +88,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight는 인증하지 않고 pass(권한이 모두 null로 들어오기 때문에)
-
                     .antMatchers(HttpMethod.GET, allUrls.get("GET").toArray(new String[0])).permitAll()
+                    .antMatchers(HttpMethod.POST, allUrls.get("POST").toArray(new String[0])).permitAll()
                     .antMatchers(HttpMethod.OPTIONS, allUrls.get("OPTIONS").toArray(new String[0])).permitAll()
-
                     .antMatchers(HttpMethod.GET, memberUrls.get("GET").toArray(new String[0])).hasRole(Role.MEMBER.name())
                     .antMatchers(HttpMethod.POST, memberUrls.get("POST").toArray(new String[0])).hasRole(Role.MEMBER.name())
                     .antMatchers(HttpMethod.PUT, memberUrls.get("PUT").toArray(new String[0])).hasRole(Role.MEMBER.name())
@@ -107,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .oauth2Login()//OAuth2 로그인 기능에 대한 여러 설정의 진입점입니다. Spring security에서 제공하는 oauth2Login 메소드를 이용하여 로그인 코드를 가져오도록 합니다.
                         .authorizationEndpoint()
-                        .baseUri("/api/v1/auth")
+                        .baseUri("/api/v1/oauth2")
                         .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
                 .and()
                     .userInfoEndpoint()//OAuth2 로그인 성공 이후 사용자 정보를 가져올 떄의 설정들을 담당합니다.

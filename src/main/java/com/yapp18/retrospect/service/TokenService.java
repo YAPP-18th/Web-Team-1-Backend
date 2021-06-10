@@ -39,7 +39,7 @@ public class TokenService {
         if(StringUtils.hasText(bearerToken)){
             if(bearerToken.startsWith("Bearer ")) return bearerToken.substring(7);
             else {
-                request.setAttribute("code", TokenErrorInfo.ILLEGAL_GRANTTYPE.getCode());
+                request.setAttribute("errorCode", TokenErrorInfo.ILLEGAL_GRANTTYPE.getCode());
                 throw new IllegalArgumentException("Access Token에 grantType이 존재하지 않습니다.");
             }
         }
@@ -167,23 +167,23 @@ public class TokenService {
         }  catch (ExpiredJwtException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.EXPIRED_JWT.getMessage());
-            request.setAttribute("code", TokenErrorInfo.EXPIRED_JWT.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.EXPIRED_JWT.getCode());
         } catch (SignatureException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.INVALID_SIGNATURE.getMessage());
-            request.setAttribute("code", TokenErrorInfo.INVALID_SIGNATURE.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.INVALID_SIGNATURE.getCode());
         } catch (MalformedJwtException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.MALFORMED_JWT.getCode());
-            request.setAttribute("code", TokenErrorInfo.MALFORMED_JWT.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.MALFORMED_JWT.getCode());
         }  catch (UnsupportedJwtException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.UNSUPPORTED_JWT.getMessage());
-            request.setAttribute("code", TokenErrorInfo.UNSUPPORTED_JWT.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.UNSUPPORTED_JWT.getCode());
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.ILLEGAL_ARGUMENT.getMessage());
-            request.setAttribute("code", TokenErrorInfo.ILLEGAL_ARGUMENT.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.ILLEGAL_ARGUMENT.getCode());
         }
         return false;
     }
@@ -196,19 +196,19 @@ public class TokenService {
         } catch (SignatureException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.INVALID_SIGNATURE.getMessage());
-            request.setAttribute("code", TokenErrorInfo.INVALID_SIGNATURE.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.INVALID_SIGNATURE.getCode());
         } catch (MalformedJwtException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.MALFORMED_JWT.getCode());
-            request.setAttribute("code", TokenErrorInfo.MALFORMED_JWT.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.MALFORMED_JWT.getCode());
         }  catch (UnsupportedJwtException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.UNSUPPORTED_JWT.getMessage());
-            request.setAttribute("code", TokenErrorInfo.UNSUPPORTED_JWT.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.UNSUPPORTED_JWT.getCode());
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
             logger.error(TokenErrorInfo.ILLEGAL_ARGUMENT.getMessage());
-            request.setAttribute("code", TokenErrorInfo.ILLEGAL_ARGUMENT.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.ILLEGAL_ARGUMENT.getCode());
         }
         return false;
     }
