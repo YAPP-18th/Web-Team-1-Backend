@@ -30,7 +30,7 @@ public class UserService {
                 .name(oAuth2UserInfo.getName())
                 .nickname(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
-                .profile(appProperties.getDefaultValue().getProfileUrl())
+                .profile(appProperties.getValues().getDefaultProfileUrl())
                 .provider(AuthProvider.valueOf(registrationId))
                 .providerId(oAuth2UserInfo.getId())
                 .build()

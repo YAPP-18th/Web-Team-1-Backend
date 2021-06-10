@@ -17,6 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 //이 클래스는 요청으로부터 전달된 JWT 토큰 검증하는데 사용된다.
 //전달된 Request에서 JWT 토큰을 가져오고, 가져온 토큰의 유효성 검사 후, 토큰에 있는 사용자 Id를 가져온다.
@@ -39,6 +42,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         //가입/로그인/재발급을 제외한 모든 Request 요청은 이 필터를 거치기 때문에 토큰 정보가 없거나 유효하지 않으면 정상적으로 수행되지 않습니다.
         //그리고 요청이 정상적으로 Controller 까지 도착했다면 SecurityContext 에 Member ID 가 존재한다는 것이 보장됩니다.
         try {
+            System.out.println(request.getMethod());
             String jwt = tokenService.getTokenFromRequest(request);
             String secret = appProperties.getAuth().getAccessTokenSecret();
             if (tokenService.validateToken(request, jwt, secret)) {
@@ -57,8 +61,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return appProperties.getPermitUrl().getAll()
-                .stream()
-                .anyMatch(p -> pathMatcher.match(p, request.getRequestURI()));
+        List<String> ignoreUrls = new ArrayList<>();
+        ignoreUrls.addAll(appProperties.getValues().getAllUrls().get(request.getMethod()));
+        ignoreUrls.addAll(appProperties.getValues().getAnonymousUrls().get(request.getMethod()));
+        return ignoreUrls != null && ignoreUrls.stream().anyMatch(p -> pathMatcher.match(p, request.getRequestURI()));
     }
 }

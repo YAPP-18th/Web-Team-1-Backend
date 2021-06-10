@@ -27,6 +27,8 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -66,6 +68,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        Map<String, List<String>> allUrls = appProperties.getValues().getAllUrls();
+        Map<String, List<String>> memberUrls = appProperties.getValues().getMemberUrls();
+        Map<String, List<String>> adminUrls = appProperties.getValues().getAdminUrls();
+        Map<String, List<String>> anonymousUrls = appProperties.getValues().getAnonymousUrls();
+
         http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 // 토큰을 사용하기 위해 sessionCreationPolicy를 STATELESS로 설정 (Session 비활성화)
@@ -81,12 +88,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests() // URL 별 권한 관리를 설정하는 옵션의 시작점입니다. authorizeRequests가 선언되어야만 antMatchers 옵션을 사용할 수 있습니다.
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight는 인증하지 않고 pass(권한이 모두 null로 들어오기 때문에)
-                    .antMatchers(appProperties.getPermitUrl().getAll().toArray(new String[0])).permitAll()
-                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1/banner").permitAll()
-                    .antMatchers(HttpMethod.POST, "/api/v1/user/profiles").hasRole(Role.MEMBER.name())
-                    .antMatchers(appProperties.getPermitUrl().getAnonymous().toArray(new String[0])).anonymous()
+
+                    .antMatchers(HttpMethod.GET, allUrls.get("GET").toArray(new String[0])).permitAll()
+                    .antMatchers(HttpMethod.OPTIONS, allUrls.get("OPTIONS").toArray(new String[0])).permitAll()
+
+                    .antMatchers(HttpMethod.GET, memberUrls.get("GET").toArray(new String[0])).hasRole(Role.MEMBER.name())
+                    .antMatchers(HttpMethod.POST, memberUrls.get("POST").toArray(new String[0])).hasRole(Role.MEMBER.name())
+                    .antMatchers(HttpMethod.PUT, memberUrls.get("PUT").toArray(new String[0])).hasRole(Role.MEMBER.name())
+                    .antMatchers(HttpMethod.DELETE, memberUrls.get("DELETE").toArray(new String[0])).hasRole(Role.MEMBER.name())
+                    .antMatchers(HttpMethod.PATCH, memberUrls.get("PATCH").toArray(new String[0])).hasRole(Role.MEMBER.name())
+
+                    .antMatchers(HttpMethod.GET, anonymousUrls.get("GET").toArray(new String[0])).anonymous()
+
                     .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
                 .and()
                     .logout()
@@ -94,6 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .oauth2Login()//OAuth2 로그인 기능에 대한 여러 설정의 진입점입니다. Spring security에서 제공하는 oauth2Login 메소드를 이용하여 로그인 코드를 가져오도록 합니다.
                         .authorizationEndpoint()
+                        .baseUri("/api/v1/auth")
                         .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
                 .and()
                     .userInfoEndpoint()//OAuth2 로그인 성공 이후 사용자 정보를 가져올 떄의 설정들을 담당합니다.

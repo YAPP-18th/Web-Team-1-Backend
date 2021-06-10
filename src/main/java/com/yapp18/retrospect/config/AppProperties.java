@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 // 프로젝트에 AppProperties를 사용할 수 있도록 선언해주면 에러 사라짐
@@ -16,8 +17,7 @@ import java.util.List;
 public class AppProperties {
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
-    private final DefaultValue defaultValue = new DefaultValue();
-    private final PermitUrl permitUrl = new PermitUrl();
+    private final Values values = new Values();
 
     @Getter
     @Setter
@@ -52,27 +52,19 @@ public class AppProperties {
     @Getter
     @Setter
     @RequiredArgsConstructor
-    public static class DefaultValue {
-        private String profileUrl;
-        public DefaultValue(String profileUrl) {
-            this.profileUrl = profileUrl;
-        }
-    }
+    public static class Values {
+        private String defaultProfileUrl;
+        private Map<String, List<String>> allUrls;
+        private Map<String, List<String>> memberUrls;
+        private Map<String, List<String>> adminUrls;
+        private Map<String, List<String>> anonymousUrls;
 
-    @Getter
-    @Setter
-    @RequiredArgsConstructor
-    public static class PermitUrl {
-        private List<String> all = new ArrayList<>();
-        private List<String> member = new ArrayList<>();
-        private List<String> admin = new ArrayList<>();
-        private List<String> anonymous = new ArrayList<>();
-
-        public PermitUrl(List<String> all, List<String> member, List<String> admin, List<String> anonymous) {
-            this.all = all;
-            this.member = member;
-            this.admin = admin;
-            this.anonymous = anonymous;
+        public Values(String defaultProfileUrl, Map<String, List<String>> allUrls, Map<String, List<String>> memberUrls, Map<String, List<String>> adminUrls, Map<String, List<String>> anonymousUrls) {
+            this.defaultProfileUrl = defaultProfileUrl;
+            this.allUrls = allUrls;
+            this.memberUrls = memberUrls;
+            this.adminUrls = adminUrls;
+            this.anonymousUrls = anonymousUrls;
         }
     }
 }

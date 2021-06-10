@@ -21,7 +21,7 @@ import java.net.URLDecoder;
 
 @RestController
 @Api(value = "UserController") // swagger 리소스 명시
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
