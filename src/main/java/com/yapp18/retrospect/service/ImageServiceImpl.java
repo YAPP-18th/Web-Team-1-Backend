@@ -1,14 +1,13 @@
 package com.yapp18.retrospect.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -29,4 +28,26 @@ public class ImageServiceImpl implements s3Service{
     public String getFileUrl(String fileName) {
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
+
+    @Override
+    public List<String> getFileList(String filePath) {
+        return amazonS3Client.listObjects(bucket, filePath).getObjectSummaries()
+                .stream().map(S3ObjectSummary::getKey).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteFileList(List<String> garbage) {
+        // 지워야할 list를 keyversion으로 변환
+        if (!garbage.isEmpty()){
+            List<DeleteObjectsRequest.KeyVersion> objects = garbage.stream().map(DeleteObjectsRequest.KeyVersion::new).collect(Collectors.toList());
+            System.out.println("===>>>>>>>>>keyversion으로 바꾼 garbage 목록 "+ objects);
+            // 지워야할 객체요청을 새로 만든다
+            DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
+            deleteObjectsRequest.setKeys(objects);
+            // 임시저장한 s3 삭제
+            amazonS3Client.deleteObjects(deleteObjectsRequest);
+        }
+    }
+
+
 }
