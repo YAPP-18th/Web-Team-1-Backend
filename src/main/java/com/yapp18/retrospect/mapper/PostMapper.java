@@ -51,7 +51,4 @@ public interface PostMapper {
                     .contains(userIdx);
 
     }
-
-
-
 }
