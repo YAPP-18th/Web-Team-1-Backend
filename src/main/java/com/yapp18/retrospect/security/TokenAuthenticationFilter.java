@@ -42,7 +42,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         //가입/로그인/재발급을 제외한 모든 Request 요청은 이 필터를 거치기 때문에 토큰 정보가 없거나 유효하지 않으면 정상적으로 수행되지 않습니다.
         //그리고 요청이 정상적으로 Controller 까지 도착했다면 SecurityContext 에 Member ID 가 존재한다는 것이 보장됩니다.
         try {
-            System.out.println(request.getMethod());
             String jwt = tokenService.getTokenFromRequest(request);
             String secret = appProperties.getAuth().getAccessTokenSecret();
             if (tokenService.validateToken(request, jwt, secret)) {
