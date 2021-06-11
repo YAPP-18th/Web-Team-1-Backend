@@ -93,8 +93,8 @@ public class PostService {
 
         Post post = postRepository.save(saveResponse.toEntity(user, template));
 
-
         if (!saveResponse.getImageList().isEmpty()){
+            System.out.println("--> imageList "+saveResponse.getImageList() + "-----> s3:"+ imageService.getFileList(userIdx));
             if (!saveResponse.getImageList().equals(imageService.getFileList(userIdx))){ // 일치하지 않을 때만
                 imageService.deleteImageList(saveResponse.getImageList(), userIdx); // s3에 불필요한 이미지 제거
             }
@@ -119,6 +119,8 @@ public class PostService {
         List<String> tagList = post.getTagList().stream().map(Tag::getTag).collect(Collectors.toList()); // 기존 태그 목록
         List<String> dbImageList = post.getImages().stream().map(Image::getImageUrl).collect(Collectors.toList()); // 기존 이미지 목록
 
+        System.out.println("기존 디비 이미지"+ dbImageList +"      수정 시 들어온 이미지" + requestDto.getImageList()); // 둘 다 http붙여서.
+
         // 수정할 tag 목록이 있고, 기존과 다른 내용이다. => tag 내용 수정해야함.
         if (!requestDto.getTagList().isEmpty() && !tagList.equals(requestDto.getTagList())){
             tagService.delTagList(compareList(tagList, requestDto.getTagList()), post); // 기존- 공통 = 삭제
@@ -128,13 +130,7 @@ public class PostService {
         // db와 이미지 리스트가 다르다 -> 수정사항이 있다.
         if (!requestDto.getImageList().isEmpty() && !dbImageList.equals(requestDto.getImageList())){
             System.out.println("수정사항이 생겼따!!!");
-//            imageService.updateNewImages(requestDto.getImageList() ,dbImageList, post);
-//            imageService.deleteDbImage(requestDto.getImageList() ,dbImageList);
 
-            // imageList에 없는 데이터는 s3에서 제거
-//            if (!requestDto.getImageList().equals(imageService.getFileList(userIdx))){ // 일치하지 않을 때만
-//                imageService.deleteImageList(requestDto.getImageList(), userIdx); // s3에 불필요한 이미지 제거
-//            }
         }
 
         if (post.getUser().getUserIdx().equals(userIdx)) post.updatePost(requestDto);

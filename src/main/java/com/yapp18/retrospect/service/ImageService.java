@@ -6,6 +6,7 @@ import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
 import com.yapp18.retrospect.domain.post.Post;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -75,14 +80,15 @@ public class ImageService {
 
 
     // file 이름 지정
-    private String createFileName(String originFileName, Long userIdx){
+    @SneakyThrows
+    private String createFileName(String originFileName, Long userIdx) {
         // images 폴더에 아이디 폴더의 post 폴더의.... originFilename + 랜덤 string?
-        return "images"+"/"+userIdx+"/"+"posts"+"/"+originFileName+UUID.randomUUID().toString();
+        return "images"+"/"+userIdx+"/"+"posts"+"/"+ originFileName +userIdx;
     }
 
     //  imageList에 없는 가비지 데이터들을 s3에서 제거
     private List<String> compareImageList(List<String> imageList, List<String> compareImageList){
-        return compareImageList.stream().filter(x -> !imageList.contains(x.replace("https://s3doraboda.s3.ap-northeast-2.amazonaws.com/","")))
+        return compareImageList.stream().filter(x -> !imageList.contains(x))
                 .collect(Collectors.toList());
     }
 

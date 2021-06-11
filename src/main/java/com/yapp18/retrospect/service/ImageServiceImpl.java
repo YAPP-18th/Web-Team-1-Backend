@@ -32,14 +32,16 @@ public class ImageServiceImpl implements s3Service{
     @Override
     public List<String> getFileList(String filePath) {
         return amazonS3Client.listObjects(bucket, filePath).getObjectSummaries()
-                .stream().map(S3ObjectSummary::getKey).collect(Collectors.toList());
+                .stream().map(x-> getFileUrl(x.getKey())).collect(Collectors.toList());
     }
 
     @Override
     public void deleteFileList(List<String> garbage) {
         // 지워야할 list를 keyversion으로 변환
         if (!garbage.isEmpty()){
-            List<DeleteObjectsRequest.KeyVersion> objects = garbage.stream().map(DeleteObjectsRequest.KeyVersion::new).collect(Collectors.toList());
+            List<DeleteObjectsRequest.KeyVersion> objects = garbage.stream()
+                    .map(x-> new DeleteObjectsRequest.KeyVersion(x.replace("https://s3doraboda.s3.ap-northeast-2.amazonaws.com/","")))
+                    .collect(Collectors.toList());
             System.out.println("===>>>>>>>>>keyversion으로 바꾼 garbage 목록 "+ objects);
             // 지워야할 객체요청을 새로 만든다
             DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
