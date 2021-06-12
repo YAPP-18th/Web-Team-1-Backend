@@ -80,10 +80,10 @@ public class PostDto {
         private Long templateIdx;
 
         @ApiModelProperty(value = "이미지")
-        private List<String> image;
+        private List<String> imageList;
 
         @ApiModelProperty(value = "태그 String 담긴 배열 ")
-        private List<String> tag;
+        private List<String> tagList;
 
         @Builder
         public Post toEntity(User user, Template template){
@@ -110,6 +110,8 @@ public class PostDto {
         private String contents;
         @ApiModelProperty(value = "태그")
         private List<String> tagList;
+        @ApiModelProperty(value = "이미지")
+        private List<String> imageList;
 
     }
 

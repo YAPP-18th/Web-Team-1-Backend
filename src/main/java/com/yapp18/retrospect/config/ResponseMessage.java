@@ -40,6 +40,7 @@ public enum ResponseMessage {
 
     LIKE_SAVE("스크랩 추가 성공"),
     LIKE_DELETE("스크랩 한 글 삭제 성공"),
+
     // 이미지 업로드
     IMAGE_UPLOAD("이미지 업로드 성공 ")
     ;

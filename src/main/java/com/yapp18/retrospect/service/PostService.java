@@ -5,10 +5,8 @@ import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
 import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
-import com.yapp18.retrospect.domain.post.PostQueryRepository;
 import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.domain.tag.Tag;
-import com.yapp18.retrospect.domain.tag.TagRepository;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.template.TemplateRepository;
 import com.yapp18.retrospect.domain.user.User;
@@ -18,19 +16,15 @@ import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.ApiIsResultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
-import com.yapp18.retrospect.web.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.UriComponentsBuilder;
 //import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -39,13 +33,13 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final PostQueryRepository postQueryRepository;
+    private final TagService tagService;
     private final UserRepository userRepository;
     private final TemplateRepository templateRepository;
-    private final TagRepository tagRepository;
     private final ImageRepository imageRepository;
     private final LikeRepository likeRepository;
     private final PostMapper postMapper;
+    private final ImageService imageService;
 
     // post idx 조회 나중에 method로 뺄 것
 
@@ -99,13 +93,20 @@ public class PostService {
 
         Post post = postRepository.save(saveResponse.toEntity(user, template));
 
-        if (!saveResponse.getImage().isEmpty()){ // image가 있을 때만 저장
-            for (String url : saveResponse.getImage()) {
+        if (!saveResponse.getImageList().isEmpty()){
+            System.out.println("--> imageList "+saveResponse.getImageList() + "-----> s3:"+ imageService.getFileList(userIdx));
+            if (!saveResponse.getImageList().equals(imageService.getFileList(userIdx))){ // 일치하지 않을 때만
+                imageService.deleteImageList(saveResponse.getImageList(), userIdx); // s3에 불필요한 이미지 제거
+            }
+            // imageList 있을 때만 db에 저장
+            for (String url : saveResponse.getImageList()) {
                 imageRepository.save(Image.builder().imageUrl(url).post(post).build());
             }
         }
         // tag 저장
-        saveTagList(saveResponse.getTag(), post);
+        if (!saveResponse.getTagList().isEmpty()){
+            tagService.saveTagList(saveResponse.getTagList(), post);
+        }
         return post.getPostIdx();
     }
 
@@ -116,12 +117,27 @@ public class PostService {
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         List<String> tagList = post.getTagList().stream().map(Tag::getTag).collect(Collectors.toList()); // 기존 태그 목록
+        List<String> dbImageList = post.getImages().stream().map(Image::getImageUrl).collect(Collectors.toList()); // 기존 이미지 목록
+
+        System.out.println("기존 디비 이미지"+ dbImageList +" 수정 시 들어온 이미지" + requestDto.getImageList()); // 둘 다 http붙여서.
 
         // 수정할 tag 목록이 있고, 기존과 다른 내용이다. => tag 내용 수정해야함.
         if (!requestDto.getTagList().isEmpty() && !tagList.equals(requestDto.getTagList())){
-            delTagList(compareList(tagList, requestDto.getTagList()), post); // 기존- 공통 = 삭제
-            saveTagList(compareList(requestDto.getTagList(), tagList), post); // 새로운 - 공통 = 추가
+            tagService.delTagList(compareList(tagList, requestDto.getTagList()), post); // 기존- 공통 = 삭제
+            tagService.saveTagList(compareList(requestDto.getTagList(), tagList), post); // 새로운 - 공통 = 추가
         }
+
+        // db와 이미지 리스트가 다르다 -> 수정사항이 있다.
+        if (!requestDto.getImageList().isEmpty() && !dbImageList.equals(requestDto.getImageList())){
+            imageService.updateNewImages(requestDto.getImageList(), dbImageList, post); // imageList에만 있는 것은 add 추가
+            imageService.deleteDbImage(requestDto.getImageList(), dbImageList); // dbList에만 있는 것은 삭제
+
+            if (!requestDto.getImageList().equals(imageService.getFileList(userIdx))){ // imageList != s3List
+                imageService.deleteImageList(requestDto.getImageList(), userIdx); // s3에 불필요한 이미지 제거
+            }
+
+        }
+
         if (post.getUser().getUserIdx().equals(userIdx)) post.updatePost(requestDto);
         return post.getPostIdx();
     }
@@ -174,32 +190,14 @@ public class PostService {
         return postUserIdx.equals(userIdx);
     }
 
-    // 스크랩 여부 판별
+    // 스크랩 여부 판별 -> 리팩토링 필요
     private boolean isScrap(Post post, Long userIdx){
         return likeRepository.findByPostAndUserUserIdx(post, userIdx).isPresent();
     }
 
     // 리스트 비교
-    private List<String> compareList(List<String> tagList, List<String> compareList){
-        return tagList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
+    private List<String> compareList(List<String> newList, List<String> compareList){
+        return newList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
     }
 
-    // tag 저장
-    private void saveTagList(List<String> tagList, Post post){
-        if (!tagList.isEmpty()){ // tag가 있을 때만 저장
-            for (String tag : tagList){
-                tagRepository.save(Tag.builder().tag(tag).post(post).build());
-            }
-        }
-    }
-
-    // tag 삭제
-    private void delTagList(List<String> tagList, Post post){
-        System.out.println(tagList);
-        if (!tagList.isEmpty()){ // 삭제할 것이 있는 것의 tagIdx
-            List<Long> result = post.getTagList().stream().filter(tag -> tagList.contains(tag.getTag())).map(Tag::getTagIdx).collect(Collectors.toList());
-            System.out.println("삭제해야할 태그 인덱스"+result);
-            tagRepository.deleteAllByTagIdxInQuery(result);
-        }
-    }
 }
