@@ -33,8 +33,8 @@ public class UserDto implements Serializable {
 
     @Getter
     public static class ProfileResponse {
-        @ApiModelProperty(value = "회원 번호")
-        private Long userIdx;
+        @ApiModelProperty(value = "회원 이름")
+        private String name;
         @ApiModelProperty(value = "회원 닉네임")
         private String nickname;
         @ApiModelProperty(value = "회원 사진 URL")
@@ -45,8 +45,8 @@ public class UserDto implements Serializable {
         private String intro;
 
         @Builder
-        public ProfileResponse(Long userIdx, String nickname, String profile, String job, String intro) {
-            this.userIdx = userIdx;
+        public ProfileResponse(String name, String nickname, String profile, String job, String intro) {
+            this.name = name;
             this.nickname = nickname;
             this.profile = profile;
             this.job = job;
@@ -56,6 +56,8 @@ public class UserDto implements Serializable {
 
     @Getter
     public static class UpdateRequest {
+        @ApiModelProperty(value = "회원 이름")
+        private String name;
         @ApiModelProperty(value = "회원 닉네임")
         private String nickname;
         @ApiModelProperty(value = "회원 사진 URL")
@@ -66,7 +68,8 @@ public class UserDto implements Serializable {
         private String intro;
 
         @Builder
-        public UpdateRequest(Long userIdx, String nickname, String profile, String job, String intro) {
+        public UpdateRequest(String name, String nickname, String profile, String job, String intro) {
+            this.name = name;
             this.nickname = nickname;
             this.profile = profile;
             this.job = job;
