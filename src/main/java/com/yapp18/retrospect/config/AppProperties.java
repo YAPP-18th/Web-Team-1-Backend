@@ -54,13 +54,15 @@ public class AppProperties {
     @RequiredArgsConstructor
     public static class Values {
         private String defaultProfileUrl;
+        private String defaultNicknameSuffix;
         private Map<String, List<String>> allUrls;
         private Map<String, List<String>> memberUrls;
         private Map<String, List<String>> adminUrls;
         private Map<String, List<String>> anonymousUrls;
 
-        public Values(String defaultProfileUrl, Map<String, List<String>> allUrls, Map<String, List<String>> memberUrls, Map<String, List<String>> adminUrls, Map<String, List<String>> anonymousUrls) {
+        public Values(String defaultProfileUrl, String defaultNicknameSuffix, Map<String, List<String>> allUrls, Map<String, List<String>> memberUrls, Map<String, List<String>> adminUrls, Map<String, List<String>> anonymousUrls) {
             this.defaultProfileUrl = defaultProfileUrl;
+            this.defaultNicknameSuffix = defaultNicknameSuffix;
             this.allUrls = allUrls;
             this.memberUrls = memberUrls;
             this.adminUrls = adminUrls;

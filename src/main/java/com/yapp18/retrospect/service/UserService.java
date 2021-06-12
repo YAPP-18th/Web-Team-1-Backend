@@ -21,26 +21,25 @@ public class UserService {
     private final UserMapper mapper;
     private final UserRepository userRepository;
     private final AppProperties appProperties;
+    private final UserMapper userMapper;
 
     // DB에 존재하지 않을 경우 회원 가입
     @Transactional
     public User registerNewUser(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
-        return userRepository.save(User.builder()
+        User user = userRepository.save(User.builder()
                 .role(Role.MEMBER)
                 .name(oAuth2UserInfo.getName())
-                .nickname(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
                 .profile(appProperties.getValues().getDefaultProfileUrl())
                 .provider(AuthProvider.valueOf(registrationId))
                 .providerId(oAuth2UserInfo.getId())
                 .build()
         );
-    }
 
-    // DB에 존재할 경우 회원 정보 업데이트
-    @Transactional
-    public User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        return userRepository.save(existingUser.simpleUpdate(oAuth2UserInfo.getName()));
+        user.updateNickname(user.getUserIdx() +
+                appProperties.getValues().getDefaultNicknameSuffix());
+
+        return user;
     }
 
     // userId로 회원 프로필 정보 조회
@@ -53,9 +52,8 @@ public class UserService {
     // 회원 프로필 정보 업데이트
     public UserDto.ProfileResponse updateUserProfiles(Long userIdx, UserDto.UpdateRequest request){
         User user = userRepository.findByUserIdx(userIdx)
-                .map(existingUser ->
-                        existingUser.updateProfile(request.getProfile(), request.getNickname(), request.getIntro(), request.getJob())).
-                        orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+                .map(existingUser -> existingUser.updateProfile(request.getProfile(), request.getName(), request.getNickname(), request.getJob(), request.getIntro()))
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
         userRepository.save(user);
         return mapper.userToProfileResponse(user);
     }

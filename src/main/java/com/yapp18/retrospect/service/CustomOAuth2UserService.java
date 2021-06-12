@@ -58,7 +58,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 throw new OAuth2AuthenticationProcessingException(
                         user.getProvider() + " 계정을 사용하기 위해서 로그인을 해야 합니다.");
             }
-            user = userService.updateExistingUser(user, oAuth2UserInfo);
         } else {
             isNew = true;
             user = userService.registerNewUser(registrationId, oAuth2UserInfo);

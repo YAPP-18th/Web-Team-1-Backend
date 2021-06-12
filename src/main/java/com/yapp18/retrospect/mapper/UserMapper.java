@@ -14,10 +14,14 @@ public interface UserMapper {
 
     UserDto.ProfileResponse userToProfileResponse(User user);
 
-    @Mapping(target = "email", constant = "") // 3
-    @Mapping(target = "name", constant = "") // 3
-    @Mapping(target = "provider", expression = "java(AuthProvider.empty)") // 3
-    @Mapping(target = "providerId", constant = "") // 3
-    @Mapping(target = "role", expression = "java(Role.GUEST)") // 3
-    User updateRequestToUser(UserDto.UpdateRequest updateRequest);
+    @Mapping(target = "email", expression = "java(user.getEmail())") // 3
+    @Mapping(target = "name", expression = "java(user.getName())") // 3
+    @Mapping(target = "provider", expression = "java(user.getProvider())") // 3
+    @Mapping(target = "providerId", expression = "java(user.getProviderId())")
+    @Mapping(target = "role", expression = "java(user.getRole())") // 3
+    @Mapping(target = "nickname", expression = "java(updateRequest.getNickname())") // 3
+    @Mapping(target = "intro", expression = "java(updateRequest.getIntro())") // 3
+    @Mapping(target = "profile", expression = "java(updateRequest.getProfile())") // 3
+    @Mapping(target = "job", expression = "java(updateRequest.getJob())") // 3
+    User updateRequestToUser(User user, UserDto.UpdateRequest updateRequest);
 }

@@ -30,7 +30,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nickname;
 
     private String profile;
@@ -70,12 +70,13 @@ public class User extends BaseTimeEntity {
         this.job = job;
     }
 
-    public User simpleUpdate(String name){
-        this.name = name;
+    public User updateNickname(String nickname){
+        this.nickname = nickname;
         return this;
     }
 
-    public User updateProfile(String profile, String nickname, String job, String intro){
+    public User updateProfile(String profile, String name, String nickname, String job, String intro){
+        this.name = name;
         this.profile = profile;
         this.nickname = nickname;
         this.job = job;
