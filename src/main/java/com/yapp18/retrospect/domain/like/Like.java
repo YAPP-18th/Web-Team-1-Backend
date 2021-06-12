@@ -16,6 +16,7 @@ import javax.persistence.*;
         name="like_tb",
         uniqueConstraints={
                 @UniqueConstraint(
+                        name="like_post_constraints",
                         columnNames={"post_idx","user_idx"}
                 )
         }
