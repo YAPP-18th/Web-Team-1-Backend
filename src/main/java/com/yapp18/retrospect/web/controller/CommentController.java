@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 @Api(value = "CommentController") // swagger 리소스 명시
-@RequestMapping("/api/v2/comments")
+@RequestMapping("/api/v1/comments")
 public class CommentController {
 
     private final CommentService commentService;

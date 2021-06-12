@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @RestController
 @Api(value = "LikeController") // swagger 리소스 명시
-@RequestMapping("/api/v2/likes")
+@RequestMapping("/api/v1/likes")
 public class LikeController {
     private final LikeService likeService;
     private final TokenService tokenService;
