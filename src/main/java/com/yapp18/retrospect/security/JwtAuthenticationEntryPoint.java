@@ -23,18 +23,18 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         String errorCode = (String)request.getAttribute("errorCode");
 
         logger.error(errorCode);
-        if(errorCode.equals(TokenErrorInfo.ILLEGAL_ARGUMENT.getCode())){ // 헤더에 토큰이 없는 경우
-            setResponse(response, TokenErrorInfo.ILLEGAL_ARGUMENT);
+        if(errorCode.equals(TokenErrorInfo.ILLEGAL_ARGUMENT_ACCESS.getCode())){ // 헤더에 토큰이 없는 경우
+            setResponse(response, TokenErrorInfo.ILLEGAL_ARGUMENT_ACCESS);
         } else if(errorCode.equals(TokenErrorInfo.ILLEGAL_GRANTTYPE.getCode())){
             setResponse(response, TokenErrorInfo.ILLEGAL_GRANTTYPE);
-        } else if(errorCode.equals(TokenErrorInfo.EXPIRED_JWT.getCode())) {
-            setResponse(response, TokenErrorInfo.EXPIRED_JWT);
-        } else if(errorCode.equals(TokenErrorInfo.INVALID_SIGNATURE.getCode())) {
-            setResponse(response, TokenErrorInfo.INVALID_SIGNATURE);
-        } else if(errorCode.equals(TokenErrorInfo.MALFORMED_JWT.getCode())) {
-            setResponse(response, TokenErrorInfo.MALFORMED_JWT);
-        } else if(errorCode.equals(TokenErrorInfo.UNSUPPORTED_JWT.getCode())) {
-            setResponse(response, TokenErrorInfo.UNSUPPORTED_JWT);
+        } else if(errorCode.equals(TokenErrorInfo.EXPIRED_ACCESS.getCode())) {
+            setResponse(response, TokenErrorInfo.EXPIRED_ACCESS);
+        } else if(errorCode.equals(TokenErrorInfo.INVALID_SIGNATURE_ACCESS.getCode())) {
+            setResponse(response, TokenErrorInfo.INVALID_SIGNATURE_ACCESS);
+        } else if(errorCode.equals(TokenErrorInfo.MALFORMED_ACCESS.getCode())) {
+            setResponse(response, TokenErrorInfo.MALFORMED_ACCESS);
+        } else if(errorCode.equals(TokenErrorInfo.UNSUPPORTED_ACCESS.getCode())) {
+            setResponse(response, TokenErrorInfo.UNSUPPORTED_ACCESS);
         }
     }
 

@@ -39,7 +39,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentDto.BasicResponse> getCommmentsListByPostIdx(Long postIdx, Long userIdx, Pageable page){
-        Post post = postRepository.findByPostIdx(userIdx)
+        Post post = postRepository.findByPostIdx(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL)); // 없으면 post 존재하지 않을때도 그냥 빈 배열 반환
 
         return commentRepository.findAllByPost(post, page)

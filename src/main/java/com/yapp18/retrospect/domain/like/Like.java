@@ -12,7 +12,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "like_tb")
+@Table(
+        name="like_tb",
+        uniqueConstraints={
+                @UniqueConstraint(
+                        columnNames={"post_idx","user_idx"}
+                )
+        }
+)
 public class Like extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -42,17 +42,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         //가입/로그인/재발급을 제외한 모든 Request 요청은 이 필터를 거치기 때문에 토큰 정보가 없거나 유효하지 않으면 정상적으로 수행되지 않습니다.
         //그리고 요청이 정상적으로 Controller 까지 도착했다면 SecurityContext 에 Member ID 가 존재한다는 것이 보장됩니다.
         try {
-            System.out.println(request.getMethod());
             String jwt = tokenService.getTokenFromRequest(request);
             String secret = appProperties.getAuth().getAccessTokenSecret();
-            if (tokenService.validateToken(request, jwt, secret)) {
-                //매 토큰 인증마다 DB를 통해 유저 정보를 불러오는 것은 Stateless 하지 않음
-                //SecurityContextHolder.getContext에 Authentication값을 세팅시 유저의 모든 정보를 세팅할 필요는 없고 권한 정보만 세팅해도 됩니다.
-                UsernamePasswordAuthenticationToken authentication = tokenService.getAuthentication(jwt, secret);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+            //매 토큰 인증마다 DB를 통해 유저 정보를 불러오는 것은 Stateless 하지 않음
+            //SecurityContextHolder.getContext에 Authentication값을 세팅시 유저의 모든 정보를 세팅할 필요는 없고 권한 정보만 세팅해도 됩니다.
+            UsernamePasswordAuthenticationToken authentication = tokenService.getAuthentication(jwt, secret);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception exception) {
             logger.error("Security Context에서 사용자 인증을 설정할 수 없습니다", exception);
         }
