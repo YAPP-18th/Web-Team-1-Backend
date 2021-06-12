@@ -56,24 +56,25 @@ public class ImageService {
     @Transactional
     public void deleteImageList(List<String> imageList, Long userIdx){
         String filepath = "images"+"/"+ userIdx+ "/" +"posts"+"/";
-        List<String> garbage = compareImageList(imageList,s3Service.getFileList(filepath)); // 이미지 리스트에 없는 s3 가비지 데이터 추출.
+        List<String> garbage = test(imageList, s3Service.getKeyList(filepath)); // 이미지 리스트에 없는 s3 가비지 데이터 추출.
+        // 객체 url의 모음이지 key 모음은 아님.
         s3Service.deleteFileList(garbage); // 삭제
     }
 
     // imageList에만 있는 것 db에 저장하기
     public void updateNewImages(List<String> newList, List<String> dbImageList, Post post){
         System.out.println("db에는 없는데 imageList에는 있다."+compareImageList(dbImageList, newList));
-        if (!compareImageList(newList, dbImageList).isEmpty()){
+        if (!compareImageList(dbImageList, newList).isEmpty()){
             for (String url : compareImageList(dbImageList, newList)) {
                 imageRepository.save(Image.builder().imageUrl(url).post(post).build());
             }
         }
     }
 
-    // imageList에는 있고 db에만 존재하면 삭제
+    // imageList에는 없고 db에만 존재하면 삭제
     public void deleteDbImage(List<String> newList, List<String> dbImageList){
         System.out.println("db에는 있는데, imageList에 없다."+ compareImageList(newList,dbImageList));
-        if (!compareImageList(dbImageList,newList).isEmpty()){
+        if (!compareImageList(newList,dbImageList).isEmpty()){
             imageRepository.deleteByImageUrlInQuery(compareImageList(newList, dbImageList));
         }
     }
@@ -86,11 +87,25 @@ public class ImageService {
         return "images"+"/"+userIdx+"/"+"posts"+"/"+ originFileName +userIdx;
     }
 
-    //  imageList에 없는 가비지 데이터들을 s3에서 제거
     private List<String> compareImageList(List<String> imageList, List<String> compareImageList){
+        // 2번째 리스트에만 있는 값 필터링
         return compareImageList.stream().filter(x -> !imageList.contains(x))
                 .collect(Collectors.toList());
     }
+
+    private List<String> test(List<String> imageList, List<String> compareImageList){
+        List<String> encode = imageList.stream().map(x-> {
+            try {
+                return URLDecoder.decode(x,"UTF-8").replace("https://s3doraboda.s3.ap-northeast-2.amazonaws.com/","");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return x;
+        }).collect(Collectors.toList());
+        return compareImageList.stream().filter(x -> !encode.contains(x))
+                .collect(Collectors.toList());
+    }
+
 
 
 }

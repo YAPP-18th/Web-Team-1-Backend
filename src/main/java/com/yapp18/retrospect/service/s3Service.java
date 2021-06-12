@@ -15,6 +15,7 @@ public interface s3Service {
     String getFileUrl(String file);
 
     List<String> getFileList(String filePath);
+    List<String> getKeyList(String filePath);
     void deleteFileList(List<String> garbage);
 
 }
