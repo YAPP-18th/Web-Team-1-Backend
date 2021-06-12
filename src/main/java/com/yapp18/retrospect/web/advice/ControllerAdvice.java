@@ -1,14 +1,10 @@
 package com.yapp18.retrospect.web.advice;
 
-import com.yapp18.retrospect.config.ResponseMessage;
-import com.yapp18.retrospect.exception.OAuth2AuthenticationProcessingException;
-import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.ErrorDefaultResponse;
 import com.yapp18.retrospect.web.dto.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLException;
@@ -37,7 +33,8 @@ public class ControllerAdvice {
                                 .exception(e.toString().split(":")[0])
                                 .message(e.getMessage())
                                 .build()
-                ));
+                        )
+                );
     }
 
 //    @ExceptionHandler(RuntimeException.class) // RuntimeException으로 뭉뚱그리면 SQLException 까지 포함됨 
@@ -45,9 +42,17 @@ public class ControllerAdvice {
 //        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorDefaultResponse.res(e));
 //    }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> illegalArgumentExceptionHandler(IllegalArgumentException e) {
-        return new ResponseEntity<>(ErrorDefaultResponse.res(e), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<Object> tokenAbsenceExceptionHandler(TokenException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorDefaultResponse.res(
+                        ErrorDto.builder()
+                                .code(e.getCode())
+                                .exception(e.getException())
+                                .message(e.getMessage())
+                                .build()
+                        )
+                );
     }
 
     @ExceptionHandler(RestException.class)

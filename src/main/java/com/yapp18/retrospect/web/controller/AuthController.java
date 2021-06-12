@@ -4,9 +4,11 @@ package com.yapp18.retrospect.web.controller;
 //<a href="/oauth2/authorization/google"> : 스프링 시큐리티에서 제공하는 로그인 url
 
 import com.yapp18.retrospect.config.ResponseMessage;
+import com.yapp18.retrospect.config.TokenErrorInfo;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.security.oauth2.CookieUtils;
 import com.yapp18.retrospect.service.TokenService;
+import com.yapp18.retrospect.web.advice.TokenException;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.AuthDto;
 import io.swagger.annotations.Api;
@@ -48,13 +50,13 @@ public class AuthController {
 //                HttpStatus.OK);
 //    }
 
-    @ApiOperation(value = "auth", notes = "[인증] Access Token 재발급, 쿠키에 JWT-Refresh-Token 필요")
+    @ApiOperation(value = "auth", notes = "[인증] Access Token 재발급")
     @PostMapping("/reissue")
     public ResponseEntity<Object> reissue (HttpServletRequest request,
                                            @RequestBody AuthDto.ReissueRequest reissueRequest) {
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,
+        return new ResponseEntity<>(ApiDefaultResponse.res(201,
                 ResponseMessage.AUTH_REISSUE.getResponseMessage(),
                 tokenService.reissueAccessToken(request, reissueRequest)),
-                HttpStatus.OK);
+                HttpStatus.CREATED);
     }
 }
