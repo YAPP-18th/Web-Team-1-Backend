@@ -97,7 +97,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.DELETE, memberUrls.get("DELETE").toArray(new String[0])).hasRole(Role.MEMBER.name())
                     .antMatchers(HttpMethod.PATCH, memberUrls.get("PATCH").toArray(new String[0])).hasRole(Role.MEMBER.name())
 
-                    .antMatchers(HttpMethod.GET, anonymousUrls.get("GET").toArray(new String[0])).anonymous()
+                    .antMatchers(anonymousUrls.get("ALL").toArray(new String[0])).anonymous()
 
                     .anyRequest().authenticated() // 나머지 URL들은 모두 인증된 사용자들에게만 허용하게 합니다. (즉 로그인한 사용자들에게만 허용)
                 .and()
