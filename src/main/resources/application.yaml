@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    include: aws
   freemarker:
     check-template-location: false
   error:
