@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,5 +35,6 @@ public class ImageController {
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.IMAGE_UPLOAD.getResponseMessage(),
                 imageService.uploadImage(file, userIdx)), HttpStatus.OK);
     }
+
 
 }

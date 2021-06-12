@@ -85,7 +85,7 @@ public class CommentController {
     public ResponseEntity<Object> getCountByPostIdx(HttpServletRequest request,
                                                        @ApiParam(value = "회고글 post_idx", required = true, example = "20")
                                                        @RequestParam(value = "postIdx") Long postIdx) {
-        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_COUNT_POSTIDX.getResponseMessage(),
+        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
                 commentService.getCommmentsCountByPostIdx(postIdx)), HttpStatus.OK);
     }
 }
