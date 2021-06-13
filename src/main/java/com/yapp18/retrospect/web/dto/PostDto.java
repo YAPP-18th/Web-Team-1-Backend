@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
@@ -145,6 +146,9 @@ public class PostDto {
         @ApiModelProperty(value = "키워드 ")
         private List<TagDto> tagList;
 
+        @ApiModelProperty(value = "이미지 목록")
+        private List<ImageDto> imageList;
+
         @ApiModelProperty(value = "조회수")
         private int view;
 
@@ -155,8 +159,6 @@ public class PostDto {
         @ApiModelProperty(value = "댓글 수")
         private Long commentCnt;
 
-//        @ApiModelProperty(value = "스크랩 여부")
-//        private boolean isScrap;
     }
 
 }
