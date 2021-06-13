@@ -117,7 +117,7 @@ public class PostService {
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         List<String> tagList = post.getTagList().stream().map(Tag::getTag).collect(Collectors.toList()); // 기존 태그 목록
-        List<String> dbImageList = post.getImages().stream().map(Image::getImageUrl).collect(Collectors.toList()); // 기존 이미지 목록
+        List<String> dbImageList = post.getImageList().stream().map(Image::getImageUrl).collect(Collectors.toList()); // 기존 이미지 목록
 
         System.out.println("기존 디비 이미지"+ dbImageList +" 수정 시 들어온 이미지" + requestDto.getImageList()); // 둘 다 http붙여서.
 

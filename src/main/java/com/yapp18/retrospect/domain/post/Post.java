@@ -72,11 +72,11 @@ public class Post extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)
-    private final List<Image> images = new ArrayList<>();
+    private List<Image> imageList = new ArrayList<>();
 
     @Builder
     public Post(Long postIdx,String title, String category, String contents,
-                User user, Template template, List<Tag> tagList, List<Like> like, List<Comment>comments) {
+                User user, Template template, List<Tag> tagList, List<Like> like, List<Comment>comments, List<Image> imageList) {
         this.postIdx = postIdx;
         this.title = title;
         this.category = category;
@@ -86,6 +86,7 @@ public class Post extends BaseTimeEntity {
         this.tagList = tagList;
         this.like = like;
         this.comments = comments;
+        this.imageList = imageList;
 
     }
 
