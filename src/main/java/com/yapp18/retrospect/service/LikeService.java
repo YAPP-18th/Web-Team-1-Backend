@@ -64,11 +64,14 @@ public class LikeService {
     }
 
     @Transactional
-    public void deleteLikes(Long likeIdx){
-        Like like = likeRepository.findById(likeIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.LIKE_NULL));
+    public void deleteLikes(Long userIdx, Long postIdx){
+        User user = userRepository.findByUserIdx(userIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        likeRepository.delete(like);
+        Post post = postRepository.findByPostIdx(postIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
+
+        likeRepository.deleteByUserAndPost(user, post);
     }
 
     // 다음 페이지 여부 확인

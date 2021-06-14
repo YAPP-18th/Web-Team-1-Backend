@@ -48,12 +48,12 @@ public class LikeController {
     }
 
     @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 삭제")
-    @DeleteMapping("/{likeIdx}")
+    @DeleteMapping("")
     public ResponseEntity<Object> deleteLikes(HttpServletRequest request,
-                                              @ApiParam(value = "삭제 like_idx", required = true, example = "3")
-                                              @PathVariable(value = "likeIdx") Long likeIdx){
-        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        likeService.deleteLikes(likeIdx);
+                                              @ApiParam(value = "회고글 idx", required = true, example = "13")
+                                              @RequestParam(value = "postIdx") Long postIdx){
+        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
+        likeService.deleteLikes(userIdx, postIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(204, ResponseMessage.LIKE_SAVE.getResponseMessage()), HttpStatus.NO_CONTENT);
     }
 

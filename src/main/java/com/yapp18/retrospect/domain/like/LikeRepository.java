@@ -18,6 +18,8 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     List<Like> findByUserOrderByCreatedAtDesc(User user, Pageable page);
 
     boolean existsByUserAndLikeIdxLessThan(User user, Long lastIdx);
+
+    void deleteByUserAndPost(User user, Post post);
 //    List<Like> findByUserOrderByCreatedAtDesc(Long userIdx, Pageable page);
 //    Like findByPostAndUser(Post post, User user);
 }
