@@ -44,14 +44,14 @@ public class PostService {
     // post idx 조회 나중에 method로 뺄 것
 
     // 최신순
-    @Transactional(readOnly = true)
-    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListRecent(Long cursorId, Pageable page, Long userIdx){
-        List<PostDto.ListResponse> result = getPostsRecent(cursorId, page).stream().map(post -> postMapper.postToListResponse(post, userIdx))
-                .collect(Collectors.toList());
-        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
-
-        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
-    }
+//    @Transactional(readOnly = true)
+//    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListRecent(Long cursorId, Pageable page, Long userIdx){
+//        List<PostDto.ListResponse> result = getPostsRecent(cursorId, page).stream().map(post -> postMapper.postToListResponse(post, userIdx))
+//                .collect(Collectors.toList());
+//        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
+//
+//        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
+//    }
 
     // 조회순
     @Transactional(readOnly = true)
@@ -63,13 +63,13 @@ public class PostService {
     }
 
 
-    // 회고글 카테고리 검색
-    public ApiPagingResultResponse<PostDto.ListResponse> getPostsByCategory(String query, Long cursorId, Pageable page, Long userIdx){
-        List<PostDto.ListResponse> result = getPostCategory(cursorId, page, query).stream().map(post->postMapper.postToListResponse(post, userIdx))
-                .collect(Collectors.toList());
-        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
-        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
-    }
+//    // 회고글 카테고리 검색
+//    public ApiPagingResultResponse<PostDto.ListResponse> getPostsByCategory(String query, Long cursorId, Pageable page, Long userIdx){
+//        List<PostDto.ListResponse> result = getPostCategory(cursorId, page, query).stream().map(post->postMapper.postToListResponse(post, userIdx))
+//                .collect(Collectors.toList());
+//        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
+//        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
+//    }
 
     // 회고글 상세페이지
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -163,19 +163,19 @@ public class PostService {
     }
 
     // 최신순 페이징
-    private List<Post> getPostsRecent(Long cursorId, Pageable page) {
-        return cursorId == null || cursorId == 0 ?
-                postRepository.findAllByOrderByPostIdxDesc(page) : // 가장 최초 포스트
-                postRepository.findRecent(cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-    }
+//    private List<Post> getPostsRecent(Long cursorId, Pageable page) {
+//        return cursorId == null || cursorId == 0 ?
+//                postRepository.findAllByOrderByPostIdxDesc(page) : // 가장 최초 포스트
+//                postRepository.findRecent(cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
+//    }
 
-    // 카테고리 페이징
-    private List<Post> getPostCategory(Long cursorId, Pageable page, String query) {
-        List<String> queryList = Arrays.asList(query.split(","));
-        return cursorId == null || cursorId == 0 ?
-                postRepository.findAllByCategoryInOrderByPostIdxDesc(page, queryList) : // 가장 최초 포스트
-                postRepository.findCategory(cursorId, page, queryList,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-    }
+//    // 카테고리 페이징
+//    private List<Post> getPostCategory(Long cursorId, Pageable page, String query) {
+//        List<String> queryList = Arrays.asList(query.split(","));
+//        return cursorId == null || cursorId == 0 ?
+//                postRepository.findAllByCategoryInOrderByPostIdxDesc(page, queryList) : // 가장 최초 포스트
+//                postRepository.findCategory(cursorId, page, queryList,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
+//    }
 
     // 누적순 페이징
     private List<Post> getPostsView(Long cursorId, Pageable page){

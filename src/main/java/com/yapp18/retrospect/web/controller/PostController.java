@@ -28,17 +28,17 @@ public class PostController {
     private final TokenService tokenService;
     private static final int DEFAULT_SIZE = 20;
 
-    @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 최신순") // api tag, 설명
-    @GetMapping("/lists/new")
-    public ResponseEntity<Object> getMainPosts(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
-                                               HttpServletRequest request,
-                                               @RequestParam(value = "page", defaultValue = "0") Long page,
-                                @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize){
-        if (pageSize == null) pageSize = DEFAULT_SIZE;
-        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_RECENT.getResponseMessage(),
-                postService.getPostsListRecent(page, PageRequest.of(0, pageSize), userIdx)), HttpStatus.OK);
-    }
+//    @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 최신순") // api tag, 설명
+//    @GetMapping("/lists/new")
+//    public ResponseEntity<Object> getMainPosts(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
+//                                               HttpServletRequest request,
+//                                               @RequestParam(value = "page", defaultValue = "0") Long page,
+//                                @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize){
+//        if (pageSize == null) pageSize = DEFAULT_SIZE;
+//        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
+//        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_RECENT.getResponseMessage(),
+//                postService.getPostsListRecent(page, PageRequest.of(0, pageSize), userIdx)), HttpStatus.OK);
+//    }
 
     @ApiOperation(value = "main", notes = "[메인] 회고글 목록 조회, 누적조회순")
     @GetMapping("/lists")
@@ -63,23 +63,6 @@ public class PostController {
                 postService.findPostContents(postIdx, userIdx)), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "main", notes = "[메인] 카테고리 필터링")
-    @GetMapping("/lists/category")
-    public ResponseEntity<Object> findPostsByCategory(HttpServletRequest request,
-                                                      @ApiParam(value = "카테고리", required = true, example = "design")
-                                                          @RequestParam(value = "query") String query,
-                                                      @ApiParam(value = "page", required = true, example = "0")
-                                                      @RequestParam(value = "page") Long page,
-                                                      @ApiParam(value = "pageSize", required = true, example = "20")
-                                                      @RequestParam(value = "pageSize") Integer pageSize
-    ){
-        if (pageSize == null) pageSize = DEFAULT_SIZE;
-        System.out.println("_---->" + request.getQueryString());
-        System.out.println(query);
-        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_CATEGORY.getResponseMessage(),
-                postService.getPostsByCategory(query, page, PageRequest.of(0,pageSize), userIdx)), HttpStatus.OK);
-    }
 
     @ApiOperation(value = "main", notes = "[메인]회고글 저장하기")
     @PostMapping("")
@@ -109,4 +92,23 @@ public class PostController {
         }
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.POST_DELETE.getResponseMessage(), true),HttpStatus.OK);
     }
+
+
+    //    @ApiOperation(value = "main", notes = "[메인] 카테고리 필터링")
+//    @GetMapping("/lists/category")
+//    public ResponseEntity<Object> findPostsByCategory(HttpServletRequest request,
+//                                                      @ApiParam(value = "카테고리", required = true, example = "design")
+//                                                          @RequestParam(value = "query") String query,
+//                                                      @ApiParam(value = "page", required = true, example = "0")
+//                                                      @RequestParam(value = "page") Long page,
+//                                                      @ApiParam(value = "pageSize", required = true, example = "20")
+//                                                      @RequestParam(value = "pageSize") Integer pageSize
+//    ){
+//        if (pageSize == null) pageSize = DEFAULT_SIZE;
+//        System.out.println("_---->" + request.getQueryString());
+//        System.out.println(query);
+//        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
+//        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_CATEGORY.getResponseMessage(),
+//                postService.getPostsByCategory(query, page, PageRequest.of(0,pageSize), userIdx)), HttpStatus.OK);
+//    }
 }
