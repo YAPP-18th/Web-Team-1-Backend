@@ -27,7 +27,7 @@ public class CommentController {
 
     private final CommentService commentService;
     private final TokenService tokenService;
-    private static final int DEFAULT_SIZE = 20;
+    private static final int DEFAULT_SIZE = 10;
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 작성") // api tag, 설명
     @PostMapping("")

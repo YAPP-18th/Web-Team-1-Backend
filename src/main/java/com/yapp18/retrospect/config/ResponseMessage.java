@@ -38,6 +38,7 @@ public enum ResponseMessage {
     COMMENT_FIND_POSTIDX("회고글에 달린 댓글 리스트 조회 성공"),
     COMMENT_COUNT_POSTIDX("회고글에 달린 댓글 갯수 조회 성공"),
 
+    LIKE_FIND("스크랩 누적순 조회 성공"),
     LIKE_SAVE("스크랩 추가 성공"),
     LIKE_DELETE("스크랩 한 글 삭제 성공"),
 

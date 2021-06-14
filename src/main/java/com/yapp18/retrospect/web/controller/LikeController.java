@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 public class LikeController {
     private final LikeService likeService;
     private final TokenService tokenService;
+    private static final int DEFAULT_SIZE = 20;
 
-    @ApiOperation(value = "like", notes = "[스크랩] 회고글 스크랩") // api tag, 설명
+    @ApiOperation(value = "like", notes = "[스크랩] 회고글 스크랩")
     @PostMapping("")
     public ResponseEntity<Object> inputLikes(HttpServletRequest request,
                                              @RequestBody LikeDto.InputRequest inputRequest) {
@@ -32,7 +34,20 @@ public class LikeController {
                 likeService.inputLikes(inputRequest, userIdx)), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 삭제") // api tag, 설명
+    @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 목록 조회, 누적순")
+    @GetMapping("/lists")
+    public ResponseEntity<Object> getLikesOrderByCreatedAtDesc(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
+                                                                  HttpServletRequest request,
+                                                          @RequestParam(value = "page", defaultValue = "0") Long page,
+                                                          @RequestParam(value = "pageSize") Integer pageSize){
+        if (pageSize == null) pageSize = DEFAULT_SIZE;
+        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
+        return ResponseEntity.status(HttpStatus.OK)
+        .body(ApiDefaultResponse.res(200, ResponseMessage.LIKE_FIND.getResponseMessage(),
+                likeService.getLikeListCreatedAt(PageRequest.of(page.intValue(), pageSize), userIdx)));
+    }
+
+    @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 삭제")
     @DeleteMapping("/{likeIdx}")
     public ResponseEntity<Object> deleteLikes(HttpServletRequest request,
                                               @ApiParam(value = "삭제 like_idx", required = true, example = "3")
