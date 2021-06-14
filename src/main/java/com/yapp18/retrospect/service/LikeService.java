@@ -7,6 +7,7 @@ import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
+import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.mapper.PostMapper;
 import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
@@ -26,7 +27,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final PostMapper postMapper;
+    private final LikeMapper likeMapper;
 
     @Transactional
     public boolean isExist(LikeDto.InputRequest inputRequest, Long userIdx){
@@ -34,7 +35,7 @@ public class LikeService {
     }
 
     @Transactional(readOnly = true)
-    public ApiPagingResultResponse<PostDto.ListResponse> getLikeListCreatedAt(Pageable page, Long userIdx){
+    public ApiPagingResultResponse<LikeDto.BasicResponse> getLikeListCreatedAt(Pageable page, Long userIdx){
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
@@ -42,10 +43,10 @@ public class LikeService {
 
         Long lastIdx = likeList.isEmpty() ? null : likeList.get(likeList.size() - 1).getLikeIdx(); // 낮은 조회수 체크
 
-        List<PostDto.ListResponse> result = likeList.stream()
-                .map(like -> postRepository.findById(like.getPost().getPostIdx())
-                        .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL)))
-                .map(post -> postMapper.postToListResponse(post, userIdx))
+        List<LikeDto.BasicResponse> result = likeList.stream()
+                .map(like -> likeMapper.likeToBasicResponse(like,
+                        postRepository.findById(like.getPost().getPostIdx())
+                                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL))))
                 .collect(Collectors.toList());
 
         return new ApiPagingResultResponse<>(isNext(user, lastIdx), result);
