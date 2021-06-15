@@ -6,10 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 @EnableJpaAuditing    //JPA Auditing 활성화
 // 프로젝트에 AppProperties를 사용할 수 있도록 선언
 @EnableConfigurationProperties(AppProperties.class)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @SpringBootApplication
 public class RetrospectApplication {
 	public static void main(String[] args) {

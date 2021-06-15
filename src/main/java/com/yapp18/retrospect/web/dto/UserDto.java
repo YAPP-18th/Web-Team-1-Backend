@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.web.dto;
 
 import com.yapp18.retrospect.domain.user.Role;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -32,6 +33,7 @@ public class UserDto implements Serializable {
 //    private String intro;
 
     @Getter
+    @ApiModel(value = "사용자 프로필 조회", description = "사용자 프로필 응답 모델")
     public static class ProfileResponse {
         @ApiModelProperty(value = "회원 이름")
         private String name;
@@ -55,6 +57,7 @@ public class UserDto implements Serializable {
     }
 
     @Getter
+    @ApiModel(value = "사용자 프로필 수정", description = "사용자 프로필 수정 요청 모델")
     public static class UpdateRequest {
         @ApiModelProperty(value = "회원 이름")
         private String name;

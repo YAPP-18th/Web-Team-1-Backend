@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.dto;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ public class AuthDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ApiModel(value = "토큰 발급", description = "토큰 발급 응답 모델")
     public static class IssueResponse {
         @ApiModelProperty(value = "권한 타입 (Bearer)")
         private String grantType;
@@ -22,6 +24,7 @@ public class AuthDto {
 
     @Getter
     @NoArgsConstructor
+    @ApiModel(value = "토큰 재발급", description = "토큰 재발급 요청 모델")
     public static class ReissueRequest {
         @ApiModelProperty(value = "유효한 Refresh Token")
         private String refreshToken;
@@ -31,6 +34,7 @@ public class AuthDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ApiModel(value = "토큰 재발급", description = "토큰 재발급 응답 모델")
     public static class ReissueResponse {
         @ApiModelProperty(value = "권한 타입 (Bearer)")
         private String grantType;

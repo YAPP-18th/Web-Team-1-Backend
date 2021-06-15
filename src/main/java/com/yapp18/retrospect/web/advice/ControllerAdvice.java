@@ -4,6 +4,7 @@ import com.yapp18.retrospect.web.dto.ErrorDefaultResponse;
 import com.yapp18.retrospect.web.dto.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,6 +31,20 @@ public class ControllerAdvice {
                 .body(ErrorDefaultResponse.res(
                         ErrorDto.builder()
                                 .code("DE" + e.getSQLState())
+                                .exception(e.toString().split(":")[0])
+                                .message(e.getMessage())
+                                .build()
+                        )
+                );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> accessDeniedExceptionHandler(AccessDeniedException e){
+        System.out.println(e);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorDefaultResponse.res(
+                        ErrorDto.builder()
+                                .code("AE001")
                                 .exception(e.toString().split(":")[0])
                                 .message(e.getMessage())
                                 .build()

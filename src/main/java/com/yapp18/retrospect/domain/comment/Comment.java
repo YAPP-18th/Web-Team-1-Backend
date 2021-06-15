@@ -6,6 +6,8 @@ import com.yapp18.retrospect.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.persistence.*;
 
@@ -42,15 +44,6 @@ public class Comment extends BaseTimeEntity {
         this.comments = comments;
         this.post = post;
         this.user = user;
-
-        return this;
-    }
-
-    public Comment update(Comment com) {
-        this.commentIdx = com.getCommentIdx();
-        this.comments = com.getComments();
-        this.post = com.getPost();
-        this.user = com.getUser();
 
         return this;
     }
