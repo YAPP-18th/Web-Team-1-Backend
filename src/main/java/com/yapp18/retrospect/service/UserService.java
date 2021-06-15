@@ -12,8 +12,7 @@ import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -43,6 +42,7 @@ public class UserService {
     }
 
     // userId로 회원 프로필 정보 조회
+    @Transactional
     public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
         return userRepository.findByUserIdx(userIdx)
                 .map(mapper::userToProfileResponse)
@@ -50,6 +50,7 @@ public class UserService {
     }
 
     // 회원 프로필 정보 업데이트
+    @Transactional
     public UserDto.ProfileResponse updateUserProfiles(Long userIdx, UserDto.UpdateRequest request){
         User user = userRepository.findByUserIdx(userIdx)
                 .map(existingUser -> existingUser.updateProfile(request.getProfile(), request.getName(), request.getNickname(), request.getJob(), request.getIntro()))
@@ -58,8 +59,14 @@ public class UserService {
         return mapper.userToProfileResponse(user);
     }
 
+    @Transactional
+    public void deleteUser(Long userIdx){
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+        userRepository.delete(user);
+    }
+
     public boolean findUserByNickname(String nickname){
-        User user = userRepository.findByNickname(nickname);
-        return user != null;
+        return userRepository.existsByNickname(nickname);
     }
 }

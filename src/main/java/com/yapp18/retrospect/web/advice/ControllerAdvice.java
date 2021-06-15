@@ -40,7 +40,6 @@ public class ControllerAdvice {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> accessDeniedExceptionHandler(AccessDeniedException e){
-        System.out.println(e);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ErrorDefaultResponse.res(
                         ErrorDto.builder()

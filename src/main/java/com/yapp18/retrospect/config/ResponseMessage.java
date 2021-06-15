@@ -23,8 +23,10 @@ public enum ResponseMessage {
     POST_FIND_CATEGORY("카테고리 필터링 조회 성공"),
     POST_DETAIL("회고글 상세 조회 성공"),
 
-    PROFILE_FIND("프로필 조회 성공"),
-    PROFILE_UPDATE("프로필 업데이트 성공"),
+    USER_FIND("사용자 정보 조회 성공"),
+    USER_UPDATE("사용자 정보 수정 성공"),
+    USER_DELETE("사용자 삭제 성공"),
+
     MY_LIST("내가 쓴 글 조회 성공"),
     AUTH_ISSUE("Access Token 발급 성공"),
     AUTH_REISSUE("Access Token 재발급 성공"),
