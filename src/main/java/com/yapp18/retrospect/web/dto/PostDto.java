@@ -8,6 +8,7 @@ import com.yapp18.retrospect.domain.user.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import lombok.experimental.WithBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,6 +58,7 @@ public class PostDto {
 
         @ApiModelProperty(value = "스크랩 여부")
         private boolean scrap;
+
 
     }
 

@@ -33,6 +33,8 @@ dependencies {
 	implementation 'org.slf4j:slf4j-api'
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.12.3'
 
+	// redis
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.3.12.RELEASE'
 
 	//oauth2, security, jwt
 	implementation 'org.springframework.boot:spring-boot-starter-security'

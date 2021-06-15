@@ -38,4 +38,13 @@ public class ListController {
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.MY_LIST.getResponseMessage(), myPostsList), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "mypage", notes = "[마이페이지] 최근 읽은 글 조회 ")
+    @GetMapping("/recent")
+    public ResponseEntity<Object> findRecentPosts(HttpServletRequest request){
+        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
+        return new ResponseEntity<>(ApiDefaultResponse.res(200, "",
+                listService.findRecentPosts(userIdx)), HttpStatus.OK);
+    }
+
+
 }

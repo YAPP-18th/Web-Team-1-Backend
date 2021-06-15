@@ -40,6 +40,7 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final PostMapper postMapper;
     private final ImageService imageService;
+    private final ListService listService;
 
     // post idx 조회 나중에 method로 뺄 것
 
@@ -77,6 +78,9 @@ public class PostService {
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         post.updateview(post.getView()); // 조회수 증가
+        if(userIdx != 0L){
+            listService.saveRecentReadPosts(userIdx, postIdx); // 최근 읽은 글에 추가
+        }
         return new ApiIsResultResponse<>(isWriter(post.getUser().getUserIdx(),userIdx),
                 isScrap(post, userIdx),
                 postMapper.postToDetailResponse(post)); // 작성자 판단
