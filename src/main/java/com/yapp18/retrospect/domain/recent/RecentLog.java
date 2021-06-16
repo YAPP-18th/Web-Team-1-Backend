@@ -8,16 +8,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @RedisHash("userIdx")
-@Getter
+@Getter @ToString @NoArgsConstructor @AllArgsConstructor @Builder
 public class RecentLog {
 
     @Id
-    private final Long userIdx;
-    private final PostDto.ListResponse postDto;
+    private  Long userIdx;
+    private  PostDto.ListResponse postDto;
 
-    @Builder
-    public RecentLog(Long userIdx, PostDto.ListResponse postDto){
-        this.userIdx = userIdx;
-        this.postDto = postDto;
-    }
 }

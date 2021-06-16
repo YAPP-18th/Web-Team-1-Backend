@@ -166,20 +166,6 @@ public class PostService {
         return postRepository.existsByPostIdxLessThan(cursorId);
     }
 
-    // 최신순 페이징
-//    private List<Post> getPostsRecent(Long cursorId, Pageable page) {
-//        return cursorId == null || cursorId == 0 ?
-//                postRepository.findAllByOrderByPostIdxDesc(page) : // 가장 최초 포스트
-//                postRepository.findRecent(cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-//    }
-
-//    // 카테고리 페이징
-//    private List<Post> getPostCategory(Long cursorId, Pageable page, String query) {
-//        List<String> queryList = Arrays.asList(query.split(","));
-//        return cursorId == null || cursorId == 0 ?
-//                postRepository.findAllByCategoryInOrderByPostIdxDesc(page, queryList) : // 가장 최초 포스트
-//                postRepository.findCategory(cursorId, page, queryList,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-//    }
 
     // 누적순 페이징
     private List<Post> getPostsView(Long cursorId, Pageable page){
