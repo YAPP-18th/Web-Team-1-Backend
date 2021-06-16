@@ -15,6 +15,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,15 +43,14 @@ public class ListService {
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         PostDto.ListResponse postDto = postMapper.postToListResponse(post, userIdx);
         String key = "userIdx::"+ userIdx;
-        RecentLog recentLog = RecentLog.builder().userIdx(userIdx).postDto(postDto).build();
         listOperations.leftPush(key, postDto);
+        redisTemplate.expireAt(key, Date.from(ZonedDateTime.now().plusDays(7).toInstant())); // 유효기간 TTL 일주일 설정
     }
 
     // 최근 읽은 글 조회
     @Transactional
     public List<PostDto.ListResponse> findRecentPosts(Long userIdx) {
         ListOperations<String, PostDto.ListResponse> listOperations = redisTemplate.opsForList();
-        ObjectMapper mapper = new ObjectMapper();
         String key = "userIdx::" + userIdx;
         long size = listOperations.size(key) == null ? 0 : listOperations.size(key); // NPE 체크해야함.
 
