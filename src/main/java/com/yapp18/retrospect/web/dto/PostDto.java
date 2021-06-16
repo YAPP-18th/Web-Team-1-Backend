@@ -1,6 +1,12 @@
 package com.yapp18.retrospect.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.template.Template;
@@ -8,18 +14,22 @@ import com.yapp18.retrospect.domain.user.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import lombok.experimental.WithBy;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Builder
 //@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostDto {
+public class PostDto{
+
+
     @Getter
     @Setter
     @NoArgsConstructor
-    public static class ListResponse {
+    public static class ListResponse implements Serializable{
 
         @ApiModelProperty(value = "회고글 idx")
         private Long postIdx;
@@ -57,6 +67,7 @@ public class PostDto {
 
         @ApiModelProperty(value = "스크랩 여부")
         private boolean scrap;
+
 
     }
 

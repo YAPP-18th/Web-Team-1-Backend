@@ -40,6 +40,7 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final PostMapper postMapper;
     private final ImageService imageService;
+    private final ListService listService;
 
     // post idx 조회 나중에 method로 뺄 것
 
@@ -77,6 +78,9 @@ public class PostService {
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         post.updateview(post.getView()); // 조회수 증가
+        if(userIdx != 0L){
+            listService.saveRecentReadPosts(userIdx, postIdx); // 최근 읽은 글에 추가
+        }
         return new ApiIsResultResponse<>(isWriter(post.getUser().getUserIdx(),userIdx),
                 isScrap(post, userIdx),
                 postMapper.postToDetailResponse(post)); // 작성자 판단
@@ -162,20 +166,6 @@ public class PostService {
         return postRepository.existsByPostIdxLessThan(cursorId);
     }
 
-    // 최신순 페이징
-//    private List<Post> getPostsRecent(Long cursorId, Pageable page) {
-//        return cursorId == null || cursorId == 0 ?
-//                postRepository.findAllByOrderByPostIdxDesc(page) : // 가장 최초 포스트
-//                postRepository.findRecent(cursorId, page, postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-//    }
-
-//    // 카테고리 페이징
-//    private List<Post> getPostCategory(Long cursorId, Pageable page, String query) {
-//        List<String> queryList = Arrays.asList(query.split(","));
-//        return cursorId == null || cursorId == 0 ?
-//                postRepository.findAllByCategoryInOrderByPostIdxDesc(page, queryList) : // 가장 최초 포스트
-//                postRepository.findCategory(cursorId, page, queryList,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-//    }
 
     // 누적순 페이징
     private List<Post> getPostsView(Long cursorId, Pageable page){

@@ -19,3 +19,27 @@ spring:
         format_sql: true # sql prettier
     show-sql: true
     open-in-view: false # 안쓰면 warning 뜸
+  redis:
+    host: localhost
+    port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            authorization-grant-type: authorization_code
+            client-id: test
+            client-secret: test
+            scope:
+              - profile
+              - account_email
+            client-authentication-method: POST
+            client-name: Kakao
+          google:
+            client-id: test
+            client-secret: test
+            # 여기서 profile, email을 scope로 강제로 등록한 이유는 openid라는 scope가 있으면 Open Id Provider로 인식하기 때문이다.
+            # 이렇게 되면 OpenId Provider인 서비스(구글)와 그렇지 않은 서비스(카카오 등)로 나눠서 각각 OAuth2Service를 만들어야 한다.
+            scope:
+              - profile
+              - email
