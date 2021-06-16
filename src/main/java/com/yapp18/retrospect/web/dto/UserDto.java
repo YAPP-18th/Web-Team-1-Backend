@@ -36,6 +36,7 @@ public class UserDto implements Serializable {
     }
 
     @Getter
+    @NoArgsConstructor
     @ApiModel(value = "사용자 프로필 수정", description = "사용자 프로필 수정 요청 모델")
     public static class UpdateRequest {
         @ApiModelProperty(value = "회원 이름")
