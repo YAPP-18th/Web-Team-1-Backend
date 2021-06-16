@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.web.dto;
 
 import com.yapp18.retrospect.web.advice.EntityNullException;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

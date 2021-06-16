@@ -32,6 +32,7 @@ public class LikeDto {
     @Getter
     @Setter
     @NoArgsConstructor
+    @ApiModel(value = "회고글 스크랩 조회", description = "회고글 스크랩 응답 모델")
     public static class BasicResponse {
         @ApiModelProperty(value = "스크랩 idx")
         private Long likeIdx;

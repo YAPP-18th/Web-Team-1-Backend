@@ -12,6 +12,7 @@ import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.CommentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,27 +64,30 @@ public class CommentService {
                 .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL));
     }
 
+
     @Transactional
-    public CommentDto.BasicResponse updateCommentsByIdx(CommentDto.UpdateRequest updateRequest, Long commentIdx, Long userIdx){
+    @PreAuthorize("#comment.user.userIdx == #userIdx")
+    public CommentDto.BasicResponse updateCommentsByIdx(CommentDto.UpdateRequest updateRequest, Comment comment, Long userIdx){
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        Post post = postRepository.findByPostIdx(updateRequest.getPostIdx())
+        Post post = postRepository.findByPostIdx(comment.getPost().getPostIdx())
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
 
-        Comment comment = commentRepository.findById(commentIdx)
-                .map(entity -> entity.update(updateRequest.getComments(), post, user))
-                .orElse(updateRequest.toEntity(user, post));
-
-        return commentMapper.commentToBasicResponse(commentRepository.save(comment));
+        return commentMapper.commentToBasicResponse(commentRepository.save(
+                comment.update(updateRequest.getComments(), post, user)
+                )
+        );
     }
 
     @Transactional
-    public void deleteCommentsByIdx(Long commentIdx){
-        Comment comment = commentRepository.findById(commentIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
+    @PreAuthorize("#comment.user.userIdx == #userIdx")
+    public void deleteComments(Comment comment, Long userIdx){
+        System.out.println(comment.getUser().getUserIdx());
+        System.out.println(userIdx);
         commentRepository.delete(comment);
     }
+
 
     // 작성자 판별
     private boolean isWriter(Long commentUserIdx, Long userIdx){

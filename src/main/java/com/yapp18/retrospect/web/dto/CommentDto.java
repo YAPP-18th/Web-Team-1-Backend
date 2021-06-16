@@ -5,15 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 public class CommentDto {
     @Getter
+    @ApiModel(value = "댓글 등록", description = "댓글 등록 요청 모델")
     public static class InputRequest {
         @ApiModelProperty(value = "회고글 idx")
         private final Long postIdx;
@@ -36,16 +40,15 @@ public class CommentDto {
     }
 
     @Getter
+    @NoArgsConstructor
+    @ApiModel(value = "댓글 수정", description = "댓글 수정 요청 모델")
     public static class UpdateRequest {
         @ApiModelProperty(value = "댓글 내용")
-        private final String comments;
-        @ApiModelProperty(value = "회고글 idx")
-        private final Long postIdx;
+        private String comments;
 
         @Builder
-        public UpdateRequest(String comments, Long postIdx) {
+        public UpdateRequest(String comments) {
             this.comments = comments;
-            this.postIdx = postIdx;
         }
 
         public Comment toEntity(User user, Post post){
@@ -58,6 +61,7 @@ public class CommentDto {
     }
 
     @Getter
+    @ApiModel(value = "댓글 리스트 조회", description = "댓글 리스트 응답 모델")
     public static class ListResponse<T> {
         @ApiModelProperty(value = "작성자 여부")
         private final boolean isWriter;
@@ -72,6 +76,7 @@ public class CommentDto {
     }
 
     @Getter
+    @ApiModel(value = "댓글 조회", description = "댓글 응답 모델")
     public static class BasicResponse {
         @ApiModelProperty(value = "댓글 idx")
         private final Long commentIdx;
