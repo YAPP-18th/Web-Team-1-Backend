@@ -21,7 +21,7 @@ public class ImageServiceImpl implements s3Service{
 
     @Override
     public void uploadFile(InputStream inputStream, ObjectMetadata objectMetadata, String fileName) {
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName,inputStream ,objectMetadata)
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream ,objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
@@ -56,6 +56,4 @@ public class ImageServiceImpl implements s3Service{
             DeleteObjectsResult result = amazonS3Client.deleteObjects(deleteObjectsRequest);
         }
     }
-
-
 }

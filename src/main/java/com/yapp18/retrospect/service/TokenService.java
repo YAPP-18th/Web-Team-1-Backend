@@ -133,14 +133,13 @@ public class TokenService {
 //        return Optional.empty();
 //    }
   
-    public Optional<AuthDto.ReissueResponse> reissueAccessToken(HttpServletRequest request, AuthDto.ReissueRequest reissueRequest) {
+    public AuthDto.ReissueResponse reissueAccessToken(HttpServletRequest request, AuthDto.ReissueRequest reissueRequest) {
         String expiredAccessToken = getExpiredTokenFromRequest(request);
+        String refreshToken = reissueRequest.getRefreshToken();
+        String accessSecret = appProperties.getAuth().getAccessTokenSecret();
+        String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
+        validateRefreshToken(refreshToken, refreshSecret);
         if (expiredAccessToken != null) {
-            String refreshToken = reissueRequest.getRefreshToken();
-            String accessSecret = appProperties.getAuth().getAccessTokenSecret();
-            String refreshSecret = appProperties.getAuth().getRefreshTokenSecret();
-
-            validateRefreshToken(refreshToken, refreshSecret);
             Number accessIdx = (Number) getUserIdxFromExpiredToken(expiredAccessToken, accessSecret);
             Claims refreshClaims = getClaimsFromToken(refreshToken, refreshSecret);
             Number refreshIdx = (Number) refreshClaims.get("user_idx");
@@ -155,9 +154,9 @@ public class TokenService {
                     .grantType(BEARER_TYPE)
                     .accessToken(reissuedAccessToken)
                     .build();
-            return Optional.of(response);
+            return response;
         }
-        return Optional.empty();
+        return null;
     }
 
     public String createRefreshToken(Authentication authentication) {

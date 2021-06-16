@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.service;
 
+import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
@@ -18,6 +19,7 @@ import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -41,6 +43,11 @@ public class PostService {
     private final PostMapper postMapper;
     private final ImageService imageService;
     private final ListService listService;
+
+    @Value("${app.values.s3PostImagePathSuffix}")
+    public String s3PostImagePathSuffix;
+//    @Value("${app.values.s3ProfileImagePathSuffix}")
+//    public String s3ProfileImagePathSuffix;
 
     // post idx 조회 나중에 method로 뺄 것
 
@@ -98,9 +105,11 @@ public class PostService {
         Post post = postRepository.save(saveResponse.toEntity(user, template));
 
         if (!saveResponse.getImageList().isEmpty()){
-            System.out.println("--> imageList "+saveResponse.getImageList() + "-----> s3:"+ imageService.getFileList(userIdx));
-            if (!saveResponse.getImageList().equals(imageService.getFileList(userIdx))){ // 일치하지 않을 때만
-                imageService.deleteImageList(saveResponse.getImageList(), userIdx); // s3에 불필요한 이미지 제거
+            System.out.println("--> imageList "+saveResponse.getImageList() +
+                    "-----> s3:"+ imageService.getFileList(userIdx, s3PostImagePathSuffix));
+            if (!saveResponse.getImageList().equals(
+                    imageService.getFileList(userIdx, s3PostImagePathSuffix))){ // 일치하지 않을 때만
+                imageService.deleteImageList(saveResponse.getImageList(), userIdx, s3PostImagePathSuffix); // s3에 불필요한 이미지 제거
             }
             // imageList 있을 때만 db에 저장
             for (String url : saveResponse.getImageList()) {
@@ -136,8 +145,9 @@ public class PostService {
             imageService.updateNewImages(requestDto.getImageList(), dbImageList, post); // imageList에만 있는 것은 add 추가
             imageService.deleteDbImage(requestDto.getImageList(), dbImageList); // dbList에만 있는 것은 삭제
 
-            if (!requestDto.getImageList().equals(imageService.getFileList(userIdx))){ // imageList != s3List
-                imageService.deleteImageList(requestDto.getImageList(), userIdx); // s3에 불필요한 이미지 제거
+            if (!requestDto.getImageList().equals(
+                    imageService.getFileList(userIdx, s3PostImagePathSuffix))){ // imageList != s3List
+                imageService.deleteImageList(requestDto.getImageList(), userIdx, s3PostImagePathSuffix); // s3에 불필요한 이미지 제거
             }
 
         }

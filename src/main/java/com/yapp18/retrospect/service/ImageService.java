@@ -33,29 +33,29 @@ public class ImageService {
 
     // s3 이미지 업로드
     @Transactional
-    public String uploadImage(MultipartFile file, Long userIdx){
+    public String uploadImage(MultipartFile file, Long userIdx, String pathSuffix){
         // file name null 처리
         String fileName = file.getOriginalFilename() == null ? UUID.randomUUID().toString() : file.getOriginalFilename();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         try {
-            s3Service.uploadFile(file.getInputStream(), objectMetadata, createFileName(fileName, userIdx));
+            s3Service.uploadFile(file.getInputStream(), objectMetadata, createFileName(fileName, userIdx, pathSuffix));
         } catch (IOException e) {
             throw new IllegalArgumentException(String.format("파일 변환 중 에러가 발생하였습니다 (%s)", file.getOriginalFilename()));
         }
-        return s3Service.getFileUrl(createFileName(fileName, userIdx));
+        return s3Service.getFileUrl(createFileName(fileName, userIdx, pathSuffix));
     }
     // s3 이미지 목록 가져오기
     @Transactional
-    public List<String>  getFileList(Long userIdx){
-        String filepath = "images"+"/"+ userIdx+ "/" +"posts"+"/";
+    public List<String> getFileList(Long userIdx, String pathSuffix){
+        String filepath = "images/" + userIdx + pathSuffix;
         return s3Service.getFileList(filepath);
     }
 
     // s3 이미지 목록 삭제
     @Transactional
-    public void deleteImageList(List<String> imageList, Long userIdx){
-        String filepath = "images"+"/"+ userIdx+ "/" +"posts"+"/";
+    public void deleteImageList(List<String> imageList, Long userIdx, String pathSuffix){
+        String filepath = "images/" + userIdx + pathSuffix;
         List<String> garbage = test(imageList, s3Service.getKeyList(filepath)); // 이미지 리스트에 없는 s3 가비지 데이터 추출.
         // 객체 url의 모음이지 key 모음은 아님.
         s3Service.deleteFileList(garbage); // 삭제
@@ -82,9 +82,9 @@ public class ImageService {
 
     // file 이름 지정
     @SneakyThrows
-    private String createFileName(String originFileName, Long userIdx) {
+    private String createFileName(String originFileName, Long userIdx, String pathSuffix) {
         // images 폴더에 아이디 폴더의 post 폴더의.... originFilename + 랜덤 string?
-        return "images"+"/"+userIdx+"/"+"posts"+"/"+ originFileName +userIdx;
+        return "images/"+ userIdx + pathSuffix + originFileName;
     }
 
     private List<String> compareImageList(List<String> imageList, List<String> compareImageList){
@@ -105,7 +105,4 @@ public class ImageService {
         return compareImageList.stream().filter(x -> !encode.contains(x))
                 .collect(Collectors.toList());
     }
-
-
-
 }
