@@ -11,27 +11,6 @@ import java.io.Serializable;
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDto implements Serializable {
-//    @ApiModelProperty(value = "회원 번호")
-//    private Long userIdx;
-//    @ApiModelProperty(value = "회원 권한")
-//    private Role role;
-//    @ApiModelProperty(value = "회원 이름")
-//    private String name;
-//    @ApiModelProperty(value = "회원 닉네임")
-//    private String nickname;
-//    @ApiModelProperty(value = "회원 이메일")
-//    private String email;
-//    @ApiModelProperty(value = "회원 사진 URL")
-//    private String profile;
-//    @ApiModelProperty(value = "회원 가입 플랫폼")
-//    private String provider;
-//    @ApiModelProperty(value = "회원 가입 플랫폼 ID")
-//    private String providerId;
-//    @ApiModelProperty(value = "회원 직업")
-//    private String job;
-//    @ApiModelProperty(value = "회원 자기소개")
-//    private String intro;
-
     @Getter
     @ApiModel(value = "사용자 프로필 조회", description = "사용자 프로필 응답 모델")
     public static class ProfileResponse {

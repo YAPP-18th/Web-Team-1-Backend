@@ -24,6 +24,7 @@ public enum ResponseMessage {
     POST_DETAIL("회고글 상세 조회 성공"),
 
     USER_FIND("사용자 정보 조회 성공"),
+    USER_OWN_FIND("자신의 사용자 정보 조회 성공"),
     USER_UPDATE("사용자 정보 수정 성공"),
     USER_DELETE("사용자 삭제 성공"),
 
