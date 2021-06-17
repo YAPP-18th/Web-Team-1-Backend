@@ -11,16 +11,25 @@ import com.yapp18.retrospect.security.oauth2.user.OAuth2UserInfo;
 import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserMapper mapper;
     private final UserRepository userRepository;
+    private final ImageService imageService;
     private final AppProperties appProperties;
     private final UserMapper userMapper;
+
+    @Value("${app.values.s3ProfileImagePathSuffix}")
+    public String s3ProfileImagePathSuffix;
 
     // DB에 존재하지 않을 경우 회원 가입
     @Transactional
@@ -53,7 +62,13 @@ public class UserService {
     @Transactional
     public UserDto.ProfileResponse updateUserProfiles(Long userIdx, UserDto.UpdateRequest request){
         User user = userRepository.findByUserIdx(userIdx)
-                .map(existingUser -> existingUser.updateProfile(request.getProfile(), request.getName(), request.getNickname(), request.getJob(), request.getIntro()))
+                .map(existingUser -> {
+                    if(!existingUser.getProfile().equals(request.getProfile())) { // 수정사항이 있다
+                        List<String> list = Arrays.asList(request.getProfile());
+                        imageService.deleteImageList(list, userIdx, s3ProfileImagePathSuffix); // list에 없는 s3 가비지 데이터를 추출하여 삭제
+                    }
+                    return existingUser.updateProfile(request.getProfile(), request.getName(), request.getNickname(), request.getJob(), request.getIntro());
+                })
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
         userRepository.save(user);
         return mapper.userToProfileResponse(user);
