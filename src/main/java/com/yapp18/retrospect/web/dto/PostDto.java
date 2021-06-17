@@ -171,5 +171,4 @@ public class PostDto{
         private Long commentCnt;
 
     }
-
 }

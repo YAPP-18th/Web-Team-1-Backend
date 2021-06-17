@@ -12,6 +12,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDto implements Serializable {
     @Getter
+    @NoArgsConstructor
     @ApiModel(value = "사용자 프로필 조회", description = "사용자 프로필 응답 모델")
     public static class ProfileResponse {
         @ApiModelProperty(value = "회원 이름")

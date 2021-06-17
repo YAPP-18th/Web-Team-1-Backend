@@ -20,7 +20,6 @@ public class LikeDto {
     public static class InputRequest {
         @ApiModelProperty(value = "회고글 idx")
         private Long postIdx;
-
         public Like toEntity(Post post, User user){
             return Like.builder()
                     .post(post)

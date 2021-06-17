@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 @Getter
 public class CommentDto {
     @Getter
+    @NoArgsConstructor
     @ApiModel(value = "댓글 등록", description = "댓글 등록 요청 모델")
     public static class InputRequest {
         @ApiModelProperty(value = "회고글 idx")
-        private final Long postIdx;
+        private Long postIdx;
         @ApiModelProperty(value = "댓글 내용")
-        private final String comments;
-
+        private String comments;
         @Builder
         public InputRequest(Long postIdx, String comments) {
             this.postIdx = postIdx;
@@ -61,10 +61,11 @@ public class CommentDto {
     }
 
     @Getter
+    @NoArgsConstructor
     @ApiModel(value = "댓글 리스트 조회", description = "댓글 리스트 응답 모델")
     public static class ListResponse<T> {
         @ApiModelProperty(value = "작성자 여부")
-        private final boolean isWriter;
+        private boolean isWriter;
         @ApiModelProperty(value = "댓글 내용")
         private T result;
 
@@ -79,34 +80,34 @@ public class CommentDto {
     @ApiModel(value = "댓글 조회", description = "댓글 응답 모델")
     public static class BasicResponse {
         @ApiModelProperty(value = "댓글 idx")
-        private final Long commentIdx;
+        private Long commentIdx;
 
         @ApiModelProperty(value = "내용")
-        private final String comments;
+        private String comments;
 
         @JsonIgnore
         @ApiModelProperty(value = "작성자")
-        private final User user;
+        private User user;
 
         @ApiModelProperty(value = "작성자 idx")
-        private final Long userIdx;
+        private Long userIdx;
 
         @ApiModelProperty(value = "작성자 닉네임")
-        private final String nickname;
+        private String nickname;
 
         @ApiModelProperty(value = "작성자 프로필 사진")
-        private final String profile;
+        private String profile;
 
         @ApiModelProperty(value = "작성자 여부")
-        private final boolean writer;
+        private boolean writer;
 
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
-        private final LocalDateTime createdAt;
+        private LocalDateTime createdAt;
 
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
         @ApiModelProperty(value = "수정날짜")
-        private final LocalDateTime modifiedAt;
+        private LocalDateTime modifiedAt;
 
         @Builder
         public BasicResponse(Long commentIdx, String comments, User user, boolean writer, LocalDateTime createdAt, LocalDateTime modifiedAt) {
