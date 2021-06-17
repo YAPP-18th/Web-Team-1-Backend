@@ -56,9 +56,15 @@ public class ImageService {
     @Transactional
     public void deleteImageList(List<String> imageList, Long userIdx, String pathSuffix){
         String filepath = "images/" + userIdx + pathSuffix;
-        List<String> garbage = test(imageList, s3Service.getKeyList(filepath)); // 이미지 리스트에 없는 s3 가비지 데이터 추출.
+        List<String> garbage = compareImagePath(imageList, s3Service.getKeyList(filepath)); // 이미지 리스트에 없는 s3 가비지 데이터 추출.
         // 객체 url의 모음이지 key 모음은 아님.
         s3Service.deleteFileList(garbage); // 삭제
+    }
+
+    @Transactional
+    public void deleteUserInfo(Long userIdx){
+        String filePath = "images/" + userIdx;
+        s3Service.deleteFileList(s3Service.getKeyList(filePath));
     }
 
     // imageList에만 있는 것 db에 저장하기
@@ -93,7 +99,8 @@ public class ImageService {
                 .collect(Collectors.toList());
     }
 
-    private List<String> test(List<String> imageList, List<String> compareImageList){
+    // key 경로 비교
+    private List<String> compareImagePath(List<String> imageList, List<String> compareImageList){
         List<String> encode = imageList.stream().map(x-> {
             try {
                 return URLDecoder.decode(x,"UTF-8").replace("https://s3doraboda.s3.ap-northeast-2.amazonaws.com/","");
