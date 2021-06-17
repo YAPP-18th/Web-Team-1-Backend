@@ -79,6 +79,7 @@ public class UserService {
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
         userRepository.delete(user);
+        imageService.deleteUserInfo(userIdx); // s3에 해당 사용자 정보 모두 삭제
     }
 
     public boolean findUserByNickname(String nickname){

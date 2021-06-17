@@ -53,7 +53,8 @@ public class ImageServiceImpl implements s3Service{
             DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
             deleteObjectsRequest.setKeys(objects);
             // 임시저장한 s3 삭제
-            DeleteObjectsResult result = amazonS3Client.deleteObjects(deleteObjectsRequest);
+            amazonS3Client.deleteObjects(deleteObjectsRequest);
         }
     }
+
 }
