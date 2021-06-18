@@ -16,7 +16,7 @@ public class TemplateService {
 
     private final TemplateRepository templateRepository;
 
-    public Optional<String> getTemplateContents(Long templateIdx){
-        return templateRepository.findById(templateIdx).map(Template::getTemplate);
+    public String getTemplateContents(Long templateIdx){
+         return templateRepository.findById(templateIdx).map(Template::getTemplate).toString();
     }
 }
