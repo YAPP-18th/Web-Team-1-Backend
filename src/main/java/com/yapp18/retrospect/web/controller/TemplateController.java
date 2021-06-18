@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 public class TemplateController {
 
     private final TemplateService templateService;
-    private final TokenService tokenService;
 
     @ApiOperation(value = "template", notes = "[템플릿] 템플릿 양식 불러오기")
     @GetMapping("/{templateIdx}")
