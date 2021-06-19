@@ -5,12 +5,10 @@ import com.yapp18.retrospect.config.ResponseMessage;
 import com.yapp18.retrospect.service.PostService;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
-import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
-import org.mapstruct.Context;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +46,20 @@ public class PostController {
                                                @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND.getResponseMessage(),
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_VIEW.getResponseMessage(),
                 postService.getPostsListView(page, PageRequest.of(0,pageSize), userIdx)), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "main", notes = "[프로필] 유저 회고글 목록 조회, 생성일자순")
+    @GetMapping("/lists/{userIdx}")
+    public ResponseEntity<Object> getPostsByUserIdxOrderByCreatedAtDesc(@ApiParam(value = "사용자 user_idx", required = true, example = "3")
+                                                                        @PathVariable(value = "userIdx") Long userIdx,
+                                                                        @RequestParam(value = "cursorIdx(디폴트 0, 페이징 하고 싶은 맨 마지막 postIdx 입력)", defaultValue = "0") Long cursorIdx,
+                                                                        @RequestParam(value = "pageSize") Integer pageSize){
+        if (pageSize == null) pageSize = DEFAULT_SIZE;
+        return new ResponseEntity<>(ApiDefaultResponse.res(200,
+                ResponseMessage.POST_FIND_CREATED.getResponseMessage(),
+                postService.getPostsListCreatedAt(cursorIdx, userIdx, PageRequest.of(0, pageSize))), HttpStatus.OK);
     }
 
 

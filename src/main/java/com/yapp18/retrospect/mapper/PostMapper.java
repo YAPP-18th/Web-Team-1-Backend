@@ -28,7 +28,7 @@ public interface PostMapper {
     @Mapping(target = "commentCnt", expression = "java((long)post.getComments().size())")
     @Mapping(target = "scrapCnt", expression = "java((long)post.getLike().size())")
     @Mapping(target = "createdAt", expression = "java(post.getCreatedAt())")
-    @Mapping(target = "scrap", expression = "java(isScrap(post.getLike(),userIdx))")
+    @Mapping(target = "scrap", expression = "java(isScrap(post.getLike(), userIdx))")
     PostDto.ListResponse postToListResponse(Post post, Long userIdx);
 
     // 상세보기

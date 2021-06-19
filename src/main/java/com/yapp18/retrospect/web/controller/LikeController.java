@@ -34,7 +34,7 @@ public class LikeController {
                 likeService.inputLikes(inputRequest, userIdx)), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 목록 조회, 누적순")
+    @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 목록 조회, 생성일자순")
     @GetMapping("/lists")
     public ResponseEntity<Object> getLikesOrderByCreatedAtDesc(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
                                                                   HttpServletRequest request,

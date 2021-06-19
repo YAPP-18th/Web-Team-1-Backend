@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.domain.post;
 
+import com.yapp18.retrospect.domain.user.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +28,8 @@ public interface  PostRepository extends JpaRepository<Post, Long> {
 
     // 조회순
     List<Post> findAllByOrderByViewDesc(Pageable page);
+
+    //커서Id를 가진 포스트보다 조회수가 작은 애들을 가져온다.
     @Query(value = "SELECT * FROM post_tb  WHERE (post_tb.created_at =:currentAt AND post_tb.view <:view) " +
             "OR (post_tb.created_at<:currentAt AND post_tb.view <:view) ORDER BY post_tb.view DESC,post_tb.created_at DESC", nativeQuery = true)
     List<Post> findView(int view, Pageable pageable, LocalDateTime currentAt);
@@ -40,4 +43,8 @@ public interface  PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY post_tb.created_at DESC, post_tb.post_idx DESC", nativeQuery = true)
     List<Post> findCategory(Long cursorId,Pageable page, List<String> query);
 
+    List<Post> findByUserOrderByCreatedAtDesc(User user, Pageable pageable);
+    @Query(nativeQuery = true, value = "SELECT * FROM post_tb WHERE post_tb.user_idx = :userIdx AND post_tb.post_idx <:cursorIdx ORDER BY post_tb.created_at DESC")
+    List<Post> cursorFindByUserOrderByCreatedAtDesc(Long cursorIdx, Long userIdx, Pageable pageable);
+    boolean existsByUserAndPostIdxLessThan(User user, Long lastIdx);
 }
