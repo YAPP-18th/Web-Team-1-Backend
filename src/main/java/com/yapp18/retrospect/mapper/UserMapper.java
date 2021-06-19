@@ -12,5 +12,9 @@ import org.mapstruct.factory.Mappers;
 public interface UserMapper {
     UserMapper instance = Mappers.getMapper(UserMapper.class);
 
+    @Mapping(target = "mine",  constant = "true")
     UserDto.ProfileResponse userToProfileResponse(User user);
+
+    @Mapping(target = "mine",  expression = "java(mine)")
+    UserDto.ProfileResponse userToProfileResponse(User user, boolean mine);
 }

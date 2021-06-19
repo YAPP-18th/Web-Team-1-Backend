@@ -48,14 +48,17 @@ public class UserDto implements Serializable {
         private String job;
         @ApiModelProperty(value = "회원 자기소개")
         private String intro;
+        @ApiModelProperty(value = "본인 프로필 여부")
+        private boolean mine;
 
         @Builder
-        public ProfileResponse(String name, String nickname, String profile, String job, String intro) {
+        public ProfileResponse(String name, String nickname, String profile, String job, String intro, boolean mine) {
             this.name = name;
             this.nickname = nickname;
             this.profile = profile;
             this.job = job;
             this.intro = intro;
+            this.mine = mine;
         }
     }
 }
