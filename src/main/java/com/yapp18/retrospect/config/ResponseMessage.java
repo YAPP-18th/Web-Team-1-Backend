@@ -29,6 +29,7 @@ public enum ResponseMessage {
     USER_DELETE("사용자 삭제 성공"),
 
     MY_LIST("내가 쓴 글 조회 성공"),
+    MY_RECENT_LIST("최근 읽은 글 조회 성공"),
     AUTH_ISSUE("Access Token 발급 성공"),
     AUTH_REISSUE("Access Token 재발급 성공"),
     TEMPLATE_FIND("템플릿 조회 성공 "),

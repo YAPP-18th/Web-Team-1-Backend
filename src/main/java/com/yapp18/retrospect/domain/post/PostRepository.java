@@ -13,7 +13,7 @@ public interface  PostRepository extends JpaRepository<Post, Long> {
 
     boolean existsByPostIdxLessThan(Long cursorId);
 
-    List<Post> findAllByUserUserIdxOrderByCreatedAtDesc(Long userIdx);
+    List<Post> findAllByUserUserIdxOrderByCreatedAtDesc(Long userIdx, Pageable pageable);
 
     // 쓴 날짜 찾기
     Post findCreatedAtByPostIdx(Long postIdx);
