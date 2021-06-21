@@ -52,9 +52,9 @@ public class UserService {
 
     // userId로 회원 프로필 정보 조회
     @Transactional
-    public UserDto.ProfileResponse getUserProfiles(Long userIdx) {
+    public UserDto.ProfileResponse getUserProfiles(Long userIdx, Long extractedIdx) {
         return userRepository.findByUserIdx(userIdx)
-                .map(mapper::userToProfileResponse)
+                .map(user -> mapper.userToProfileResponse(user, user.getUserIdx().equals(extractedIdx)))
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
     }
 

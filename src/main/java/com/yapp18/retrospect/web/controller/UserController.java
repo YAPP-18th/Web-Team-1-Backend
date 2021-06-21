@@ -37,15 +37,17 @@ public class UserController {
     @GetMapping("/profiles")
     public ResponseEntity<Object> getOwnProfiles(HttpServletRequest request){
         Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
-        UserDto.ProfileResponse response = userService.getUserProfiles(userIdx);
+        UserDto.ProfileResponse response = userService.getUserProfiles(userIdx, userIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.USER_OWN_FIND.getResponseMessage(), response), HttpStatus.OK);
     }
 
     @ApiOperation(value = "profile", notes = "[프로필] 다른 사용자 정보 조회") // api tag, 설명
     @GetMapping("/profiles/{userIdx}")
-    public ResponseEntity<Object> getProfiles(@ApiParam (value = "사용자 user_idx", required = true, example = "1557")
-                                                  @PathVariable(value = "userIdx") Long userIdx){
-        UserDto.ProfileResponse response = userService.getUserProfiles(userIdx);
+    public ResponseEntity<Object> getProfiles(HttpServletRequest request,
+                                              @ApiParam (value = "사용자 user_idx", required = true, example = "1557")
+                                              @PathVariable(value = "userIdx") Long userIdx){
+        Long extractedIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
+        UserDto.ProfileResponse response = userService.getUserProfiles(userIdx, extractedIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.USER_FIND.getResponseMessage(), response), HttpStatus.OK);
     }
 
