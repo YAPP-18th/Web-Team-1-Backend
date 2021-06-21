@@ -29,11 +29,6 @@ public class LikeService {
     private final PostRepository postRepository;
     private final LikeMapper likeMapper;
 
-    @Transactional
-    public boolean isExist(LikeDto.InputRequest inputRequest, Long userIdx){
-        return likeRepository.findByPostIdxAndUserIdx(inputRequest.getPostIdx(), userIdx) != null;
-    }
-
     @Transactional(readOnly = true)
     public ApiPagingResultResponse<LikeDto.BasicResponse> getLikeListCreatedAt(Pageable page, Long userIdx){
         User user = userRepository.findByUserIdx(userIdx)
@@ -79,7 +74,6 @@ public class LikeService {
         if (cursorId == null) return false;
         return likeRepository.existsByUserAndLikeIdxLessThan(user, cursorId);
     }
-
     // 누적순 페이징
 //    private List<Like> getLikesAll(Long cursorId, Pageable page){
 //        return

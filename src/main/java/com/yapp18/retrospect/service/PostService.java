@@ -70,6 +70,24 @@ public class PostService {
         return new ApiPagingResultResponse<>(isNext(lastIdx), result);
     }
 
+    @Transactional(readOnly = true)
+    public ApiPagingResultResponse<PostDto.ListResponse> getPostsListCreatedAt(Long cursorIdx, Long userIdx, Pageable pageable){
+        User user = userRepository.findByUserIdx(userIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+
+        List<Post> postList = cursorIdx == 0 || cursorIdx == null ?
+                postRepository.findByUserOrderByCreatedAtDesc(user, pageable)
+                : postRepository.cursorFindByUserOrderByCreatedAtDesc(cursorIdx, user.getUserIdx(), pageable);
+
+        Long lastIdx = postList.isEmpty() ? null : postList.get(postList.size() - 1).getPostIdx(); // 낮은 조회수 체크
+
+        List<PostDto.ListResponse> result = postList.stream()
+                .map(post -> postMapper.postToListResponse(post, userIdx))
+                .collect(Collectors.toList());
+
+        return new ApiPagingResultResponse<>(isNext(user, lastIdx), result);
+    }
+
 
 //    // 회고글 카테고리 검색
 //    public ApiPagingResultResponse<PostDto.ListResponse> getPostsByCategory(String query, Long cursorId, Pageable page, Long userIdx){
@@ -174,6 +192,12 @@ public class PostService {
     public boolean isNext(Long cursorId){
         if (cursorId == null) return false;
         return postRepository.existsByPostIdxLessThan(cursorId);
+    }
+
+    // 다음 페이지 여부 확인
+    public boolean isNext(User user, Long cursorId){
+        if (cursorId == null) return false;
+        return postRepository.existsByUserAndPostIdxLessThan(user, cursorId);
     }
 
 

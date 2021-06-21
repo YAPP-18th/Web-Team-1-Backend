@@ -12,7 +12,8 @@ public enum ResponseMessage {
     POST_SAVE("회고글 저장 성공"),
     POST_UPDATE("회고글 수정 성공"),
     POST_FIND_RECENT("회고글 최신순 조회 성공"),
-    POST_FIND("회고글 누적조회순 조회 성공"),
+    POST_FIND_VIEW("회고글 누적조회순 조회 성공"),
+    POST_FIND_CREATED("회고글 생성날짜순 조회 성공"),
     POST_DELETE("회고글 삭제 성공"),
 
     // 검색
