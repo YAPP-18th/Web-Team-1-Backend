@@ -82,12 +82,12 @@ public class CommentController {
     public ResponseEntity<Object> getCommentsByPostIdx(HttpServletRequest request,
                                                        @ApiParam(value = "회고글 post_idx", required = true, example = "20")
                                                        @RequestParam(value = "postIdx") Long postIdx,
-                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                       @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize) {
+                                                       @RequestParam(value = "cursorIdx(디폴트 0, 페이징 하고 싶은 맨 마지막 postIdx 입력)", defaultValue = "0") Long cursorIdx,
+                                                       @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
-                commentService.getCommmentsListByPostIdx(postIdx, userIdx, PageRequest.of(page, pageSize))), HttpStatus.OK);
+                commentService.getCommmentsListByPostIdx(postIdx, cursorIdx, userIdx, PageRequest.of(0, pageSize))), HttpStatus.OK);
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 갯수 조회") // api tag, 설명
