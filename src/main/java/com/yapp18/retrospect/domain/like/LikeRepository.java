@@ -17,6 +17,9 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     List<Like> findByUserOrderByCreatedAtDesc(User user, Pageable page);
 
+    @Query(value = "SELECT * FROM like_tb WHERE like_tb.like_idx < :cursorIdx AND like_tb.user_idx = :userIdx", nativeQuery = true)
+    List<Like> cursorFindByUserOrderByCreatedAtDesc(Long cursorIdx, Long userIdx, Pageable page);
+
     boolean existsByUserAndLikeIdxLessThan(User user, Long lastIdx);
 
     void deleteByUserAndPost(User user, Post post);

@@ -36,15 +36,14 @@ public class LikeController {
 
     @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 목록 조회, 생성일자순")
     @GetMapping("/lists")
-    public ResponseEntity<Object> getLikesOrderByCreatedAtDesc(@ApiParam(value = "현재 페이지 마지막 post_idx", required = true, example = "20")
-                                                                  HttpServletRequest request,
-                                                          @RequestParam(value = "page", defaultValue = "0") Long page,
-                                                          @RequestParam(value = "pageSize") Integer pageSize){
+    public ResponseEntity<Object> getLikesOrderByCreatedAtDesc(HttpServletRequest request,
+                                                               @RequestParam(value = "cursorIdx", defaultValue = "0") Long cursorIdx,
+                                                               @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
         return ResponseEntity.status(HttpStatus.OK)
-        .body(ApiDefaultResponse.res(200, ResponseMessage.LIKE_FIND.getResponseMessage(),
-                likeService.getLikeListCreatedAt(PageRequest.of(page.intValue(), pageSize), userIdx)));
+                .body(ApiDefaultResponse.res(200, ResponseMessage.LIKE_FIND.getResponseMessage(),
+                        likeService.getLikeListCreatedAt(cursorIdx, userIdx, PageRequest.of(0, pageSize))));
     }
 
     @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 삭제")
