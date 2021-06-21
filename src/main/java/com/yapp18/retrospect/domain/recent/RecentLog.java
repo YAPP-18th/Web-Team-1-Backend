@@ -7,12 +7,15 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.sql.Timestamp;
+
 @RedisHash("userIdx")
 @Getter @ToString @NoArgsConstructor @AllArgsConstructor @Builder
 public class RecentLog {
 
     @Id
     private  Long userIdx;
-    private  PostDto.ListResponse postDto;
+    private  Long postIdx;
+//    private Long timestamp;
 
 }
