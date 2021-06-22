@@ -1,6 +1,10 @@
 spring:
   freemarker:
     check-template-location: false
+  devtools:
+    remote:
+      restart:
+        enabled: true # 서버 자동 재시작 사용 여부
   error:
     include-exception: true
     include-stacktrace: always
