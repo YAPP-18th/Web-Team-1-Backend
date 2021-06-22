@@ -69,6 +69,7 @@ public class ListService {
 //    private boolean isKey(String key){
 //
 //    }
+
     // redis key 생성
     private String setKey(Long userIdx){
         return "userIdx::"+userIdx;
@@ -80,11 +81,23 @@ public class ListService {
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
     }
 
+
     // redis에서 value 삭제
     public void deleteRedisPost(Long userIdx,Long postIdx){
         ZSetOperations<String, RecentLog> zSetOps = redisTemplate.opsForZSet();
         RecentLog recentLog = RecentLog.builder().userIdx(userIdx).postIdx(postIdx).build();
         zSetOps.remove(setKey(userIdx), recentLog);
     }
+
+    public boolean isPostsExist(Long userIdx, Long postIdx){
+        ZSetOperations<String, RecentLog> zSetOps = redisTemplate.opsForZSet();
+        RecentLog recentLog = RecentLog.builder().userIdx(userIdx).postIdx(postIdx).build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<RecentLog> result = objectMapper.convertValue(Objects.requireNonNull(zSetOps.reverseRange(setKey(userIdx), 0, -1)),
+                new TypeReference<List<RecentLog>>() {
+                });
+        return result.contains(recentLog);
+    }
+
 
 }
