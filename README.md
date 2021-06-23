@@ -4,14 +4,16 @@
 <br>
 
 ## 🛠 Architecture
-<img width="1792" alt="스크린샷 2021-03-25 오후 12 58 37" src="https://user-images.githubusercontent.com/35520314/113499700-02661200-9553-11eb-8b04-e62b19a1e886.png">
+
+<img width="1792" alt="스크린샷 2021-06-23 오후 12 05 20" src="https://user-images.githubusercontent.com/35520314/123028980-4f9fa480-d41b-11eb-9bf2-dcbd020b1525.png">
 <br>
 
 ## 📋 ERD
 https://www.erdcloud.com/d/dsywqiDTmJcMtcASj  
 <br>
-![erd](https://user-images.githubusercontent.com/54519245/116951582-3acc4d80-acc3-11eb-8031-5f0fcf7d0035.png)
+<img width="1447" alt="스크린샷 2021-06-23 오후 12 09 58" src="https://user-images.githubusercontent.com/35520314/123029359-f126f600-d41b-11eb-8350-0898c7111a78.png">
 <br>
+
 
 ## 📤 Commit & PR 규칙
 
