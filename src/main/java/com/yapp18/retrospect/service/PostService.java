@@ -1,6 +1,5 @@
 package com.yapp18.retrospect.service;
 
-import com.yapp18.retrospect.config.AppProperties;
 import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.domain.image.Image;
 import com.yapp18.retrospect.domain.image.ImageRepository;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 //import javax.transaction.Transactional;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,11 +63,13 @@ public class PostService {
     // 조회순
     @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page, Long userIdx){
+        // 마지막으로 검색된 회고글의 조회수
         List<PostDto.ListResponse> result = getPostsView(cursorId, page).stream().map(post->postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
-        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 조회수 체크
-        return new ApiPagingResultResponse<>(isNext(lastIdx), result);
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 다음 postIdx
+        return new ApiPagingResultResponse<>(isNextView(lastIdx), result);
     }
+
 
     @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListCreatedAt(Long cursorIdx, Long userIdx, Pageable pageable){
@@ -85,17 +86,9 @@ public class PostService {
                 .map(post -> postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
 
-        return new ApiPagingResultResponse<>(isNext(user, lastIdx), result);
+        return new ApiPagingResultResponse<>(isView(user, lastIdx), result);
     }
 
-
-//    // 회고글 카테고리 검색
-//    public ApiPagingResultResponse<PostDto.ListResponse> getPostsByCategory(String query, Long cursorId, Pageable page, Long userIdx){
-//        List<PostDto.ListResponse> result = getPostCategory(cursorId, page, query).stream().map(post->postMapper.postToListResponse(post, userIdx))
-//                .collect(Collectors.toList());
-//        Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 낮은 idx 체크
-//        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
-//    }
 
     // 회고글 상세페이지
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -189,25 +182,25 @@ public class PostService {
     }
 
 
-    // 다음 페이지 여부 확인
-    public boolean isNext(Long cursorId){
+    // 다음 페이지 여부 확인: 조회순
+    public boolean isNextView(Long cursorId){
         if (cursorId == null) return false;
-        return postRepository.existsByPostIdxLessThan(cursorId);
+        return postRepository.findViewNext(postRepository.findViewByPostIdx(cursorId).getView());
+    }
+
+    // 조회 누적순 페이징
+    private List<Post> getPostsView(Long cursorId, Pageable page){
+        return cursorId == null || cursorId == 0 ?
+                postRepository.findAllByOrderByViewDesc(page) :  // 처음 조회할 때
+                postRepository.findView(postRepository.findViewByPostIdx(cursorId).getView(), page);  // 그 다음 postIdx 로 조회할 때
     }
 
     // 다음 페이지 여부 확인
-    public boolean isNext(User user, Long cursorId){
+    public boolean isView(User user, Long cursorId){
         if (cursorId == null) return false;
         return postRepository.existsByUserAndPostIdxLessThan(user, cursorId);
     }
 
-
-    // 누적순 페이징
-    private List<Post> getPostsView(Long cursorId, Pageable page){
-        return cursorId == null || cursorId == 0 ?
-                postRepository.findAllByOrderByViewDesc(page) :
-                postRepository.findView(postRepository.findViewByPostIdx(cursorId).getView(), page,postRepository.findCreatedAtByPostIdx(cursorId).getCreatedAt());
-    }
 
     // 작성자 판별
     private boolean isWriter(Long postUserIdx, Long userIdx){
