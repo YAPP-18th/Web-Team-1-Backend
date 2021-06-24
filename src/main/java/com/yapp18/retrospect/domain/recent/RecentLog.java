@@ -16,6 +16,5 @@ public class RecentLog {
     @Id
     private  Long userIdx;
     private  Long postIdx;
-//    private Long timestamp;
 
 }
