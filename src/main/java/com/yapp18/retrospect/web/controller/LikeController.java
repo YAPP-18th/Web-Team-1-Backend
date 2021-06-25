@@ -37,7 +37,7 @@ public class LikeController {
     @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 목록 조회, 생성일자순")
     @GetMapping("/lists")
     public ResponseEntity<Object> getLikesOrderByCreatedAtDesc(HttpServletRequest request,
-                                                               @RequestParam(value = "page(디폴트 0, 페이징 하고 싶은 맨 마지막 likeIdx 입력)", defaultValue = "0") Long page,
+                                                               @RequestParam(value = "page", defaultValue = "0") Long page,
                                                                @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
