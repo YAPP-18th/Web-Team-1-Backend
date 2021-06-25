@@ -84,8 +84,9 @@ public class TokenService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        claim.put("user_idx", userPrincipal.getUserIdx());
-        claim.put("nickname", userPrincipal.getNickname());
+        claim.put("user_idx", userPrincipal.getUser().getUserIdx());
+        claim.put("email", userPrincipal.getUser().getEmail());
+        claim.put("nickname", userPrincipal.getUser().getNickname());
         claim.put("isnew", userPrincipal.getIsNew());
         claim.put(AUTHORITIES_KEY, authorities);
 
@@ -162,8 +163,9 @@ public class TokenService {
     public String createRefreshToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Map<String, Object> claim = new HashMap<>();
-        claim.put("user_idx", userPrincipal.getUserIdx());
-        claim.put("nickname", userPrincipal.getNickname());
+        claim.put("user_idx", userPrincipal.getUser().getUserIdx());
+        claim.put("email", userPrincipal.getUser().getEmail());
+        claim.put("nickname", userPrincipal.getUser().getNickname());
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpirationMsec());
@@ -185,8 +187,9 @@ public class TokenService {
         Number idx = (Number) claims.get("user_idx");
         Long userIdx = idx.longValue();
         String nickname = (String) claims.get("nickname");
+        String email = (String) claims.get("email");
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUserIdx(userIdx);// OK
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);// OK
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }

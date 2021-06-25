@@ -2,15 +2,18 @@ package com.yapp18.retrospect.domain.banner;
 
 
 import com.yapp18.retrospect.domain.template.Template;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "banner_tb")
 public class Banner {
     @Id
@@ -30,15 +33,4 @@ public class Banner {
     @ManyToOne
     @JoinColumn(name = "template_idx")
     private Template template;
-
-
-    @Builder
-    public Banner(Long bannerIdx,String project, int emotion, String term, Template template){
-        this.bannerIdx = bannerIdx;
-        this.project = project;
-        this.emotion = emotion;
-        this.term = term;
-        this.template = template;
-
-    }
 }

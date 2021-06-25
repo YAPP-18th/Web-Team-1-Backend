@@ -28,14 +28,8 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     @Transactional
-    public Long inputComments(CommentDto.InputRequest inputRequest, Long userIdx){
-        User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
-
-        Post post = postRepository.findByPostIdx(inputRequest.getPostIdx())
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
-
-        return commentRepository.save(inputRequest.toEntity(post, user)).getCommentIdx();
+    public Comment inputComments(Comment comment){
+        return commentRepository.save(comment);
     }
 
     @Transactional(readOnly = true)

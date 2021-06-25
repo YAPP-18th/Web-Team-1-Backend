@@ -2,6 +2,7 @@ package com.yapp18.retrospect.domain.template;
 
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.user.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +11,11 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="template_tb")
 public class Template extends BaseTimeEntity {
     @Id
@@ -25,11 +28,4 @@ public class Template extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String template;
-
-    @Builder
-    public Template(Long templateIdx, String templateName,String template) {
-        this.templateIdx = templateIdx;
-        this.templateName = templateName;
-        this.template = template;
-    }
 }

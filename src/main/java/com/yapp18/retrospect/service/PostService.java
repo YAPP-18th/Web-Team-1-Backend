@@ -61,6 +61,12 @@ public class PostService {
 //        return new ApiPagingResultResponse<>(isNext(lastIdx),result);
 //    }
 
+    @Transactional(readOnly = true)
+    public Post findByPostIdx(Long postIdx){
+        return postRepository.findById(postIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
+    }
+
     // 조회순
     @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page, Long userIdx){

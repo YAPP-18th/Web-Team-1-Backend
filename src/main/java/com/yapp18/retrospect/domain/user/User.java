@@ -4,10 +4,7 @@ import com.sun.istack.NotNull;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.security.oauth2.AuthProvider;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,6 +14,8 @@ import java.util.List;
 @Getter
 @Table(name="user_tb")
 // 기본 생성자 접근을 protected으로 변경하면 외부에서 해당 생성자를 접근 할 수 없으므로 Builder를 통해서만 객체 생성 가능하므로 안전성 보장
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
     @Id
@@ -55,20 +54,6 @@ public class User extends BaseTimeEntity {
 //
 //    @OneToMany(mappedBy = "user")
 //    private final List<Comment> comments = new ArrayList<>();
-
-    @Builder
-    public User(Role role, String name, String nickname, String intro, String email,
-                String profile, AuthProvider provider, String providerId, String job) {
-        this.role = role;
-        this.name = name;
-        this.nickname = nickname;
-        this.intro = intro;
-        this.email = email;
-        this.profile = profile;
-        this.provider = provider;
-        this.providerId = providerId;
-        this.job = job;
-    }
 
     public User updateNickname(String nickname){
         this.nickname = nickname;

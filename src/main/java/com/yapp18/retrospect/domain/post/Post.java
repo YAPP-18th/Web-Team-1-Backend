@@ -9,12 +9,11 @@ import com.yapp18.retrospect.domain.tag.Tag;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.web.dto.PostDto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,10 +22,12 @@ import java.util.List;
 import java.util.Set;
 
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@Builder
 @DynamicUpdate // 변경된 것만 바꾸기
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="post_tb")
 //@Builder
 public class Post extends BaseTimeEntity {
@@ -52,11 +53,12 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_idx")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "template_idx")
-    private Template template;
+    private Template template; // 어떻게?
 
     @JsonIgnore
     @OneToMany(mappedBy = "post",orphanRemoval = true)
@@ -74,22 +76,6 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
 
-    @Builder
-    public Post(Long postIdx,String title, String category, String contents,
-                User user, Template template, List<Tag> tagList, List<Like> like, List<Comment>comments, List<Image> imageList) {
-        this.postIdx = postIdx;
-        this.title = title;
-        this.category = category;
-        this.contents = contents;
-        this.user = user;
-        this.template = template;
-        this.tagList = tagList;
-        this.like = like;
-        this.comments = comments;
-        this.imageList = imageList;
-
-    }
-
     public void updatePost(PostDto.updateRequest requestDto){
         this.title = requestDto.getTitle();
         this.category = requestDto.getCategory();
@@ -99,6 +85,4 @@ public class Post extends BaseTimeEntity {
     public void updateview(int view){
         this.view = getView() + 1;
     }
-
-
 }

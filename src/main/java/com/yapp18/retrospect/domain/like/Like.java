@@ -3,15 +3,21 @@ package com.yapp18.retrospect.domain.like;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
+
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(
         name="like_tb",
         uniqueConstraints={
@@ -29,17 +35,10 @@ public class Like extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "post_idx")
-    private Post post;
+    private Post post; // 어떻게..?
 
     @ManyToOne
     @JoinColumn(name = "user_idx")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-
-    @Builder
-    public Like(Long likeIdx, Post post, User user){
-        this.likeIdx = likeIdx;
-        this.post = post;
-        this.user = user;
-    }
-
 }

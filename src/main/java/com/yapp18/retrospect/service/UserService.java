@@ -51,7 +51,7 @@ public class UserService {
     }
 
     // userId로 회원 프로필 정보 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDto.ProfileResponse getUserProfiles(Long userIdx, Long extractedIdx) {
         return userRepository.findByUserIdx(userIdx)
                 .map(user -> mapper.userToProfileResponse(user, user.getUserIdx().equals(extractedIdx)))
@@ -84,5 +84,11 @@ public class UserService {
 
     public boolean findUserByNickname(String nickname){
         return userRepository.existsByNickname(nickname);
+    }
+
+    @Transactional(readOnly = true)
+    public User findByUserEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
     }
 }

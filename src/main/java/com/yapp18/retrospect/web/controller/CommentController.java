@@ -1,12 +1,15 @@
 package com.yapp18.retrospect.web.controller;
 
+import com.yapp18.retrospect.annotation.CurrentUser;
 import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.config.ResponseMessage;
 import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.comment.CommentRepository;
+import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.service.CommentService;
+import com.yapp18.retrospect.service.PostService;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
@@ -32,16 +35,17 @@ public class CommentController {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final CommentService commentService;
+    private final PostService postService;
     private final TokenService tokenService;
     private static final int DEFAULT_SIZE = 10;
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 작성") // api tag, 설명
     @PostMapping("")
-    public ResponseEntity<Object> inputComments(HttpServletRequest request,
+    public ResponseEntity<Object> inputComments(@CurrentUser User user,
                                                 @RequestBody CommentDto.InputRequest inputRequest) {
-        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
+        Post post = postService.findByPostIdx(inputRequest.getPostIdx());
         return new ResponseEntity<>(ApiDefaultResponse.res(201, ResponseMessage.COMMENT_SAVE.getResponseMessage(),
-                commentService.inputComments(inputRequest, userIdx)), HttpStatus.CREATED);
+                commentService.inputComments(inputRequest.toEntity(post, user))), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 상세보기") // api tag, 설명

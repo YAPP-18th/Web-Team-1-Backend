@@ -13,55 +13,24 @@ import java.util.*;
 
 @Getter
 public class UserPrincipal implements OAuth2User, UserDetails {
-    // 이 클래스는 User를 생성자로 전달받아 Spring Security에 User 정보를 전달한다.
-    // UserPrincipal 클래스는 인증된 Spring Security 주체를 나타낸다. (토큰을 통해)
-    // 인증된 사용자의 세부 정보를 포함한다.
-    private String providerId;
-    private String email;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    private final User user;
     private Map<String, Object> attributes;
-    // 여기까지 OAuth2User, UserDetails 구현체 필수, 아래는 직접 추가한것
-    private Long userIdx;
-    private String nickname;
     private boolean isNew;
 
+    public UserPrincipal(User user) {
+        this.user = user;
+    }
+
     @Builder
-    public UserPrincipal(String providerId, String email, String password, Collection<? extends GrantedAuthority> authorities, Long userIdx, String nickname, boolean isNew) {
-        this.providerId = providerId;
-        this.email = email;
-        this.password = password;
-        this.authorities = authorities;
-        this.userIdx = userIdx;
-        this.nickname = nickname;
+    public UserPrincipal(User user, Map<String, Object> attributes, boolean isNew) {
+        this.user = user;
+        this.attributes = attributes;
         this.isNew = isNew;
-    }
-
-
-    public static UserPrincipal create(User user) {
-        List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority(user.getRoleKey()));
-
-        return UserPrincipal.builder()
-                .providerId(user.getProviderId())
-                .email(user.getEmail())
-                .password(null)
-                .authorities(authorities)
-                .userIdx(user.getUserIdx())
-                .nickname(user.getNickname())
-                .build();
-    }
-
-    public static UserPrincipal create(User user, Map<String, Object> attributes, boolean isNew) {
-        UserPrincipal userPrincipal = UserPrincipal.create(user);
-        userPrincipal.setAttributes(attributes);
-        userPrincipal.setNew(isNew);
-        return userPrincipal;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return user.getEmail();
     }
 
     @Override
@@ -91,6 +60,8 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_MEMBER"));
         return authorities;
     }
 
@@ -113,6 +84,6 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public String getName() {
-        return String.valueOf(providerId);
+        return user.getProviderId();
     }
 }
