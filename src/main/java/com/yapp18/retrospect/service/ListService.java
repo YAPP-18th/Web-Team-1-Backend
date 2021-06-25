@@ -54,7 +54,7 @@ public class ListService {
 
     // 최근 읽은 글 조회
     @Transactional
-    public ApiPagingResultResponse<PostDto.ListResponse> findRecentPosts(Long userIdx, Long page, Integer pageSize) {
+    public List<PostDto.ListResponse> findRecentPosts(Long userIdx, Long page, Integer pageSize) {
         ZSetOperations<String, RecentLog> zSetOps = redisTemplate.opsForZSet();
         // 페이징 start, end 인덱스
         HashMap<String, Integer> pagingIdx = getPagingIndex(page, pageSize);
@@ -67,8 +67,7 @@ public class ListService {
                 pagingIdx.get("end"))),
                 new TypeReference<List<RecentLog>>() {
         });
-        return new ApiPagingResultResponse<>(isNextRedis(size, page, pageSize),
-                result.stream().map(x -> postMapper.postToListResponse(findPostById(x.getPostIdx()), userIdx)).collect(Collectors.toList()))
+        return result.stream().map(x -> postMapper.postToListResponse(findPostById(x.getPostIdx()), userIdx)).collect(Collectors.toList())
                 ;
 
     }
@@ -118,9 +117,6 @@ public class ListService {
 
     // 페이징 시 다음 결과 있는지 검사
     private boolean isNextRedis(long size, Long page ,Integer pageSize){
-        if (page+1 >  Math.round(size/pageSize)){
-            return false;
-        }
-        return true;
+        return page + 1 <= Math.round(size / pageSize);
     }
 }
