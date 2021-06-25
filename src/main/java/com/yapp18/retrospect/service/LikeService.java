@@ -52,8 +52,7 @@ public class LikeService {
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        Post post = postRepository.findByPostIdx(inputRequest.getPostIdx())
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
+        Post post = postRepository.findByPostIdx(inputRequest.getPostIdx());
 
         return likeRepository.save(inputRequest.toEntity(post, user)).getLikeIdx();
     }
@@ -63,8 +62,7 @@ public class LikeService {
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        Post post = postRepository.findByPostIdx(postIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
+        Post post = postRepository.findByPostIdx(postIdx);
 
         likeRepository.deleteByUserAndPost(user, post);
     }

@@ -8,6 +8,7 @@ import com.yapp18.retrospect.domain.comment.CommentRepository;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
+import com.yapp18.retrospect.mapper.CommentMapper;
 import com.yapp18.retrospect.service.CommentService;
 import com.yapp18.retrospect.service.PostService;
 import com.yapp18.retrospect.service.TokenService;
@@ -31,21 +32,21 @@ import javax.servlet.http.HttpServletRequest;
 @Api(value = "CommentController") // swagger 리소스 명시
 @RequestMapping("/api/v1/comments")
 public class CommentController {
-
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final CommentService commentService;
     private final PostService postService;
     private final TokenService tokenService;
+    private final CommentMapper commentMapper;
     private static final int DEFAULT_SIZE = 10;
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 작성") // api tag, 설명
     @PostMapping("")
     public ResponseEntity<Object> inputComments(@CurrentUser User user,
                                                 @RequestBody CommentDto.InputRequest inputRequest) {
-        Post post = postService.findByPostIdx(inputRequest.getPostIdx());
+        Comment newComment = commentMapper.toEntity(inputRequest, user, Post.builder().postIdx(inputRequest.getPostIdx()).build());
         return new ResponseEntity<>(ApiDefaultResponse.res(201, ResponseMessage.COMMENT_SAVE.getResponseMessage(),
-                commentService.inputComments(inputRequest.toEntity(post, user))), HttpStatus.CREATED);
+                commentService.inputComments(newComment)), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 상세보기") // api tag, 설명

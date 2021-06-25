@@ -60,10 +60,10 @@ public class CommentControllerTest extends AbstractControllerTest {
         //when
         mockMvc.perform(
                 post("/api/v1/comments")
-                        .content("{\"postIdx\": 1, \"comment\": \"정말 좋은 글입니다.\"}")
+                        .content("{\"postIdx\": 1, \"comments\": \"정말 좋은 글입니다.\"}")
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.responseMessage").value(ResponseMessage.COMMENT_SAVE.getResponseMessage()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").value(1L));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.commentIdx").value(1L));
     }
 }

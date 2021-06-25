@@ -34,8 +34,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentDto.BasicResponse> getCommmentsListByPostIdx(Long postIdx, Long userIdx, Pageable page){
-        Post post = postRepository.findByPostIdx(postIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL)); // 없으면 post 존재하지 않을때도 그냥 빈 배열 반환
+        Post post = postRepository.findByPostIdx(postIdx);
 
         return commentRepository.findAllByPost(post, page)
                 .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL)) // exception 안하는게 나을지도
@@ -46,8 +45,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Long getCommmentsCountByPostIdx(Long postIdx){
-        Post post = postRepository.findByPostIdx(postIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
+        Post post = postRepository.findByPostIdx(postIdx);
         return commentRepository.countCommentByPost(post);
     }
 
@@ -65,8 +63,7 @@ public class CommentService {
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        Post post = postRepository.findByPostIdx(comment.getPost().getPostIdx())
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
+        Post post = postRepository.findByPostIdx(comment.getPost().getPostIdx());
 
         return commentMapper.commentToBasicResponse(commentRepository.save(
                 comment.update(updateRequest.getComments(), post, user)

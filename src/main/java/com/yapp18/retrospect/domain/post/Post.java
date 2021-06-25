@@ -24,9 +24,7 @@ import java.util.Set;
 
 @Getter
 @Entity
-@Builder
 @DynamicUpdate // 변경된 것만 바꾸기
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="post_tb")
 //@Builder
@@ -75,6 +73,22 @@ public class Post extends BaseTimeEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
+
+    @Builder
+    public Post(Long postIdx,String title, String category, String contents,
+                User user, Template template, List<Tag> tagList, List<Like> like, List<Comment>comments, List<Image> imageList) {
+        this.postIdx = postIdx;
+        this.title = title;
+        this.category = category;
+        this.contents = contents;
+        this.user = user;
+        this.template = template;
+        this.tagList = tagList;
+        this.like = like;
+        this.comments = comments;
+        this.imageList = imageList;
+
+    }
 
     public void updatePost(PostDto.updateRequest requestDto){
         this.title = requestDto.getTitle();
