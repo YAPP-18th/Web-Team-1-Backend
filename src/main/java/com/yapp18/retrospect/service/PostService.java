@@ -175,7 +175,10 @@ public class PostService {
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         if (isWriter(post.getUser().getUserIdx(), userIdx)){
             postRepository.deleteById(postIdx);
-            if (listService.isPostsExist(userIdx, postIdx)) listService.deleteRedisPost(userIdx, postIdx); // redis 에서도 삭제
+//            if (listService.isPostsExist(userIdx, postIdx)) {
+//                // ** redis에 있는 모든...어쩌구....
+//                listService.deleteRedisPost(userIdx, postIdx); // redis 에서도 삭제
+//            }
             return true;
         }
         return false;
