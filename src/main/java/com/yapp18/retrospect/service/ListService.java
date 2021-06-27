@@ -65,10 +65,12 @@ public class ListService {
         List<RecentLog> recentLogList = result.stream().filter(x -> postRepository.findById(x.getPostIdx()).isPresent()).collect(Collectors.toList());
 
         System.out.println("시작"+ pagingIdx.get("start") + " 끝 "+ pagingIdx.get("end"));
-        return recentLogList.stream()
+        List<PostDto.ListResponse> test =  recentLogList.stream()
                 .skip(pagingIdx.get("start"))
-                .limit(pagingIdx.get("end")+1)
+                .limit(pageSize)
                 .map(x -> postMapper.postToListResponse(findPostById(x.getPostIdx()), userIdx)).collect(Collectors.toList());
+        System.out.println("최종 결과 값 목록 수"+test.size());
+        return test;
 
 
     }
