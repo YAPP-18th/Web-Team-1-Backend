@@ -57,20 +57,18 @@ public class ListService {
         // 페이징 start, end 인덱스
         System.out.println("테스트 ->>>"+ zSetOps.getOperations());
         HashMap<String, Integer> pagingIdx = getPagingIndex(page, pageSize);
-        System.out.println("시작"+ pagingIdx.get("start") + " 끝 "+ pagingIdx.get("end"));
         // linkedHashMap 으로 저장된 redis 값들을 List로 변환해줌
-//        long size = zSetOps.size(setKey(userIdx));
+//        long size = zSetOps.size(setKey(userIdx)); pagingIdx.get("start"), pagingIdx.get("end")
         ObjectMapper objectMapper = new ObjectMapper();
-        List<RecentLog> result = objectMapper.convertValue(Objects.requireNonNull(zSetOps.reverseRange(setKey(userIdx),
-                pagingIdx.get("start"),
-                pagingIdx.get("end"))),
-                new TypeReference<List<RecentLog>>() {
-        });
-
+        List<RecentLog> result = objectMapper.convertValue(Objects.requireNonNull(zSetOps.reverseRange(setKey(userIdx), 0,-1)), new TypeReference<List<RecentLog>>() {});
         // if post가 존재하는 경우만 filter
-        List<RecentLog> recentLogList = result.stream().filter(x -> postRepository.findById(x.getPostIdx()).isPresent())
-                .collect(Collectors.toList());
-        return recentLogList.stream().map(x -> postMapper.postToListResponse(findPostById(x.getPostIdx()), userIdx)).collect(Collectors.toList());
+        List<RecentLog> recentLogList = result.stream().filter(x -> postRepository.findById(x.getPostIdx()).isPresent()).collect(Collectors.toList());
+
+        System.out.println("시작"+ pagingIdx.get("start") + " 끝 "+ pagingIdx.get("end"));
+        return recentLogList.stream()
+                .skip(pagingIdx.get("start"))
+                .limit(pagingIdx.get("end")+1)
+                .map(x -> postMapper.postToListResponse(findPostById(x.getPostIdx()), userIdx)).collect(Collectors.toList());
 
 
     }
