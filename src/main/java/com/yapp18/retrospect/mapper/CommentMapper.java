@@ -15,6 +15,9 @@ public interface CommentMapper extends GenericMapper<Comment, CommentDto>{
     @Override
     @Mapping(target = "userIdx", expression = "java(comment.getUser().getUserIdx())")
     @Mapping(target = "nickname", expression = "java(comment.getUser().getNickname())")
+    @Mapping(target = "profile", expression = "java(comment.getUser().getProfile())")
+    @Mapping(target = "createdAt", expression = "java(comment.getCreatedAt())")
+    @Mapping(target = "modifiedAt", expression = "java(comment.getModifiedAt())")
     CommentDto.BasicResponse toDto(Comment comment);
 
     @Mapping(target = "writer", expression = "java(comment.isWriter(user))")
@@ -24,6 +27,14 @@ public interface CommentMapper extends GenericMapper<Comment, CommentDto>{
     @Mapping(target = "createdAt", expression = "java(comment.getCreatedAt())")
     @Mapping(target = "modifiedAt", expression = "java(comment.getModifiedAt())")
     CommentDto.ListResponse toDto(Comment comment, User user);
+
+    @Override
+    @Mapping(target = "commentIdx", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "post", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
+    Comment toEntity(CommentDto dto);
 
     @Mapping(target = "commentIdx", ignore = true)
     @Mapping(target = "comments", expression = "java(inputRequest.getComments())")

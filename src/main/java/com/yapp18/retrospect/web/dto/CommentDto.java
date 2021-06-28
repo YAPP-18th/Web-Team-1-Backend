@@ -75,6 +75,9 @@ public class CommentDto {
         @ApiModelProperty(value = "작성자 닉네임")
         private String nickname;
 
+        @ApiModelProperty(value = "작성자 프로필 사진")
+        private String profile;
+
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "en_GB")
         @ApiModelProperty(value = "생성날짜")
         private LocalDateTime createdAt;

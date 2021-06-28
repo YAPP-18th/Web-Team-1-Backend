@@ -25,9 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final CommentMapper commentMapper;
 
     @Transactional
     public Comment inputComments(Comment comment){
@@ -50,9 +48,8 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public CommentDto.BasicResponse getCommmentsByIdx(Long commentIdx){
+    public Comment getCommmentsByIdx(Long commentIdx){
         return commentRepository.findById(commentIdx)
-                .map(commentMapper::toDto)
                 .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL));
     }
 

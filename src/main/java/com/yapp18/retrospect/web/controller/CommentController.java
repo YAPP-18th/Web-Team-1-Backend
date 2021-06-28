@@ -34,11 +34,7 @@ import java.util.stream.Collectors;
 @Api(value = "CommentController") // swagger 리소스 명시
 @RequestMapping("/api/v1/comments")
 public class CommentController {
-    private final UserRepository userRepository;
-    private final CommentRepository commentRepository;
     private final CommentService commentService;
-    private final PostService postService;
-    private final TokenService tokenService;
     private final CommentMapper commentMapper;
     private static final int DEFAULT_SIZE = 10;
 
@@ -57,15 +53,17 @@ public class CommentController {
         );
     }
 
-    @ApiOperation(value = "comment", notes = "[댓글] 댓글 상세보기") // api tag, 설명
+    @ApiOperation(value = "comment", notes = "[댓글] 댓글 상세보기")
     @GetMapping("/{commentIdx}")
     public ResponseEntity<Object> getCommentsById(@ApiParam(value = "상세보기 comment_idx", required = true, example = "3")
                                                    @PathVariable(value = "commentIdx") Long commentIdx) {
-        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_DETAIL.getResponseMessage(),
-                commentService.getCommmentsByIdx(commentIdx)), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiDefaultResponse.res(200, ResponseMessage.COMMENT_DETAIL.getResponseMessage(),
+                        commentMapper.toDto(commentService.getCommmentsByIdx(commentIdx)))
+        );
     }
 
-    @ApiOperation(value = "comment", notes = "[댓글] 댓글 수정") // api tag, 설명
+    @ApiOperation(value = "comment", notes = "[댓글] 댓글 수정")
     @PatchMapping("/{commentIdx}")
     public ResponseEntity<Object> updateComments(@CurrentUser User user,
                                                  @RequestBody CommentDto updateRequest,
@@ -79,7 +77,7 @@ public class CommentController {
         );
     }
 
-    @ApiOperation(value = "comment", notes = "[댓글] 댓글 삭제") // api tag, 설명
+    @ApiOperation(value = "comment", notes = "[댓글] 댓글 삭제")
     @DeleteMapping("/{commentIdx}")
     public ResponseEntity<Object> deleteComments(@CurrentUser User user,
                                                  @ApiParam(value = "삭제 comment_idx", required = true, example = "3")
@@ -91,7 +89,7 @@ public class CommentController {
         );
     }
 
-    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 목록 조회") // api tag, 설명
+    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 목록 조회")
     @GetMapping("/lists")
     public ResponseEntity<Object> getCommentsByPostIdx(@CurrentUser User user,
                                                        @ApiParam(value = "회고글 post_idx", required = true, example = "20")
@@ -112,12 +110,14 @@ public class CommentController {
         );
     }
 
-    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 갯수 조회") // api tag, 설명
+    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 갯수 조회")
     @GetMapping("/lists/count")
-    public ResponseEntity<Object> getCountByPostIdx(HttpServletRequest request,
-                                                       @ApiParam(value = "회고글 post_idx", required = true, example = "20")
-                                                       @RequestParam(value = "postIdx") Long postIdx) {
-        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
-                commentService.getCommmentsCountByPostIdx(postIdx)), HttpStatus.OK);
+    public ResponseEntity<Object> getCountByPostIdx(@ApiParam(value = "회고글 post_idx", required = true, example = "20")
+                                                        @RequestParam(value = "postIdx") Long postIdx) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiDefaultResponse.res(200,
+                        ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
+                        commentService.getCommmentsCountByPostIdx(postIdx))
+        );
     }
 }
