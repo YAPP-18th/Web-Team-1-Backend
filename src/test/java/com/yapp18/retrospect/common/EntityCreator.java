@@ -7,6 +7,8 @@ import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.security.oauth2.AuthProvider;
 
+import java.time.LocalDateTime;
+
 public class EntityCreator {
     private static final Long USER_IDX = 1L;
     private static final Long POST_IDX = 1L;
@@ -14,7 +16,7 @@ public class EntityCreator {
     private static final Long TEMPLATE_IDX = 1L;
 
     public static User createUserEntity(){
-        return User.builder()
+        User user = User.builder()
                 .userIdx(USER_IDX)
                 .email("test@example.com")
                 .name("테스트이름")
@@ -26,10 +28,15 @@ public class EntityCreator {
                 .job("테스트직업")
                 .intro("테스트자기소개")
                 .build();
+
+        user.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+        user.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 1, 0));
+
+        return user;
     }
 
     public static Post createPostEntity(){
-        return Post.builder()
+        Post post =  Post.builder()
                 .postIdx(POST_IDX)
                 .title("회고글제목")
                 .category("카테고리")
@@ -37,22 +44,37 @@ public class EntityCreator {
                 .user(createUserEntity())
                 .template(createTemplateEntity())
                 .build();
+
+        post.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+        post.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+
+        return post;
     }
 
     public static Template createTemplateEntity(){
-        return Template.builder()
+        Template template = Template.builder()
                 .templateIdx(TEMPLATE_IDX)
                 .templateName("템플릿이름")
                 .template("템플릿내용")
                 .build();
+
+        template.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+        template.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+
+        return template;
     }
 
     public static Comment createCommentEntity(){
-        return Comment.builder()
+        Comment comment = Comment.builder()
                 .commentIdx(COMMENT_IDX)
                 .post(createPostEntity())
                 .user(createUserEntity())
                 .comments("댓글내용")
                 .build();
+
+        comment.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+        comment.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+
+        return comment;
     }
 }
