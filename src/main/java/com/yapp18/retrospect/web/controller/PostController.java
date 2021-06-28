@@ -47,7 +47,7 @@ public class PostController {
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
         return new ResponseEntity<>(ApiDefaultResponse.res(200,ResponseMessage.POST_FIND_VIEW.getResponseMessage(),
-                postService.getPostsListView(page, PageRequest.of(0,pageSize), userIdx)), HttpStatus.OK);
+                postService.getPostsListView(page, PageRequest.of(0, pageSize), userIdx)), HttpStatus.OK);
     }
 
     @ApiOperation(value = "main", notes = "[프로필] 유저 회고글 목록 조회, 생성일자순")

@@ -36,14 +36,11 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto.ListResponse> getCommmentsListByPostIdx(Long postIdx, Long userIdx, Pageable page){
-        Post post = postRepository.findByPostIdx(postIdx);
+    public List<Comment> getCommmentsListByPostIdx(Long postIdx, Pageable page){
+        Post post = postRepository.findById(postIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
 
-        return commentRepository.findAllByPost(post, page)
-                .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL)) // exception 안하는게 나을지도
-                .stream()
-                .map(comment -> commentMapper.toDto(comment, isWriter(comment.getUser().getUserIdx(), userIdx)))
-                .collect(Collectors.toList());
+        return commentRepository.findAllByPost(post, page);
     }
 
     @Transactional(readOnly = true)
@@ -78,8 +75,8 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComments(User user, Long userIdx){
-        Comment comment = commentRepository.findById(userIdx)
+    public void deleteComments(User user, Long commentIdx){
+        Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
 
         if(!comment.isWriter(user)){
@@ -87,12 +84,5 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
-    }
-
-
-    // 작성자 판별
-    private boolean isWriter(Long commentUserIdx, Long userIdx){
-        if (userIdx == 0L) return false;
-        return commentUserIdx.equals(userIdx);
     }
 }

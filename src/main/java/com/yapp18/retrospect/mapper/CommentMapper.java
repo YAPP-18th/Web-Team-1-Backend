@@ -17,18 +17,27 @@ public interface CommentMapper extends GenericMapper<Comment, CommentDto>{
     @Mapping(target = "nickname", expression = "java(comment.getUser().getNickname())")
     CommentDto.BasicResponse toDto(Comment comment);
 
-    @Mapping(source = "isWriter", target = "writer")
-    CommentDto.ListResponse toDto(Comment comment, boolean isWriter);
+    @Mapping(target = "writer", expression = "java(comment.isWriter(user))")
+    @Mapping(target = "userIdx", expression = "java(comment.getUser().getUserIdx())")
+    @Mapping(target = "nickname", expression = "java(comment.getUser().getNickname())")
+    @Mapping(target = "profile", expression = "java(comment.getUser().getProfile())")
+    @Mapping(target = "createdAt", expression = "java(comment.getCreatedAt())")
+    @Mapping(target = "modifiedAt", expression = "java(comment.getModifiedAt())")
+    CommentDto.ListResponse toDto(Comment comment, User user);
 
     @Mapping(target = "commentIdx", ignore = true)
     @Mapping(target = "comments", expression = "java(inputRequest.getComments())")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "post", source = "post")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
     Comment toEntity(CommentDto.InputRequest inputRequest, User user, Post post);
 
     @Mapping(target = "commentIdx", source = "commentIdx")
     @Mapping(target = "comments", expression = "java(commentDto.getComments())")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "post", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
     Comment toEntity(CommentDto commentDto, User user, Long commentIdx);
 }

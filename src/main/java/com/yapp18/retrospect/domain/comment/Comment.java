@@ -39,6 +39,7 @@ public class Comment extends BaseTimeEntity {
     }
 
     public boolean isWriter(User user){
-        return this.user.getUserIdx() == user.getUserIdx();
+        if (user == null) return false;
+        return this.user.getUserIdx().equals(user.getUserIdx());
     }
 }

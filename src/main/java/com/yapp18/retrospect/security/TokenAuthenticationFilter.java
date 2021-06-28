@@ -60,13 +60,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        List<String> ignoreUrls = new ArrayList<>();
-        ignoreUrls.addAll(appProperties.getValues().getAllUrls().get("ALL"));
-        ignoreUrls.addAll(appProperties.getValues().getAllUrls().get(request.getMethod()));
-        ignoreUrls.addAll(appProperties.getValues().getAnonymousUrls().get("ALL"));
-        ignoreUrls.addAll(appProperties.getValues().getAnonymousUrls().get(request.getMethod()));
-        return ignoreUrls != null && ignoreUrls.stream().anyMatch(p -> pathMatcher.match(p, request.getRequestURI()));
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        List<String> ignoreUrls = new ArrayList<>();
+//        ignoreUrls.addAll(appProperties.getValues().getAllUrls().get("ALL"));
+//        ignoreUrls.addAll(appProperties.getValues().getAllUrls().get(request.getMethod()));
+//        ignoreUrls.addAll(appProperties.getValues().getAnonymousUrls().get("ALL"));
+//        ignoreUrls.addAll(appProperties.getValues().getAnonymousUrls().get(request.getMethod()));
+//        return ignoreUrls != null && ignoreUrls.stream().anyMatch(p -> pathMatcher.match(p, request.getRequestURI()));
+//    }
 }

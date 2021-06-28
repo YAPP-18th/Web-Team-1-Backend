@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    Optional<List<Comment>> findAllByPost(Post post, Pageable page);
+    List<Comment> findAllByPost(Post post, Pageable page);
 
 //    @Query(value = "SELECT * FROM comment_tb  WHERE (comment_tb.post_idx =:postIdx) " +
 //            "ORDER BY comment_tb.created_at", nativeQuery = true)

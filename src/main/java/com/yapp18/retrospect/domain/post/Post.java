@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 
-@Getter
+@Getter @Setter
 @Entity
 @DynamicUpdate // 변경된 것만 바꾸기
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -87,7 +87,6 @@ public class Post extends BaseTimeEntity {
         this.like = like;
         this.comments = comments;
         this.imageList = imageList;
-
     }
 
     public void updatePost(PostDto.updateRequest requestDto){

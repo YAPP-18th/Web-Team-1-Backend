@@ -26,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -91,15 +93,23 @@ public class CommentController {
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 목록 조회") // api tag, 설명
     @GetMapping("/lists")
-    public ResponseEntity<Object> getCommentsByPostIdx(HttpServletRequest request,
+    public ResponseEntity<Object> getCommentsByPostIdx(@CurrentUser User user,
                                                        @ApiParam(value = "회고글 post_idx", required = true, example = "20")
                                                        @RequestParam(value = "postIdx") Long postIdx,
                                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                        @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize) {
         if (pageSize == null) pageSize = DEFAULT_SIZE;
-        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
-                commentService.getCommmentsListByPostIdx(postIdx, userIdx, PageRequest.of(page, pageSize))), HttpStatus.OK);
+
+        List<CommentDto.ListResponse> result = commentService.getCommmentsListByPostIdx(postIdx, PageRequest.of(page, pageSize))
+                .stream()
+                .map(comment -> commentMapper.toDto(comment, user))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiDefaultResponse.res(200,
+                        ResponseMessage.COMMENT_FIND_POSTIDX.getResponseMessage(),
+                        result)
+        );
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 갯수 조회") // api tag, 설명
