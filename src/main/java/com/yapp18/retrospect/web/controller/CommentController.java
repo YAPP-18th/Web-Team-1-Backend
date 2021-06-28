@@ -40,13 +40,19 @@ public class CommentController {
     private final CommentMapper commentMapper;
     private static final int DEFAULT_SIZE = 10;
 
-    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 작성") // api tag, 설명
+    @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 작성")
     @PostMapping("")
+    // 시큐리티에서 제공하는 @AuthenticationPrincipal을 이용하여 인증된 사용자 정보를 가져오는 @CurrentUser 애노테이션
     public ResponseEntity<Object> inputComments(@CurrentUser User user,
                                                 @RequestBody CommentDto.InputRequest inputRequest) {
+        //쿼리를 통해 post 엔티티를 가져오는 대신, RequestDto에 들어있는 postIdx로 엔티티를 생성해준다
+        //dtoToEntity mapstruct 활용할 것
         Comment newComment = commentMapper.toEntity(inputRequest, user, Post.builder().postIdx(inputRequest.getPostIdx()).build());
-        return new ResponseEntity<>(ApiDefaultResponse.res(201, ResponseMessage.COMMENT_SAVE.getResponseMessage(),
-                commentService.inputComments(newComment)), HttpStatus.CREATED);
+        //기존 return new ResponseEntity<> 대신 빌더 패턴을 사용하는게 가독성에 더 좋아보임
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiDefaultResponse.res(201, ResponseMessage.COMMENT_SAVE.getResponseMessage(),
+                commentMapper.toDto(commentService.inputComments(newComment)))
+        );
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 상세보기") // api tag, 설명
@@ -59,15 +65,16 @@ public class CommentController {
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 수정") // api tag, 설명
     @PatchMapping("/{commentIdx}")
-    public ResponseEntity<Object> updateComments(HttpServletRequest request,
-                                                 @RequestBody CommentDto.UpdateRequest updateRequest,
+    public ResponseEntity<Object> updateComments(@CurrentUser User user,
+                                                 @RequestBody CommentDto updateRequest,
                                                  @ApiParam(value = "수정 comment_idx", required = true, example = "3")
                                                      @PathVariable(value = "commentIdx") Long commentIdx) {
-        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
-        Comment comment = commentRepository.findById(commentIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
-        return new ResponseEntity<>(ApiDefaultResponse.res(201, ResponseMessage.COMMENT_UPDATE.getResponseMessage(),
-                commentService.updateCommentsByIdx(updateRequest, comment, userIdx)), HttpStatus.CREATED);
+        Comment newComment = commentMapper.toEntity(updateRequest, user, commentIdx);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiDefaultResponse.res(201,
+                        ResponseMessage.COMMENT_UPDATE.getResponseMessage(),
+                        commentMapper.toDto(commentService.updateComments(newComment)))
+        );
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 삭제") // api tag, 설명

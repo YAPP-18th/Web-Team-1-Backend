@@ -34,11 +34,7 @@ public class Comment extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    public Comment update(String comments, Post post, User user) {
-        this.comments = comments;
-        this.post = post;
-        this.user = user;
-
-        return this;
+    public void update(Comment newComment) {
+        this.comments = newComment.comments;
     }
 }

@@ -29,17 +29,18 @@ public class CommentService {
 
     @Transactional
     public Comment inputComments(Comment comment){
+        //타 서비스 의존성을 제거와 코드 가독성을 위해 Entity 외의 메서드 parameter는 최소화 할 것
         return commentRepository.save(comment);
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto.BasicResponse> getCommmentsListByPostIdx(Long postIdx, Long userIdx, Pageable page){
+    public List<CommentDto.ListResponse> getCommmentsListByPostIdx(Long postIdx, Long userIdx, Pageable page){
         Post post = postRepository.findByPostIdx(postIdx);
 
         return commentRepository.findAllByPost(post, page)
                 .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL)) // exception 안하는게 나을지도
                 .stream()
-                .map(comment -> commentMapper.commentToBasicResponse(comment, isWriter(comment.getUser().getUserIdx(), userIdx)))
+                .map(comment -> commentMapper.toDto(comment, isWriter(comment.getUser().getUserIdx(), userIdx)))
                 .collect(Collectors.toList());
     }
 
@@ -52,23 +53,22 @@ public class CommentService {
     @Transactional(readOnly = true)
     public CommentDto.BasicResponse getCommmentsByIdx(Long commentIdx){
         return commentRepository.findById(commentIdx)
-                .map(commentMapper::commentToBasicResponse)
+                .map(commentMapper::toDto)
                 .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL));
     }
 
 
     @Transactional
-    @PreAuthorize("#comment.user.userIdx == #userIdx")
-    public CommentDto.BasicResponse updateCommentsByIdx(CommentDto.UpdateRequest updateRequest, Comment comment, Long userIdx){
-        User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+//    @PreAuthorize("#oldComment.user.userIdx == #user.userIdx")
+    public Comment updateComments(Comment newComment){
+        Long commentIdx = newComment.getCommentIdx();
 
-        Post post = postRepository.findByPostIdx(comment.getPost().getPostIdx());
+        Comment oldComment = commentRepository.findById(commentIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
 
-        return commentMapper.commentToBasicResponse(commentRepository.save(
-                comment.update(updateRequest.getComments(), post, user)
-                )
-        );
+        oldComment.update(newComment);
+
+        return commentRepository.save(oldComment);
     }
 
     @Transactional
