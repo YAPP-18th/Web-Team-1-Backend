@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.config.ErrorInfo;
+import com.yapp18.retrospect.config.TokenErrorInfo;
 import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.comment.CommentRepository;
 import com.yapp18.retrospect.domain.post.Post;
@@ -12,6 +13,7 @@ import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.CommentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +67,10 @@ public class CommentService {
 
         Comment oldComment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
+
+        if(!oldComment.isWriter(newComment.getUser())){
+            throw new AccessDeniedException(TokenErrorInfo.ACCESS_DENIED.getMessage());
+        }
 
         oldComment.update(newComment);
 

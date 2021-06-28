@@ -37,4 +37,8 @@ public class Comment extends BaseTimeEntity {
     public void update(Comment newComment) {
         this.comments = newComment.comments;
     }
+
+    public boolean isWriter(User user){
+        return this.user.getUserIdx() == user.getUserIdx();
+    }
 }
