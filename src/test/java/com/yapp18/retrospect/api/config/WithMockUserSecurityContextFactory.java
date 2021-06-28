@@ -18,15 +18,15 @@ public class WithMockUserSecurityContextFactory implements WithSecurityContextFa
 
         UserPrincipal userPrincipal =
                 new UserPrincipal(User.builder()
-                        .email("ybell1028@daum.net")
-                        .name("real-name")
-                        .nickname("Walkman")
+                        .email("test@example.com")
+                        .name("테스트이름")
+                        .nickname("테스트닉네임")
                         .profile("profile-url")
                         .provider(AuthProvider.kakao)
                         .providerId("12345")
                         .role(Role.MEMBER)
-                        .job("job")
-                        .intro("intro")
+                        .job("테스트직업")
+                        .intro("테스트자기소개")
                         .build());
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(userPrincipal, "password", userPrincipal.getAuthorities());

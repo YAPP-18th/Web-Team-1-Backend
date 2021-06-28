@@ -78,10 +78,14 @@ public class CommentService {
     }
 
     @Transactional
-    @PreAuthorize("#comment.user.userIdx == #userIdx")
-    public void deleteComments(Comment comment, Long userIdx){
-        System.out.println(comment.getUser().getUserIdx());
-        System.out.println(userIdx);
+    public void deleteComments(User user, Long userIdx){
+        Comment comment = commentRepository.findById(userIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
+
+        if(!comment.isWriter(user)){
+            throw new AccessDeniedException(TokenErrorInfo.ACCESS_DENIED.getMessage());
+        }
+
         commentRepository.delete(comment);
     }
 

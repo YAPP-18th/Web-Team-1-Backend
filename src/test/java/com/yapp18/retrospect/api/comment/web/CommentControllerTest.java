@@ -53,7 +53,8 @@ public class CommentControllerTest extends AbstractControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.responseMessage").value(ResponseMessage.COMMENT_SAVE.getResponseMessage()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.commentIdx").value(1L));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.commentIdx").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.nickname").value("테스트닉네임"));
     }
 
     @Test

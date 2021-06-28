@@ -79,14 +79,14 @@ public class CommentController {
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 삭제") // api tag, 설명
     @DeleteMapping("/{commentIdx}")
-    public ResponseEntity<Object> deleteComments(HttpServletRequest request,
-                                                 @ApiParam(value = "수정 comment_idx", required = true, example = "3")
+    public ResponseEntity<Object> deleteComments(@CurrentUser User user,
+                                                 @ApiParam(value = "삭제 comment_idx", required = true, example = "3")
                                                  @PathVariable(value = "commentIdx") Long commentIdx) {
-        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
-        Comment comment = commentRepository.findById(commentIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
-        commentService.deleteComments(comment, userIdx);
-        return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.COMMENT_DELETE.getResponseMessage(), commentIdx), HttpStatus.OK);
+        commentService.deleteComments(user, commentIdx);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+                ApiDefaultResponse.res(204,
+                        ResponseMessage.COMMENT_DELETE.getResponseMessage())
+        );
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 목록 조회") // api tag, 설명

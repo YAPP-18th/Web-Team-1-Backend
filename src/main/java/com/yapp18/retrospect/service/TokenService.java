@@ -34,19 +34,15 @@ public class TokenService {
     private final AppProperties appProperties;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public String getTokenFromRequest(HttpServletRequest request){
+    public String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken)){
-            if(bearerToken.startsWith("Bearer ")) {
-                bearerToken = bearerToken.substring(7);
-                if(validateAccessToken(request, bearerToken, appProperties.getAuth().getAccessTokenSecret())){
-                    return bearerToken;
-                }
-            } else {
-                request.setAttribute("errorCode", TokenErrorInfo.ILLEGAL_GRANTTYPE.getCode());
+        if (bearerToken.startsWith("Bearer ")) {
+            bearerToken = bearerToken.substring(7);
+            if (validateAccessToken(request, bearerToken, appProperties.getAuth().getAccessTokenSecret())) {
+                return bearerToken;
             }
         } else {
-            request.setAttribute("errorCode", TokenErrorInfo.ILLEGAL_ARGUMENT_ACCESS.getCode());
+            request.setAttribute("errorCode", TokenErrorInfo.ILLEGAL_GRANTTYPE.getCode());
         }
         return null;
     }

@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.security;
 
 import com.yapp18.retrospect.config.AppProperties;
+import com.yapp18.retrospect.config.TokenErrorInfo;
 import com.yapp18.retrospect.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         //그리고 요청이 정상적으로 Controller 까지 도착했다면 SecurityContext 에 Member ID 가 존재한다는 것이 보장됩니다.
         try {
             if(request.getHeader("Authorization") == null){
+                request.setAttribute("errorCode", TokenErrorInfo.ILLEGAL_ARGUMENT_ACCESS.getCode());
             } else {
                 String jwt = tokenService.getTokenFromRequest(request);
                 String secret = appProperties.getAuth().getAccessTokenSecret();

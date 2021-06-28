@@ -16,7 +16,7 @@ public class EntityCreator {
     public static User createUserEntity(){
         return User.builder()
                 .userIdx(USER_IDX)
-                .email("test@example.net")
+                .email("test@example.com")
                 .name("테스트이름")
                 .nickname("테스트닉네임")
                 .profile("profile-url")
