@@ -9,6 +9,7 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.CommentMapper;
 import com.yapp18.retrospect.web.advice.EntityNullException;
+import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.CommentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -39,15 +40,20 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto.BasicResponse> getCommmentsListByPostIdx(Long postIdx, Long userIdx, Pageable page){
+    public ApiPagingResultResponse<CommentDto.BasicResponse> getCommmentsListByPostIdx(Long postIdx, Long cursorIdx, Long userIdx, Pageable page){
         Post post = postRepository.findByPostIdx(postIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL)); // 없으면 post 존재하지 않을때도 그냥 빈 배열 반환
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
 
-        return commentRepository.findAllByPost(post, page)
-                .orElseThrow(() ->  new EntityNullException(ErrorInfo.COMMENT_NULL)) // exception 안하는게 나을지도
-                .stream()
+        List<Comment> result = cursorIdx == 0 ?
+                commentRepository.findAllByPost(post, page) :
+                commentRepository.cursorFindAllByPost(cursorIdx, postIdx, page);
+
+        Long lastIdx = result.isEmpty() ? null : result.get(result.size() - 1).getCommentIdx();
+
+        return new ApiPagingResultResponse(isNext(post, lastIdx),
+                result.stream()
                 .map(comment -> commentMapper.commentToBasicResponse(comment, isWriter(comment.getUser().getUserIdx(), userIdx)))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Transactional(readOnly = true)
@@ -93,5 +99,11 @@ public class CommentService {
     private boolean isWriter(Long commentUserIdx, Long userIdx){
         if (userIdx == 0L) return false;
         return commentUserIdx.equals(userIdx);
+    }
+
+    // 다음 페이지 여부 확인
+    public boolean isNext(Post post, Long cursorId){
+        if (cursorId == null) return false;
+        return commentRepository.existsByCommentIdxGreaterThanAndPost(cursorId, post);
     }
 }
