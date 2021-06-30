@@ -4,7 +4,7 @@ spring:
   config:
     use-legacy-processing: true
   profiles:
-    include: test, oauth # real로 바꾸면 rds와 연결
+    include: oauth, real, aws # real로 바꾸면 rds와 연결
 server:
   port: 8081
   servlet:

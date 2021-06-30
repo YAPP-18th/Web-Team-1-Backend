@@ -1,16 +1,23 @@
 package com.yapp18.retrospect.domain.user;
 
+import com.sun.istack.NotNull;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
+import com.yapp18.retrospect.security.oauth2.AuthProvider;
+
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Table(name="user_tb")
+// 기본 생성자 접근을 protected으로 변경하면 외부에서 해당 생성자를 접근 할 수 없으므로 Builder를 통해서만 객체 생성 가능하므로 안전성 보장
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +30,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String nickname;
 
     private String profile;
@@ -32,19 +39,26 @@ public class User extends BaseTimeEntity {
 
     private String intro;
 
-    @Column(length = 20, nullable = false)
-    private String provider;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
 
-    @Column(nullable = false)
+    @Column(name = "provider_id", nullable = false)
     private String providerId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
+//    @OneToMany(mappedBy = "user")
+//    private final List<Like> like = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "user")
+//    private final List<Comment> comments = new ArrayList<>();
+
     @Builder
     public User(Role role, String name, String nickname, String intro, String email,
-                String profile, String provider, String providerId, String job) {
+                String profile, AuthProvider provider, String providerId, String job) {
         this.role = role;
         this.name = name;
         this.nickname = nickname;
@@ -56,9 +70,17 @@ public class User extends BaseTimeEntity {
         this.job = job;
     }
 
-    public User update(String name, String profile){
+    public User updateNickname(String nickname){
+        this.nickname = nickname;
+        return this;
+    }
+
+    public User updateProfile(String profile, String name, String nickname, String job, String intro){
         this.name = name;
         this.profile = profile;
+        this.nickname = nickname;
+        this.job = job;
+        this.intro = intro;
         return this;
     }
 

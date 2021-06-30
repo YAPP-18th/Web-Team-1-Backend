@@ -1,69 +1,139 @@
 package com.yapp18.retrospect.domain.post;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.yapp18.retrospect.domain.comment.QComment;
-import com.yapp18.retrospect.domain.like.QLike;
-import com.yapp18.retrospect.domain.tag.QTag;
-import com.yapp18.retrospect.domain.user.QUser;
-import com.yapp18.retrospect.web.dto.PostDto;
-import com.yapp18.retrospect.web.dto.QPostDto_ListResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
-
-import java.awt.print.Pageable;
 import java.util.List;
 
-@RequiredArgsConstructor
+
 @Repository
-public class PostQueryRepository {
+public class PostQueryRepository extends QuerydslRepositorySupport{
 
     private final JPAQueryFactory queryFactory;
 
-    public List<PostDto.ListResponse> findByPostIdx(Long cursorId, Integer pageSize){
-        QPost post = QPost.post;
-        QUser user = QUser.user;
-        QTag tag = QTag.tag1;
-        QComment comment = QComment.comment1;
-        QLike like = QLike.like;
 
-        return queryFactory
-                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
-                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post)
-                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
-                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
-                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.postIdx.lt(cursorId)) // 최초 id 이하의 값
-                .orderBy(post.postIdx.desc()) // 조회순으로 바꿔야함.
-                .limit(pageSize)
-                .groupBy(post, user, tag, comment, like)
+    public PostQueryRepository(JPAQueryFactory queryFactory) {
+        super(Post.class);
+        this.queryFactory = queryFactory;
+    }
+
+    // 해시태그로 검색
+    public List<Post> findAllByHashTag(String hashtag,Pageable page){
+        QPost post = QPost.post;
+
+        return queryFactory.select(post)
+                .from(post).where(post.tagList.any().tag.eq(hashtag))
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .orderBy(post.createdAt.desc())
                 .fetch();
     }
 
-    // 누적 조회수
-    public List<PostDto.ListResponse> findByPostIdxOrderByViewDesc(Long cursorId, Integer pageSize){
+    public List<Post> findCursorIdByHashTag(Long cursorId,Pageable page,String hashtag){
         QPost post = QPost.post;
-        QUser user = QUser.user;
-        QTag tag = QTag.tag1;
-        QComment comment = QComment.comment1;
-        QLike like = QLike.like;
 
-        return queryFactory
-                .select(new QPostDto_ListResponse(post.postIdx, post.title, post.category, post.contents,
-                        user.nickname, user.profile, tag.tag, post.created_at, post.view,
-                        comment.post.postIdx.count().as("commentCnt"), like.post.postIdx.count().as("scrapCnt")))
-                .from(post)
-                .leftJoin(user).on(post.user.userIdx.eq(user.userIdx))
-                .leftJoin(tag).on(post.postIdx.eq(tag.post.postIdx))
-                .leftJoin(comment).on(post.postIdx.eq(comment.post.postIdx))
-                .leftJoin(like).on(post.postIdx.eq(like.post.postIdx))
-                .where(post.postIdx.lt(cursorId))
-                .orderBy(post.view.desc())  // viewCount 순서대로
-                .limit(pageSize)
-                .groupBy(post, user, tag, comment, like)
+        return queryFactory.select(post)
+                .from(post).where(post.tagList.any().tag.eq(hashtag).and(post.postIdx.lt(cursorId)))
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .orderBy(post.createdAt.desc(), post.postIdx.desc())
                 .fetch();
     }
+
+
+    public List<Post> FirstSearch(String type,String query,String keyword,Pageable page){
+        QPost post = QPost.post;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 일반 검색 = 상세검색이 없고 category 이외의 type 검색.
+        if (query == null && !type.equals("category")){
+            if (type.equals("title")) builder.and(post.title.contains(keyword));
+            if (type.equals("contents")) builder.and(post.contents.contains(keyword));
+            if (type.equals("all")) builder.and(post.title.contains(keyword).or(post.contents.contains(keyword)));
+        }
+
+        // category 상세검색
+        if (query != null && !type.equals("category")){
+            if (type.equals("title")) builder.and(post.title.contains(keyword).and(post.category.in(query)));
+            if (type.equals("contents")) builder.and(post.contents.contains(keyword)).and(post.category.in(query));
+            if (type.equals("all")) builder.and(post.title.contains(keyword).or(post.contents.contains(keyword)).and(post.category.in(query)));
+        }
+
+        return queryFactory.select(post)
+                .from(post).where(builder)
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .orderBy(post.createdAt.desc())
+                .fetch();
+    }
+
+    public List<Post> Search(String type,String query,String keyword,Pageable page, Long cursorId){
+        QPost post = QPost.post;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 일반 검색 = 상세검색이 없고 category 이외의 type 으로 검색.
+        if (query == null && !type.equals("category")){
+            if (type.equals("title")) builder.and(post.title.contains(keyword));
+            if (type.equals("contents")) builder.and(post.contents.contains(keyword));
+            if (type.equals("all")) builder.and(post.title.contains(keyword).or(post.contents.contains(keyword)));
+        }
+
+        // 카테고리까지 상세검색
+        if (query != null && !type.equals("category")){
+            if (type.equals("title")) builder.and(post.title.contains(keyword).and(post.category.in(query)));
+            if (type.equals("contents")) builder.and(post.contents.contains(keyword)).and(post.category.in(query));
+            if (type.equals("all")) builder.and(post.title.contains(keyword).or(post.contents.contains(keyword)).and(post.category.in(query)));
+        }
+
+        return queryFactory.select(post)
+                .from(post).where(builder.and(post.postIdx.lt(cursorId)))
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .orderBy(post.createdAt.desc(), post.postIdx.desc())
+                .fetch();
+    }
+
+
+
+
+    //
+//    // 통합검색
+//    public List<Post> findAllByTitleFirst(String keyword, String type,Pageable page){
+//        QPost post = QPost.post;
+//        BooleanBuilder builder = new BooleanBuilder();
+//
+//        //post.tagList.any().tag.eq(hashtag)
+//        if (type.equals("title")) builder.and(post.title.contains(keyword));
+//        if (type.equals("contents")) builder.and(post.contents.contains(keyword));
+//        if (type.equals("all")) builder.and(post.title.contains(keyword).or(post.contents.contains(keyword)));
+//
+//
+//        return queryFactory.select(post)
+//                .from(post).where(builder)
+//                .offset(page.getOffset())
+//                .limit(page.getPageSize())
+//                .orderBy(post.createdAt.desc())
+//                .fetch();
+//    }
+
+
+//    public List<Post> findAllByTitle(String keyword, String type, Long cursorId, Pageable page, LocalDateTime createdAt){
+//        QPost post = QPost.post;
+//        BooleanBuilder builder = new BooleanBuilder();
+//
+//        if (type.equals("title")) builder.and(post.title.contains(keyword));
+//        if (type.equals("contents")) builder.and(post.contents.contains(keyword));
+//        if (type.equals("all")) builder.and(post.title.contains(keyword).or(post.contents.contains(keyword)));
+//
+//
+//        return queryFactory.select(post)
+//                .from(post).where(builder.and((post.createdAt.eq(createdAt)).and(post.postIdx.lt(cursorId))).or(post.createdAt.lt(createdAt)))
+//                .offset(page.getOffset())
+//                .limit(page.getPageSize())
+//                .orderBy(post.createdAt.desc(), post.postIdx.desc())
+//                .fetch();
+//    }
 
 }

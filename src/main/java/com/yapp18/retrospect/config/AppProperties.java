@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 // 프로젝트에 AppProperties를 사용할 수 있도록 선언해주면 에러 사라짐
@@ -15,6 +16,7 @@ import java.util.List;
 public class AppProperties {
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
+    private final Values values = new Values();
 
     @Getter
     @Setter
@@ -34,13 +36,40 @@ public class AppProperties {
     }
 
     @Getter
+    @Setter
     @RequiredArgsConstructor
     public static class OAuth2 {
-        private List<String> authorrizedRedirectUris = new ArrayList<>();
+        private String redirectUri;
+        private List<String> authorizedRedirectUris = new ArrayList<>();
 
-        public OAuth2 authorizedRedirectUris(List<String> authorizedRedirectUris) {
-            this.authorrizedRedirectUris = authorrizedRedirectUris;
-            return this;
+        public OAuth2(String redirectUri, List<String> authorizedRedirectUris) {
+            this.redirectUri = redirectUri;
+            this.authorizedRedirectUris = authorizedRedirectUris;
+        }
+    }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Values {
+        private String defaultProfileUrl;
+        private String defaultNicknameSuffix;
+        private String s3PostImagePathSuffix;
+        private String s3ProfileImagePathSuffix;
+        private Map<String, List<String>> allUrls;
+        private Map<String, List<String>> memberUrls;
+        private Map<String, List<String>> adminUrls;
+        private Map<String, List<String>> anonymousUrls;
+
+        public Values(String defaultProfileUrl, String defaultNicknameSuffix, String s3PostImagePathSuffix, String s3ProfileImagePathSuffix, Map<String, List<String>> allUrls, Map<String, List<String>> memberUrls, Map<String, List<String>> adminUrls, Map<String, List<String>> anonymousUrls) {
+            this.defaultProfileUrl = defaultProfileUrl;
+            this.defaultNicknameSuffix = defaultNicknameSuffix;
+            this.s3PostImagePathSuffix = s3PostImagePathSuffix;
+            this.s3ProfileImagePathSuffix = s3ProfileImagePathSuffix;
+            this.allUrls = allUrls;
+            this.memberUrls = memberUrls;
+            this.adminUrls = adminUrls;
+            this.anonymousUrls = anonymousUrls;
         }
     }
 }
