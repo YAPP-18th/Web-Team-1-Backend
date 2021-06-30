@@ -12,12 +12,7 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByPost(Post post, Pageable page);
 
-//    @Query(value = "SELECT * FROM comment_tb  WHERE (comment_tb.post_idx =:postIdx) " +
-//            "ORDER BY comment_tb.created_at", nativeQuery = true)
-//    Optional<List<Comment>> findAllByPost(Long postIdx, Pageable page);
+    boolean existsByCommentIdxGreaterThanAndPost(Long cursorIdx, Post post);
 
     Long countCommentByPost(Post postIdx);
-
-//    @Query(value = "SELECT COUNT(comment_idx) FROM comment_tb WHERE (comment_tb.post_idx =:postIdx) ", nativeQuery = true)
-//    Long countCommentByPost(Long postIdx);
 }

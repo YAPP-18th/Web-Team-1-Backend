@@ -54,12 +54,12 @@ public class PostController {
     @GetMapping("/lists/{userIdx}")
     public ResponseEntity<Object> getPostsByUserIdxOrderByCreatedAtDesc(@ApiParam(value = "사용자 user_idx", required = true, example = "3")
                                                                         @PathVariable(value = "userIdx") Long userIdx,
-                                                                        @RequestParam(value = "cursorIdx(디폴트 0, 페이징 하고 싶은 맨 마지막 postIdx 입력)", defaultValue = "0") Long cursorIdx,
+                                                                        @RequestParam(value = "page", defaultValue = "0") Long page,
                                                                         @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
         return new ResponseEntity<>(ApiDefaultResponse.res(200,
                 ResponseMessage.POST_FIND_CREATED.getResponseMessage(),
-                postService.getPostsListCreatedAt(cursorIdx, userIdx, PageRequest.of(0, pageSize))), HttpStatus.OK);
+                postService.getPostsListCreatedAt(page, userIdx, PageRequest.of(0, pageSize))), HttpStatus.OK);
     }
 
 

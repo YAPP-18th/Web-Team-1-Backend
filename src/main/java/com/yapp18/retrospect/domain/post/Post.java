@@ -89,6 +89,7 @@ public class Post extends BaseTimeEntity {
         this.imageList = imageList;
     }
 
+
     public void updatePost(PostDto.updateRequest requestDto){
         this.title = requestDto.getTitle();
         this.category = requestDto.getCategory();

@@ -42,10 +42,13 @@ public class ListController {
 
     @ApiOperation(value = "mypage", notes = "[마이페이지] 최근 읽은 글 조회")
     @GetMapping("/recent")
-    public ResponseEntity<Object> findRecentPosts(HttpServletRequest request){
+    public ResponseEntity<Object> findRecentPosts(HttpServletRequest request,
+                                                  @RequestParam(value = "page", defaultValue = "0") Long page,
+                                                  @RequestParam(value = "pageSize",defaultValue = "20") int pageSize
+    ){
         Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
         return new ResponseEntity<>(ApiDefaultResponse.res(200, ResponseMessage.MY_RECENT_LIST.getResponseMessage(),
-                listService.findRecentPosts(userIdx)), HttpStatus.OK);
+                listService.findRecentPosts(userIdx, page, pageSize)), HttpStatus.OK);
     }
 
 

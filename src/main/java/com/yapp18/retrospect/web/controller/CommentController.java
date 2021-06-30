@@ -94,8 +94,8 @@ public class CommentController {
     public ResponseEntity<Object> getCommentsByPostIdx(@CurrentUser User user,
                                                        @ApiParam(value = "회고글 post_idx", required = true, example = "20")
                                                        @RequestParam(value = "postIdx") Long postIdx,
-                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                       @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize) {
+                                                       @RequestParam(value = "cursorIdx(디폴트 0, 페이징 하고 싶은 맨 마지막 postIdx 입력)", defaultValue = "0") Long cursorIdx,
+                                                       @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
 
         List<CommentDto.ListResponse> result = commentService.getCommmentsListByPostIdx(postIdx, PageRequest.of(page, pageSize))

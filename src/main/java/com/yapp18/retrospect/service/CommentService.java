@@ -10,6 +10,7 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.CommentMapper;
 import com.yapp18.retrospect.web.advice.EntityNullException;
+import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.CommentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -81,5 +82,11 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
+    }
+
+    // 다음 페이지 여부 확인
+    public boolean isNext(Post post, Long cursorId){
+        if (cursorId == null) return false;
+        return commentRepository.existsByCommentIdxGreaterThanAndPost(cursorId, post);
     }
 }
