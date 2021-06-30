@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface  PostRepository extends JpaRepository<Post, Long> {
-    Optional<Post> findByPostIdx(Long postIdx);
+  
+    Post findByPostIdx(Long postIdx);
+
     boolean existsByPostIdxLessThan(Long cursorId);
 
     List<Post> findAllByUserUserIdxOrderByCreatedAtDesc(Long userIdx, Pageable pageable);

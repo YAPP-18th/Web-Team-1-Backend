@@ -3,17 +3,17 @@ package com.yapp18.retrospect.domain.comment;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
+import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
-@Getter
+@Getter @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="comment_tb")
 public class Comment extends BaseTimeEntity {
     @Id
@@ -26,25 +26,20 @@ public class Comment extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "post_idx")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "user_idx")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @Builder
-    public Comment(Long commentIdx, String comments, Post post, User user) {
-        this.commentIdx = commentIdx;
-        this.comments = comments;
-        this.post = post;
-        this.user = user;
+    public void update(Comment newComment) {
+        this.comments = newComment.comments;
     }
 
-    public Comment update(String comments, Post post, User user) {
-        this.comments = comments;
-        this.post = post;
-        this.user = user;
-
-        return this;
+    public boolean isWriter(User user){
+        if (user == null) return false;
+        return this.user.getUserIdx().equals(user.getUserIdx());
     }
 }

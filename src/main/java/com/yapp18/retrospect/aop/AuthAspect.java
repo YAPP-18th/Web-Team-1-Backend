@@ -27,17 +27,17 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthAspect {
-    private final UserRepository userRepository;
-    private final TokenService tokenService;
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Around("@annotation(com.yapp18.retrospect.aop.ExtractUser) && args(updateRequest, commentIdx)") // 메소드에 있는 인수 사용가능
-    public Object extractUser(ProceedingJoinPoint pjp, CommentDto.UpdateRequest updateRequest, Long commentIdx) throws Throwable{
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
-        User user = userRepository.findById(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
-        return pjp.proceed(new Object[] { user, updateRequest, commentIdx });
-    }
+//    private final UserRepository userRepository;
+//    private final TokenService tokenService;
+//
+//    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+//
+//    @Around("@annotation(com.yapp18.retrospect.aop.ExtractUser) && args(updateRequest, commentIdx)") // 메소드에 있는 인수 사용가능
+//    public Object extractUser(ProceedingJoinPoint pjp, CommentDto.UpdateRequest updateRequest, Long commentIdx) throws Throwable{
+//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+//        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
+//        User user = userRepository.findById(userIdx)
+//                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+//        return pjp.proceed(new Object[] { user, updateRequest, commentIdx });
+//    }
 }

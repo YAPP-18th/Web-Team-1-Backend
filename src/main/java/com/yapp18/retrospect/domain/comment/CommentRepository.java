@@ -11,8 +11,6 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByPost(Post post, Pageable page);
-    @Query(value = "SELECT * FROM comment_tb WHERE comment_tb.comment_idx > :cursorIdx AND comment_tb.post_idx = :postIdx", nativeQuery = true)
-    List<Comment> cursorFindAllByPost(Long cursorIdx, Long postIdx, Pageable page);
 
     boolean existsByCommentIdxGreaterThanAndPost(Long cursorIdx, Post post);
 

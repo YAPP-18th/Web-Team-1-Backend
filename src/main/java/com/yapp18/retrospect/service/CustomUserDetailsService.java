@@ -14,22 +14,13 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email + "로 된 사용자를 찾을 수 없습니다."));
+        User user = userService.findByUserEmail(email);
 
-        return UserPrincipal.create(user);
-    }
-
-    @Transactional
-    public UserDetails loadUserByUserIdx(Long userIdx) throws UsernameNotFoundException {
-        User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new UsernameNotFoundException(userIdx + "인덱스를 갖는 사용자를 찾을 수 없습니다."));
-
-        return UserPrincipal.create(user);
+        return new UserPrincipal(user);
     }
 }

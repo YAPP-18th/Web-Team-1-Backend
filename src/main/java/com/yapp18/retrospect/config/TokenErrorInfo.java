@@ -15,7 +15,7 @@ public enum TokenErrorInfo {
     ILLEGAL_ARGUMENT_ACCESS( "TE009", "IllegalArgumentException", "비어있는 Authorization 헤더"),
     ILLEGAL_ARGUMENT_REFRESH( "TE010", "IllegalArgumentException", "비어있는 refreshToken 바디"),
     ILLEGAL_GRANTTYPE( "TE011", "IllegalArgumentException", "비어있는 GrantType"),
-    ACCESS_DENIED( "TE012", "AccessDenied", "접근이 거부됨"),
+    ACCESS_DENIED( "TE012", "AccessDenied", "접근 권한이 없음"),
     NOT_EXPIRED_ACCESS( "TE013", "TokenNotExpired", "만료되지 않은 Access Token"),
     UNMATCHED_TOKEN_PAYLOAD( "TE014", "UnmatchedTokenPayload", "Access Token과 Refresh Token의 페이로드 불일치");
 
