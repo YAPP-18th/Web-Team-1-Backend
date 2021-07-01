@@ -1,21 +1,14 @@
 package com.yapp18.retrospect.web.controller;
 
 import com.yapp18.retrospect.annotation.CurrentUser;
-import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.config.ResponseMessage;
 import com.yapp18.retrospect.domain.comment.Comment;
-import com.yapp18.retrospect.domain.comment.CommentRepository;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
-import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.CommentMapper;
 import com.yapp18.retrospect.service.CommentService;
-import com.yapp18.retrospect.service.PostService;
-import com.yapp18.retrospect.service.TokenService;
-import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.CommentDto;
-import com.yapp18.retrospect.web.dto.UserDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,16 +42,6 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiDefaultResponse.res(201, ResponseMessage.COMMENT_SAVE.getResponseMessage(),
                 commentMapper.toDto(commentService.inputComments(newComment)))
-        );
-    }
-
-    @ApiOperation(value = "comment", notes = "[댓글] 댓글 상세보기")
-    @GetMapping("/{commentIdx}")
-    public ResponseEntity<Object> getCommentsById(@ApiParam(value = "상세보기 comment_idx", required = true, example = "3")
-                                                   @PathVariable(value = "commentIdx") Long commentIdx) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                ApiDefaultResponse.res(200, ResponseMessage.COMMENT_DETAIL.getResponseMessage(),
-                        commentMapper.toDto(commentService.getCommmentsByIdx(commentIdx)))
         );
     }
 
@@ -94,11 +76,11 @@ public class CommentController {
     public ResponseEntity<Object> getCommentsByPostIdx(@CurrentUser User user,
                                                        @ApiParam(value = "회고글 post_idx", required = true, example = "20")
                                                        @RequestParam(value = "postIdx") Long postIdx,
-                                                       @RequestParam(value = "cursorIdx(디폴트 0, 페이징 하고 싶은 맨 마지막 postIdx 입력)", defaultValue = "0") Long cursorIdx,
+                                                       @RequestParam(value = "page", defaultValue = "0") Long page,
                                                        @RequestParam(value = "pageSize") Integer pageSize){
         if (pageSize == null) pageSize = DEFAULT_SIZE;
 
-        List<CommentDto.ListResponse> result = commentService.getCommmentsListByPostIdx(postIdx, PageRequest.of(page, pageSize))
+        List<CommentDto.ListResponse> result = commentService.getCommmentsListByPostIdx(postIdx, PageRequest.of(page.intValue(), pageSize))
                 .stream()
                 .map(comment -> commentMapper.toDto(comment, user))
                 .collect(Collectors.toList());

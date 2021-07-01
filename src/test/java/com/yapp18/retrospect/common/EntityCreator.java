@@ -21,7 +21,7 @@ public class EntityCreator {
                 .email("test@example.com")
                 .name("테스트이름")
                 .nickname("테스트닉네임")
-                .profile("profile-url")
+                .profile("프로필URL")
                 .provider(AuthProvider.kakao)
                 .providerId("12345")
                 .role(Role.MEMBER)

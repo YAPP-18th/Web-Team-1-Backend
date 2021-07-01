@@ -10,8 +10,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter @Setter
 @Entity
-@Getter
 @Table(name="user_tb")
 // 기본 생성자 접근을 protected으로 변경하면 외부에서 해당 생성자를 접근 할 수 없으므로 Builder를 통해서만 객체 생성 가능하므로 안전성 보장
 @Builder
