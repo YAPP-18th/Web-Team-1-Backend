@@ -7,7 +7,6 @@ import com.yapp18.retrospect.domain.comment.CommentRepository;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.web.advice.EntityNullException;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,6 +28,12 @@ public class CommentService {
         comment.setPost(postService.findByPostIdx(postIdx));
         commentRepository.save(comment);
         return comment; // commentRepository.save(comment); 그대로 반환하면 테스트 코드에서 엔티티가 null로 날아옴..
+    }
+
+    @Transactional(readOnly = true)
+    public Comment getCommmentsByIdx(Long commentIdx){
+        return commentRepository.findById(commentIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
     }
 
     @Transactional(readOnly = true)

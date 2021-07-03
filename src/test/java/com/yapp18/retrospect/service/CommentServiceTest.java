@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 
 //여기서 Service를 테스트하기 위해서는 Repository 객체를 주입받아야 한다.
 //그런데 이것을 주입받으려면 스프링을 띄울 수 밖에 없고, 테스트를 하는데 시간이 오래걸린다.
@@ -185,32 +186,51 @@ public class CommentServiceTest {
     @Nested
     @DisplayName("댓글 삭제 테스트")
     class Delete {
-//        @InjectMocks
-//        private CommentService commentService;
-//
-//        @Spy
-//        private CommentRepository commentRepository;
-//
-//        @Spy
-//        private PostService postService;
-//
-//        @Before
-//        private void init(){
-//            //given
-//            commentService.inputComments(newComment);
-//
-//        }
-//
-//        @Test
-//        public void 댓글_삭제_테스트() {
-//
-//            //when
-//            commentService.deleteComments(inputtedComment.getUser(), inputtedComment.getCommentIdx());
-//            //then
-//            Throwable thrown = catchThrowable(() -> commentRepository.findById(inputtedComment.getCommentIdx()));
-//            assertThat(thrown)
-//                    .isInstanceOf(EntityNullException.class)
-//                    .hasMessage(ErrorInfo.COMMENT_NULL.getErrorMessage());
-//        }
+        @Test
+        public void 댓글_삭제_테스트() {
+            //given
+            Comment oldComment = EntityCreator.createCommentEntity();
+            //mocking
+            given(commentRepository.findById(eq(COMMENT_IDX))).willReturn(Optional.ofNullable(oldComment));
+            doNothing().when(commentRepository).delete(any());
+            //when
+            commentService.deleteComments(oldComment.getUser(), oldComment.getCommentIdx());
+            //mocking
+            given(commentRepository.findById(eq(COMMENT_IDX))).willThrow(new EntityNullException(ErrorInfo.COMMENT_NULL));
+            //then
+            Throwable thrown = catchThrowable(() -> commentService.getCommmentsByIdx(COMMENT_IDX));
+            assertThat(thrown)
+                    .isInstanceOf(EntityNullException.class)
+                    .hasMessage(ErrorInfo.COMMENT_NULL.getErrorMessage());
+        }
+
+        @Test
+        public void 댓글_삭제_예외_권한_없는_사용자_테스트() {
+            //given
+            newComment.getUser().setUserIdx(2L);
+            Comment oldComment = EntityCreator.createCommentEntity();
+            //mocking
+            given(commentRepository.findById(eq(COMMENT_IDX))).willReturn(Optional.ofNullable(oldComment));
+            //when
+            Throwable throwable = catchThrowable(() -> commentService.deleteComments(newComment.getUser(), oldComment.getCommentIdx()));
+            //then
+            assertThat(throwable)
+                    .isInstanceOf(AccessDeniedException.class)
+                    .hasMessage(TokenErrorInfo.ACCESS_DENIED.getMessage());
+        }
+
+        @Test
+        public void 댓글_삭제_예외_존재하지_않는_댓글_테스트() throws Exception {
+            //given
+            Comment oldComment = EntityCreator.createCommentEntity();
+            //mocking
+            given(commentRepository.findById(eq(COMMENT_IDX))).willThrow(new EntityNullException(ErrorInfo.COMMENT_NULL));
+            //when
+            Throwable thrown = catchThrowable(() -> commentService.deleteComments(oldComment.getUser(), oldComment.getCommentIdx()));
+            //then
+            assertThat(thrown)
+                    .isInstanceOf(EntityNullException.class)
+                    .hasMessage(ErrorInfo.COMMENT_NULL.getErrorMessage());
+        }
     }
 }

@@ -2,9 +2,7 @@ package com.yapp18.retrospect.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Configuration
-public class JacksonConfiguration {
+public class JacksonConfig {
 
     private final Locale locale = Locale.UK;
     private  final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd, yyyy").withLocale(locale);

@@ -19,6 +19,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,7 +64,7 @@ public class CommentControllerTest extends AbstractControllerTest {
         given(commentService.updateComments(any())).willReturn(EntityCreator.createCommentEntity());
 
         mockMvc.perform(
-                patch("/api/v1/comments/1")
+                patch("/api/v1/comments/" + COMMENT_IDX)
                         .content("{\"comments\": \"댓글내용\"}")
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isCreated())
@@ -94,5 +95,15 @@ public class CommentControllerTest extends AbstractControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].comments").value("댓글내용"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].commentIdx").value(2L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].comments").value("댓글내용2"));
+    }
+
+    @Test
+    @WithMockRetrospectUser
+    public void 댓글_삭제_테스트() throws Exception {
+        doNothing().when(commentService).deleteComments(any(), eq(COMMENT_IDX));
+
+        mockMvc.perform(
+                delete("/api/v1/comments/" + COMMENT_IDX)
+        ).andExpect(status().isNoContent());
     }
 }
