@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,7 +66,7 @@ public class UserService {
                         List<String> list = Arrays.asList(request.getProfile());
                         imageService.deleteImageList(list, userIdx, s3ProfileImagePathSuffix); // list에 없는 s3 가비지 데이터를 추출하여 삭제
                     }
-                    return existingUser.updateProfile(request.getProfile(), request.getName(), request.getNickname(), request.getJob(), request.getIntro());
+                    return existingUser.updateProfile(request.getName(), request.getNickname(), request.getProfile(), request.getJob(), request.getIntro());
                 })
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
         userRepository.save(user);

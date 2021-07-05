@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <user_tb USER_IDX="1"
+             EMAIL="test@example.com"
+             NAME="테스트이름"
+             NICKNAME="테스트닉네임"
+             PROFILE="프로필URL"
+             JOB="테스트직업"
+             INTRO="테스트자기소개"
+             PROVIDER="kakao"
+             PROVIDER_ID="1"
+             ROLE="MEMBER"/>
+
+    <user_tb USER_IDX="2"
+             EMAIL="test2@example.com"
+             NAME="테스트이름2"
+             NICKNAME="테스트닉네임2"
+             PROFILE="프로필URL2"
+             JOB="테스트직업2"
+             INTRO="테스트자기소개2"
+             PROVIDER="google"
+             PROVIDER_ID="2"
+             ROLE="MEMBER"/>
+</dataset>

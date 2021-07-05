@@ -4,9 +4,6 @@ application-oauth.yaml
 application-aws.yaml
 ./src/main/resources/static
 
-### test ###
-src/test/resources/dbunit
-
 HELP.md
 .gradle
 build/

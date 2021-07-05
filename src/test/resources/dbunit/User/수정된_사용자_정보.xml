@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <user_tb USER_IDX="1"
+             EMAIL="test@example.com"
+             NAME="수정된이름"
+             NICKNAME="수정된닉네임"
+             PROFILE="수정된프로필URL"
+             JOB="수정된직업"
+             INTRO="수정된자기소개"
+             PROVIDER="kakao"
+             PROVIDER_ID="1"
+             ROLE="MEMBER"/>
+</dataset>

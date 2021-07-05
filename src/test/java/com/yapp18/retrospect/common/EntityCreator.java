@@ -23,7 +23,7 @@ public class EntityCreator {
                 .nickname("테스트닉네임")
                 .profile("프로필URL")
                 .provider(AuthProvider.kakao)
-                .providerId("12345")
+                .providerId("1")
                 .role(Role.MEMBER)
                 .job("테스트직업")
                 .intro("테스트자기소개")
