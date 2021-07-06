@@ -1,6 +1,6 @@
-package com.yapp18.retrospect.api.config;
+package com.yapp18.retrospect.config;
 
-import com.yapp18.retrospect.api.annotation.WithMockRetrospectUser;
+import com.yapp18.retrospect.annotation.WithMockRetrospectUser;
 import com.yapp18.retrospect.domain.user.Role;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.security.UserPrincipal;

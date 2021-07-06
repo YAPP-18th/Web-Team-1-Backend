@@ -1,6 +1,6 @@
 package com.yapp18.retrospect.web.controller;
 
-import com.yapp18.retrospect.api.annotation.WithMockRetrospectUser;
+import com.yapp18.retrospect.annotation.WithMockRetrospectUser;
 import com.yapp18.retrospect.common.EntityCreator;
 import com.yapp18.retrospect.config.ResponseMessage;
 import com.yapp18.retrospect.domain.comment.Comment;

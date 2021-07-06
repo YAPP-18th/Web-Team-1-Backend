@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
 <dataset>
-    <user_tb USER_IDX="1"
+    <user_tb
+            USER_IDX="1"
              EMAIL="test@example.com"
              NAME="테스트이름"
              NICKNAME="테스트닉네임"
