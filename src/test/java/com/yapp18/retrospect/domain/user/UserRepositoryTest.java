@@ -6,7 +6,6 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.yapp18.retrospect.annotation.RetrospectDataTest;
 import com.yapp18.retrospect.common.EntityCreator;
 import com.yapp18.retrospect.config.ErrorInfo;
-import com.yapp18.retrospect.security.oauth2.AuthProvider;
 import com.yapp18.retrospect.web.advice.EntityNullException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,20 +36,7 @@ public class UserRepositoryTest {
     @ExpectedDatabase(value = "classpath:dbunit/User/사용자_한명_존재.xml",
             assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void 사용자_정보_등록() {
-        userRepository.save(User.builder()
-                .userIdx(USER_IDX)
-                .email("test@example.com")
-                .name("테스트이름")
-                .nickname("테스트닉네임")
-                .profile("프로필URL")
-                .provider(AuthProvider.kakao)
-                .providerId("1")
-                .role(Role.MEMBER)
-                .job("테스트직업")
-                .intro("테스트자기소개")
-                .build());
-
-        entityManager.flush();
+        userRepository.save(EntityCreator.createUserEntity());
     }
 
     @Test

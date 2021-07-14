@@ -107,8 +107,7 @@ public class CommentServiceTest {
             List<Comment> arguList = Arrays.asList(firstComment, secondComment);
             Pageable pageable = PageRequest.of(page, size);
             //mocking
-            given(postService.findByPostIdx(eq(POST_IDX))).willReturn(EntityCreator.createPostEntity());
-            given(commentRepository.findAllByPost(any(), eq(pageable))).willReturn(arguList);
+            given(commentRepository.findAllByPostIdx(eq(COMMENT_IDX), eq(pageable))).willReturn(arguList);
             //when
             List<Comment> commentList = commentService.getCommmentsListByPostIdx(POST_IDX, pageable);
             //then

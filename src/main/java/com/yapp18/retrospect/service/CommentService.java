@@ -38,8 +38,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<Comment> getCommmentsListByPostIdx(Long postIdx, Pageable page){
-        Post post = postService.findByPostIdx(postIdx);
-        return commentRepository.findAllByPost(post, page);
+        return commentRepository.findAllByPostIdx(postIdx, page);
     }
 
     @Transactional(readOnly = true)
