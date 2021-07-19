@@ -35,7 +35,6 @@ public class CommentRepositoryTest {
     @DatabaseSetup({
             "classpath:dbunit/User/사용자_한명_존재.xml",
             "classpath:dbunit/Post/회고글_한개_존재.xml",
-            "classpath:dbunit/Comment/빈_댓글_테이블.xml"
     })
     @ExpectedDatabase(value = "classpath:dbunit/Comment/댓글_한개_존재.xml",
             assertionMode = DatabaseAssertionMode.NON_STRICT)

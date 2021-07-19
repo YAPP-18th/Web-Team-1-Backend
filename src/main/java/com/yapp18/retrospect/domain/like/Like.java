@@ -35,7 +35,7 @@ public class Like extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "post_idx")
-    private Post post; // 어떻게..?
+    private Post post;
 
     @ManyToOne
     @JoinColumn(name = "user_idx")

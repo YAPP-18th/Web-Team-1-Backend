@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RetrospectDataTest
-@DatabaseSetup({"classpath:dbunit/User/빈_사용자_테이블.xml"})
 public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
@@ -32,7 +31,6 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @DatabaseSetup({"classpath:dbunit/User/빈_사용자_테이블.xml"})
     @ExpectedDatabase(value = "classpath:dbunit/User/사용자_한명_존재.xml",
             assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void 사용자_정보_등록() {
@@ -114,7 +112,7 @@ public class UserRepositoryTest {
 
     @Test
     @DatabaseSetup(value = "classpath:dbunit/User/사용자_한명_존재.xml")
-    @ExpectedDatabase(value = "classpath:dbunit/User/빈_사용자_테이블.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
+    @ExpectedDatabase(value = "classpath:dbunit/common/빈_테이블.xml", assertionMode = DatabaseAssertionMode.NON_STRICT)
     public void 사용자_정보_삭제() {
         User user = userRepository.findById(USER_IDX)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));

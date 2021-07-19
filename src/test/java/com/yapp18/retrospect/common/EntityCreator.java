@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.common;
 
 import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.Role;
@@ -14,6 +15,7 @@ public class EntityCreator {
     private static final Long POST_IDX = 1L;
     private static final Long COMMENT_IDX = 1L;
     private static final Long TEMPLATE_IDX = 1L;
+    private static final Long LIKE_IDX = 1L;
 
     public static User createUserEntity(){
         User user = User.builder()
@@ -76,5 +78,18 @@ public class EntityCreator {
         comment.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
 
         return comment;
+    }
+
+    public static Like createLikeEntity(){
+        Like like = Like.builder()
+                .likeIdx(LIKE_IDX)
+                .post(createPostEntity())
+                .user(createUserEntity())
+                .build();
+
+        like.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+        like.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+
+        return like;
     }
 }

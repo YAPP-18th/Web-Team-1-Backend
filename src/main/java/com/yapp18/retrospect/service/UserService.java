@@ -21,11 +21,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class UserService {
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final ImageService imageService;
     private final AppProperties appProperties;
-    private final UserMapper userMapper;
 
     @Value("${app.values.s3ProfileImagePathSuffix}")
     public String s3ProfileImagePathSuffix;
@@ -53,7 +52,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDto.ProfileResponse getUserProfiles(Long userIdx, Long extractedIdx) {
         return userRepository.findByUserIdx(userIdx)
-                .map(user -> mapper.userToProfileResponse(user, user.getUserIdx().equals(extractedIdx)))
+                .map(user -> userMapper.userToProfileResponse(user, user.getUserIdx().equals(extractedIdx)))
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
     }
 
@@ -70,7 +69,7 @@ public class UserService {
                 })
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
         userRepository.save(user);
-        return mapper.userToProfileResponse(user);
+        return userMapper.userToProfileResponse(user);
     }
 
     @Transactional
