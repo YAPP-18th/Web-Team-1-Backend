@@ -1,5 +1,6 @@
 package com.yapp18.retrospect.web.advice;
 
+import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.ErrorDefaultResponse;
 import com.yapp18.retrospect.web.dto.ErrorDto;
 import org.springframework.http.HttpStatus;
@@ -79,7 +80,7 @@ public class ControllerAdvice {
 
 //    @ExceptionHandler(EntityNullException.class)
 //    public ResponseEntity<Object> entityNullExceptionHandler(EntityNullException e) {
-//        return new ResponseEntity<>(ApiDefaultResponse.res(404, e.getMessage()), e.getStatus());
+//        return new ResponseEntity<>(ApiDefaultResponse.res(404, e.getMessage()), e.getCode());
 //    }
 
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)

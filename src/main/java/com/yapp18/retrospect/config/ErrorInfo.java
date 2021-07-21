@@ -10,7 +10,8 @@ public enum ErrorInfo {
     TEMPLATE_NULL("EE004", "존재하지 않는 템플릿입니다."),
     TAG_NULL("EE005", "존재하지 않는 태그입니다."),
     IMAGE_NULL("EE006", "존재하지 않는 이미지입니다."),
-    LIKE_NULL("EE007", "존재하지 않는 스크랩입니다.");
+    LIKE_NULL("EE007", "존재하지 않는 스크랩입니다."),
+    CONDITION_NULL("EE008","해당 조건에 맞는 회고글이 없습니다.");
 
     private final String errorCode;
     private final String errorMessage;

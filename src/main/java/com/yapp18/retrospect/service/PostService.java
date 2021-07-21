@@ -70,25 +70,30 @@ public class PostService {
     @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListView(Long cursorId, Pageable page, Long userIdx){
         // 마지막으로 검색된 회고글의 조회수
-        List<PostDto.ListResponse> result = getPostsView(cursorId, page).stream().map(post->postMapper.postToListResponse(post, userIdx))
+        List<Post> posts = getPostsView(cursorId, page);
+        if (posts.isEmpty()) throw new EntityNullException(ErrorInfo.CONDITION_NULL);
+
+        List<PostDto.ListResponse> result = posts.stream().map(post->postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx(); // 다음 postIdx
         return new ApiPagingResultResponse<>(isNextView(lastIdx), result);
     }
 
 
+    // 최신순
     @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsListCreatedAt(Long cursorIdx, Long userIdx, Pageable pageable){
         User user = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
 
-        List<Post> postList = cursorIdx == 0 || cursorIdx == null ?
+        List<Post> posts = cursorIdx == 0 || cursorIdx == null ?
                 postRepository.findByUserOrderByCreatedAtDesc(user, pageable)
                 : postRepository.cursorFindByUserOrderByCreatedAtDesc(cursorIdx, user.getUserIdx(), pageable);
+        if (posts.isEmpty()) throw new EntityNullException(ErrorInfo.CONDITION_NULL);
 
-        Long lastIdx = postList.isEmpty() ? null : postList.get(postList.size() - 1).getPostIdx(); // 낮은 조회수 체크
+        Long lastIdx = posts.isEmpty() ? null : posts.get(posts.size() - 1).getPostIdx(); // 낮은 조회수 체크
 
-        List<PostDto.ListResponse> result = postList.stream()
+        List<PostDto.ListResponse> result = posts.stream()
                 .map(post -> postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
 
@@ -101,7 +106,9 @@ public class PostService {
     public ApiIsResultResponse<PostDto.detailResponse> findPostContents(Long postIdx, Long userIdx){
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
-        post.updateview(post.getView()); // 조회수 증가
+        // 조회수 증가
+        post.updateview(post.getView());
+
         if(userIdx != 0L){
             listService.saveRecentReadPosts(userIdx, postIdx); // 최근 읽은 글에 추가
         }
@@ -181,10 +188,6 @@ public class PostService {
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         if (isWriter(post.getUser().getUserIdx(), userIdx)){
             postRepository.deleteById(postIdx);
-//            if (listService.isPostsExist(userIdx, postIdx)) {
-//                // ** redis에 있는 모든...어쩌구....
-//                listService.deleteRedisPost(userIdx, postIdx); // redis 에서도 삭제
-//            }
             return true;
         }
         return false;
