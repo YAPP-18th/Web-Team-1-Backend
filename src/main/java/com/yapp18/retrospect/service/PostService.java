@@ -103,18 +103,16 @@ public class PostService {
 
     // 회고글 상세페이지
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public ApiIsResultResponse<PostDto.detailResponse> findPostContents(Long postIdx, Long userIdx){
+    public Post findPostContents(Long postIdx, Long userIdx){
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
         // 조회수 증가
         post.updateview(post.getView());
-
+        // 최근 읽은 글에 추가
         if(userIdx != 0L){
-            listService.saveRecentReadPosts(userIdx, postIdx); // 최근 읽은 글에 추가
+            listService.saveRecentReadPosts(userIdx, postIdx);
         }
-        return new ApiIsResultResponse<>(isWriter(post.getUser().getUserIdx(),userIdx),
-                isScrap(post, userIdx),
-                postMapper.postToDetailResponse(post)); // 작성자 판단
+        return post;
     }
 
 
@@ -183,14 +181,13 @@ public class PostService {
 
     // 회고글 삭제
     @Transactional
-    public boolean deletePosts(Long userIdx,Long postIdx) {
+    public void deletePosts(Long userIdx,Long postIdx) {
         Post post = postRepository.findById(postIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL));
-        if (isWriter(post.getUser().getUserIdx(), userIdx)){
+        if (!isWriter(post.getUser().getUserIdx(), userIdx)) throw new EntityNullException(ErrorInfo.POST_NULL);
+        else{
             postRepository.deleteById(postIdx);
-            return true;
         }
-        return false;
     }
 
 
@@ -215,13 +212,13 @@ public class PostService {
 
 
     // 작성자 판별
-    private boolean isWriter(Long postUserIdx, Long userIdx){
+    public boolean isWriter(Long postUserIdx, Long userIdx){
         if (userIdx == 0L) return false;
         return postUserIdx.equals(userIdx);
     }
 
     // 스크랩 여부 판별 -> 리팩토링 필요
-    private boolean isScrap(Post post, Long userIdx){
+    public boolean isScrap(Post post, Long userIdx){
         return likeRepository.findByPostAndUserUserIdx(post, userIdx).isPresent();
     }
 

@@ -89,4 +89,9 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
     }
+
+
+    public Long getUserInfoFromToken(User user){
+        return (user != null)? user.getUserIdx(): 0L;
+    }
 }
