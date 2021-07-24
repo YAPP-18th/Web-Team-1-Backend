@@ -1,7 +1,24 @@
 
 
-# <div align="center">  Web-Team-1-Backend  <br> <img alt="Java" src="https://img.shields.io/badge/java-%23ED8B00.svg?&style=for-the-badge&logo=java&logoColor=white"/> <img alt="Spring" src="https://img.shields.io/badge/spring%20-%236DB33F.svg?&style=for-the-badge&logo=spring&logoColor=white"/> <img alt="Postgres" src ="https://img.shields.io/badge/postgres-%23316192.svg?&style=for-the-badge&logo=postgresql&logoColor=white"/> <img alt="Docker" src="https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white"/></center></div>
-<br>
+# <div align="center"> 돌아보다 </center>
+ 
+<div align="center"> <img alt="Java" src="https://img.shields.io/badge/java-%23ED8B00.svg?&style=for-the-badge&logo=java&logoColor=white"/> <img alt="Spring" src="https://img.shields.io/badge/spring%20-%236DB33F.svg?&style=for-the-badge&logo=spring&logoColor=white"/> <img alt="Postgres" src ="https://img.shields.io/badge/postgres-%23316192.svg?&style=for-the-badge&logo=postgresql&logoColor=white"/> <img alt="Redis" src="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white"/>
+ 
+  
+ <img alt="Jenkins" src="https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white"/>  <img alt="Docker" src="https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white"/> <img alt="AWS" src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white"/> <img alt="Nginx" src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white"/>
+ 
+  ![201512475_5715364638537850_229962042777774324_n](https://user-images.githubusercontent.com/54519245/126858248-8ecee569-c880-4301-a7b2-f69bf1a2aed8.jpg)
+ 
+  </div>
+
+## 🧑‍💻 Server Member
+<div align="center">
+
+| [<img src="https://user-images.githubusercontent.com/35520314/113499424-e2cdea00-9550-11eb-9725-8de615b07cf7.png" width="100">](https://github.com/tape22)| [<img src="https://avatars.githubusercontent.com/ybell1028" width="100">](https://github.com/ybell1028) |
+ :-------------------------------------: | :-------------------------------------: |
+| 허정민 | 황종훈 |
+ 
+</div>
 
 ## 🛠 Architecture
 
@@ -52,9 +69,3 @@ hotfix : 출시 버전에서 발생한 버그를 수정 하는 브랜치
 **우아한 형제들 [우린 Git-Flow를 사용하고 있어요](https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)** 참조
 
 <br>
-
-## 🧑‍💻 Server Member
-
-| [<img src="https://user-images.githubusercontent.com/35520314/113499424-e2cdea00-9550-11eb-9725-8de615b07cf7.png" width="100">](https://github.com/tape22)| [<img src="https://avatars.githubusercontent.com/ybell1028" width="100">](https://github.com/ybell1028) |
- :-------------------------------------: | :-------------------------------------: |
-| 허정민 | 황종훈 |
