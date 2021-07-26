@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
+    private final PostService postService;
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -40,21 +41,16 @@ public class LikeService {
 
         return new ApiPagingResultResponse<>(isNext(user, lastIdx),
                 result.stream()
-                .map(like -> likeMapper.likeToBasicResponse(like,
-                        postRepository.findById(like.getPost().getPostIdx())
-                                .orElseThrow(() -> new EntityNullException(ErrorInfo.POST_NULL))))
+                .map(like -> likeMapper.toDto(like))
                 .collect(Collectors.toList())
         );
     }
 
     @Transactional
-    public Long inputLikes(LikeDto.InputRequest inputRequest, Long userIdx){
-        User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+    public Like inputLikes(User user, Long postIdx){
+        Post post = postService.findByPostIdx(postIdx);
 
-        Post post = postRepository.findByPostIdx(inputRequest.getPostIdx());
-
-        return likeRepository.save(inputRequest.toEntity(post, user)).getLikeIdx();
+        return likeRepository.save(likeMapper.toEntity(user, post));
     }
 
     @Transactional

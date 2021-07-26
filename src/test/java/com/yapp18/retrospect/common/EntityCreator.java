@@ -9,6 +9,7 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.security.oauth2.AuthProvider;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class EntityCreator {
     private static final Long USER_IDX = 1L;
@@ -37,7 +38,7 @@ public class EntityCreator {
         return user;
     }
 
-    public static Post createPostEntity(){
+    public static Post createPostEntity() {
         Post post =  Post.builder()
                 .postIdx(POST_IDX)
                 .title("회고글제목")
@@ -45,6 +46,10 @@ public class EntityCreator {
                 .contents("글내용")
                 .user(createUserEntity())
                 .template(createTemplateEntity())
+                .tagList(new ArrayList<>())
+                .like(new ArrayList<>())
+                .comments(new ArrayList<>())
+                .imageList(new ArrayList<>())
                 .build();
 
         post.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));

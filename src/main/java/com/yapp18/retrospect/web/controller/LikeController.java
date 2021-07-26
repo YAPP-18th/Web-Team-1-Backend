@@ -1,6 +1,10 @@
 package com.yapp18.retrospect.web.controller;
 
+import com.yapp18.retrospect.annotation.CurrentUser;
 import com.yapp18.retrospect.config.ResponseMessage;
+import com.yapp18.retrospect.domain.like.Like;
+import com.yapp18.retrospect.domain.user.User;
+import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.service.LikeService;
 import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
@@ -23,15 +27,20 @@ import javax.servlet.http.HttpServletRequest;
 public class LikeController {
     private final LikeService likeService;
     private final TokenService tokenService;
+    private final LikeMapper likeMapper;
     private static final int DEFAULT_SIZE = 20;
 
     @ApiOperation(value = "like", notes = "[스크랩] 회고글 스크랩")
     @PostMapping("")
-    public ResponseEntity<Object> inputLikes(HttpServletRequest request,
+    public ResponseEntity<Object> inputLikes(@CurrentUser User user,
                                              @RequestBody LikeDto.InputRequest inputRequest) {
-        Long userIdx = (tokenService.getTokenFromRequest(request) != null) ? tokenService.getUserIdx(tokenService.getTokenFromRequest(request)) : 0L;
-        return new ResponseEntity<>(ApiDefaultResponse.res(201, ResponseMessage.LIKE_SAVE.getResponseMessage(),
-                likeService.inputLikes(inputRequest, userIdx)), HttpStatus.CREATED);
+        Like newLike = likeService.inputLikes(user, inputRequest.getPostIdx());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiDefaultResponse.res(201, ResponseMessage.LIKE_SAVE.getResponseMessage(),
+                        likeMapper.toDto(newLike)
+                )
+        );
     }
 
     @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 목록 조회, 생성일자순")
