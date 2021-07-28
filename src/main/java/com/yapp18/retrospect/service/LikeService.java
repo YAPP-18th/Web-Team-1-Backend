@@ -9,7 +9,6 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.web.advice.EntityNullException;
-import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.LikeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,22 +27,16 @@ public class LikeService {
     private final PostRepository postRepository;
     private final LikeMapper likeMapper;
 
-    @Transactional(readOnly = true)
-    public ApiPagingResultResponse<LikeDto.BasicResponse> getLikeListCreatedAt(Long cursorIdx, Long userIdx, Pageable pageable){
-        User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+    @Transactional
+    public List<LikeDto.BasicResponse> getLikeListCreatedAt(User user, Long cursorIdx, Pageable pageable){
 
-        List<Like> result = cursorIdx == 0 ?
+        List<Like> likeList =  cursorIdx == 0 ?
                 likeRepository.findByUserOrderByCreatedAtDesc(user, pageable):
-                likeRepository.cursorFindByUserOrderByCreatedAtDesc(cursorIdx, userIdx, pageable);
+                likeRepository.cursorFindByUserOrderByCreatedAtDesc(user.getUserIdx(), cursorIdx, pageable);
 
-        Long lastIdx = result.isEmpty() ? null : result.get(result.size() - 1).getLikeIdx(); // 낮은 조회수 체크
-
-        return new ApiPagingResultResponse<>(isNext(user, lastIdx),
-                result.stream()
+        return likeList.stream()
                 .map(like -> likeMapper.toDto(like))
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList());
     }
 
     @Transactional

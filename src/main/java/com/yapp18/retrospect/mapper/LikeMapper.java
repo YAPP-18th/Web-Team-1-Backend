@@ -25,8 +25,8 @@ public interface LikeMapper extends GenericMapper<Like, LikeDto.BasicResponse> {
     @Override
     @Mapping(target = "likeIdx", expression= "java(like.getLikeIdx())")
     @Mapping(target = "postIdx", expression= "java(like.getPost().getPostIdx())")
-    @Mapping(target = "nickname", expression= "java(like.getUser().getNickname())")
-    @Mapping(target = "profile", expression = "java(like.getUser().getProfile())")
+    @Mapping(target = "nickname", expression= "java(like.getPost().getUser().getNickname())")
+    @Mapping(target = "profile", expression = "java(like.getPost().getUser().getProfile())")
     @Mapping(target = "title", expression= "java(like.getPost().getTitle())")
     @Mapping(target = "category", expression= "java(like.getPost().getCategory())")
     @Mapping(target = "contents", expression= "java(like.getPost().getContents())")

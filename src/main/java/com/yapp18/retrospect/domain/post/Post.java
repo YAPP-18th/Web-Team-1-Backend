@@ -57,7 +57,7 @@ public class Post extends BaseTimeEntity {
     private Template template;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post",orphanRemoval = true)
+    @OneToMany(mappedBy = "post",orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Tag> tagList = new ArrayList<>();
 
     @JsonIgnore
