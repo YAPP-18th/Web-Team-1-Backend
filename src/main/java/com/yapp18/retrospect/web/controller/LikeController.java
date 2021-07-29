@@ -28,7 +28,6 @@ import java.util.List;
 @RequestMapping("/api/v1/likes")
 public class LikeController {
     private final LikeService likeService;
-    private final TokenService tokenService;
     private final LikeMapper likeMapper;
     private static final int DEFAULT_SIZE = 20;
 
@@ -64,11 +63,10 @@ public class LikeController {
 
     @ApiOperation(value = "like", notes = "[스크랩] 스크랩 한 글 삭제")
     @DeleteMapping("")
-    public ResponseEntity<Object> deleteLikes(HttpServletRequest request,
+    public ResponseEntity<Object> deleteLikes(@CurrentUser User user,
                                               @ApiParam(value = "회고글 idx", required = true, example = "13")
                                               @RequestParam(value = "postIdx") Long postIdx){
-        Long userIdx = tokenService.getUserIdx(tokenService.getTokenFromRequest(request));
-        likeService.deleteLikes(userIdx, postIdx);
+        likeService.deleteLikes(user, postIdx);
         return new ResponseEntity<>(ApiDefaultResponse.res(204, ResponseMessage.LIKE_SAVE.getResponseMessage()), HttpStatus.NO_CONTENT);
     }
 }

@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.config.ErrorInfo;
+import com.yapp18.retrospect.config.TokenErrorInfo;
 import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
@@ -12,6 +13,7 @@ import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.LikeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +25,16 @@ import java.util.stream.Collectors;
 public class LikeService {
     private final PostService postService;
     private final LikeRepository likeRepository;
-    private final UserRepository userRepository;
-    private final PostRepository postRepository;
     private final LikeMapper likeMapper;
 
     @Transactional
-    public List<LikeDto.BasicResponse> getLikeListCreatedAt(User user, Long cursorIdx, Pageable pageable){
+    public Like findByPostIdxAndUserIdx(Long postIdx, Long userIdx){
+        return likeRepository.findByPostIdxAndUserIdx(postIdx, userIdx)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.LIKE_NULL));
+    }
 
+    @Transactional
+    public List<LikeDto.BasicResponse> getLikeListCreatedAt(User user, Long cursorIdx, Pageable pageable){
         List<Like> likeList =  cursorIdx == 0 ?
                 likeRepository.findByUserOrderByCreatedAtDesc(user, pageable):
                 likeRepository.cursorFindByUserOrderByCreatedAtDesc(user.getUserIdx(), cursorIdx, pageable);
@@ -47,13 +52,14 @@ public class LikeService {
     }
 
     @Transactional
-    public void deleteLikes(Long userIdx, Long postIdx){
-        User user = userRepository.findByUserIdx(userIdx)
-                .orElseThrow(() -> new EntityNullException(ErrorInfo.USER_NULL));
+    public void deleteLikes(User user, Long postIdx){
+        Like like = findByPostIdxAndUserIdx(user.getUserIdx(), postIdx);
 
-        Post post = postRepository.findByPostIdx(postIdx);
+        if(!like.isWriter(user)){
+            throw new AccessDeniedException(TokenErrorInfo.ACCESS_DENIED.getMessage());
+        }
 
-        likeRepository.deleteByUserAndPost(user, post);
+        likeRepository.delete(like);
     }
 
     // 다음 페이지 여부 확인

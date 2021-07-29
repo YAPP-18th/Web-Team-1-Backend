@@ -70,7 +70,7 @@ public class LikeRepositoryTest {
             "classpath:dbunit/Like/스크랩_다섯개_존재.xml"
     })
     public void 스크랩_커서_조회_유저_별_생성일자_내림차순() {
-        List<Like> listList = likeRepository.cursorFindByUserOrderByCreatedAtDesc(5L, USER_IDX, PageRequest.of(0, 2));
+        List<Like> listList = likeRepository.cursorFindByUserOrderByCreatedAtDesc(USER_IDX, 5L, PageRequest.of(0, 2));
 
         assertThat(listList.size()).isEqualTo(2);
         //내림차순이니까 2부터

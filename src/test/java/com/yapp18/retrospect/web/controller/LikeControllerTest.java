@@ -4,12 +4,15 @@ import com.yapp18.retrospect.annotation.WithMockRetrospectUser;
 import com.yapp18.retrospect.common.EntityCreator;
 import com.yapp18.retrospect.config.ResponseMessage;
 import com.yapp18.retrospect.domain.like.Like;
+import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
+import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.service.LikeService;
 import com.yapp18.retrospect.web.AbstractControllerTest;
 import com.yapp18.retrospect.web.dto.LikeDto;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
@@ -23,8 +26,8 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LikeControllerTest extends AbstractControllerTest {
@@ -94,5 +97,15 @@ public class LikeControllerTest extends AbstractControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.result[1].title").value("회고글제목2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.result[1].category").value("카테고리2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.result[1].contents").value("글내용2"));
+    }
+
+    @Test
+    @WithMockRetrospectUser
+    public void 스크랩_삭제_테스트() throws Exception {
+        doNothing().when(likeService).deleteLikes(any(), eq(POST_IDX));
+
+        mockMvc.perform(
+                delete("/api/v1/likes?postIdx=" + POST_IDX)
+        ).andExpect(status().isNoContent());
     }
 }

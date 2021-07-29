@@ -38,4 +38,9 @@ public class Like extends BaseTimeEntity {
     @JoinColumn(name = "user_idx")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+    public boolean isWriter(User user){
+        if (user == null) return false;
+        return this.user.getUserIdx().equals(user.getUserIdx());
+    }
 }

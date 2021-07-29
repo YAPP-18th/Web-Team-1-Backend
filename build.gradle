@@ -86,6 +86,7 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	forkEvery = 1
 }
 
 //apply plugin: 'docker'
