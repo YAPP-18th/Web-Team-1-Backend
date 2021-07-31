@@ -17,9 +17,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Getter @Setter
@@ -56,10 +54,10 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "template_idx")
-    private Template template; // 어떻게?
+    private Template template;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post",orphanRemoval = true)
+    @OneToMany(mappedBy = "post",orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Tag> tagList = new ArrayList<>();
 
     @JsonIgnore

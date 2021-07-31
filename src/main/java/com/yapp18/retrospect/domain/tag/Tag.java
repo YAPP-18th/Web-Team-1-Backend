@@ -2,8 +2,6 @@ package com.yapp18.retrospect.domain.tag;
 
 import com.yapp18.retrospect.domain.post.Post;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 @Entity

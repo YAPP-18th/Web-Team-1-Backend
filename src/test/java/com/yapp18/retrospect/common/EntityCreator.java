@@ -1,6 +1,7 @@
 package com.yapp18.retrospect.common;
 
 import com.yapp18.retrospect.domain.comment.Comment;
+import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.template.Template;
 import com.yapp18.retrospect.domain.user.Role;
@@ -8,12 +9,14 @@ import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.security.oauth2.AuthProvider;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class EntityCreator {
     private static final Long USER_IDX = 1L;
     private static final Long POST_IDX = 1L;
     private static final Long COMMENT_IDX = 1L;
     private static final Long TEMPLATE_IDX = 1L;
+    private static final Long LIKE_IDX = 1L;
 
     public static User createUserEntity(){
         User user = User.builder()
@@ -21,9 +24,9 @@ public class EntityCreator {
                 .email("test@example.com")
                 .name("테스트이름")
                 .nickname("테스트닉네임")
-                .profile("profile-url")
+                .profile("프로필URL")
                 .provider(AuthProvider.kakao)
-                .providerId("12345")
+                .providerId("1")
                 .role(Role.MEMBER)
                 .job("테스트직업")
                 .intro("테스트자기소개")
@@ -35,7 +38,7 @@ public class EntityCreator {
         return user;
     }
 
-    public static Post createPostEntity(){
+    public static Post createPostEntity() {
         Post post =  Post.builder()
                 .postIdx(POST_IDX)
                 .title("회고글제목")
@@ -43,6 +46,10 @@ public class EntityCreator {
                 .contents("글내용")
                 .user(createUserEntity())
                 .template(createTemplateEntity())
+                .tagList(new ArrayList<>())
+                .like(new ArrayList<>())
+                .comments(new ArrayList<>())
+                .imageList(new ArrayList<>())
                 .build();
 
         post.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
@@ -76,5 +83,18 @@ public class EntityCreator {
         comment.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
 
         return comment;
+    }
+
+    public static Like createLikeEntity(){
+        Like like = Like.builder()
+                .likeIdx(LIKE_IDX)
+                .post(createPostEntity())
+                .user(createUserEntity())
+                .build();
+
+        like.setCreatedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+        like.setModifiedAt(LocalDateTime.of(2021, 10, 28, 12, 0, 0));
+
+        return like;
     }
 }

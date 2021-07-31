@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <like_tb
+            like_idx="1"
+            user_idx="1"
+            post_idx="1"/>
+    <like_tb
+            like_idx="2"
+            user_idx="1"
+            post_idx="2"/>
+
+    <like_tb
+            like_idx="3"
+            user_idx="2"
+            post_idx="1"/>
+
+    <like_tb
+            like_idx="4"
+            user_idx="2"
+            post_idx="3"/>
+
+    <like_tb
+            like_idx="5"
+            user_idx="1"
+            post_idx="4"/>
+</dataset>

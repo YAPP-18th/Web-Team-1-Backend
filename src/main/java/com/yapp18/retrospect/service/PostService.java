@@ -17,16 +17,16 @@ import com.yapp18.retrospect.web.dto.ApiIsResultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-//import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
+//import javax.transaction.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -227,4 +227,8 @@ public class PostService {
         return newList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
     }
 
+    //포스트 존재 여부
+    public boolean existsByPostIdx(Long postIdx){
+        return postRepository.existsByPostIdx(postIdx);
+    }
 }

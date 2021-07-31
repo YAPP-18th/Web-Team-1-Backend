@@ -3,15 +3,12 @@ package com.yapp18.retrospect.domain.user;
 import com.sun.istack.NotNull;
 import com.yapp18.retrospect.domain.BaseTimeEntity;
 import com.yapp18.retrospect.security.oauth2.AuthProvider;
-
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
+@Getter @Setter
 @Entity
-@Getter
 @Table(name="user_tb")
 // 기본 생성자 접근을 protected으로 변경하면 외부에서 해당 생성자를 접근 할 수 없으므로 Builder를 통해서만 객체 생성 가능하므로 안전성 보장
 @Builder
@@ -60,10 +57,10 @@ public class User extends BaseTimeEntity {
         return this;
     }
 
-    public User updateProfile(String profile, String name, String nickname, String job, String intro){
+    public User updateProfile(String name, String nickname, String profile, String job, String intro){
         this.name = name;
-        this.profile = profile;
         this.nickname = nickname;
+        this.profile = profile;
         this.job = job;
         this.intro = intro;
         return this;
@@ -72,4 +69,6 @@ public class User extends BaseTimeEntity {
     public String getRoleKey(){
         return this.role.getKey();
     }
+
+
 }

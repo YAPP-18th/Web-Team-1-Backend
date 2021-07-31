@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <post_tb
+            post_idx="1"
+            title="회고글제목"
+            category="카테고리"
+            contents="글내용"
+            user_idx="1"/>
+</dataset>

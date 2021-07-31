@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <comment_tb
+            comment_idx="1"
+            post_idx="1"
+            user_idx="1"
+            comments="댓글내용1"/>
+
+    <comment_tb
+            comment_idx="2"
+            post_idx="1"
+            user_idx="1"
+            comments="댓글내용2"/>
+</dataset>

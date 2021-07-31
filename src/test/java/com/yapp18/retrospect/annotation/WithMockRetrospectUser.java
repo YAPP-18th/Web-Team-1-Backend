@@ -1,6 +1,6 @@
-package com.yapp18.retrospect.api.annotation;
+package com.yapp18.retrospect.annotation;
 
-import com.yapp18.retrospect.api.config.WithMockUserSecurityContextFactory;
+import com.yapp18.retrospect.config.WithMockUserSecurityContextFactory;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.Retention;
