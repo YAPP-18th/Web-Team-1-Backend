@@ -5,9 +5,7 @@ import com.yapp18.retrospect.config.TokenErrorInfo;
 import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
-import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.domain.user.User;
-import com.yapp18.retrospect.domain.user.UserRepository;
 import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.LikeDto;
@@ -28,7 +26,14 @@ public class LikeService {
     private final LikeMapper likeMapper;
 
     @Transactional
-    public Like findByPostIdxAndUserIdx(Long postIdx, Long userIdx){
+    public Like inputLikes(User user, Long postIdx){ // C
+        Post post = postService.findByPostIdx(postIdx);
+
+        return likeRepository.save(likeMapper.toEntity(user, post));
+    }
+
+    @Transactional
+    public Like getLikeByPostIdxAndUserIdx(Long postIdx, Long userIdx){ // R
         return likeRepository.findByPostIdxAndUserIdx(postIdx, userIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.LIKE_NULL));
     }
@@ -40,20 +45,13 @@ public class LikeService {
                 likeRepository.cursorFindByUserOrderByCreatedAtDesc(user.getUserIdx(), cursorIdx, pageable);
 
         return likeList.stream()
-                .map(like -> likeMapper.toDto(like))
+                .map(likeMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public Like inputLikes(User user, Long postIdx){
-        Post post = postService.findByPostIdx(postIdx);
-
-        return likeRepository.save(likeMapper.toEntity(user, post));
-    }
-
-    @Transactional
-    public void deleteLikes(User user, Long postIdx){
-        Like like = findByPostIdxAndUserIdx(user.getUserIdx(), postIdx);
+    public void deleteLikes(User user, Long postIdx){ // D
+        Like like = getLikeByPostIdxAndUserIdx(user.getUserIdx(), postIdx);
 
         if(!like.isWriter(user)){
             throw new AccessDeniedException(TokenErrorInfo.ACCESS_DENIED.getMessage());

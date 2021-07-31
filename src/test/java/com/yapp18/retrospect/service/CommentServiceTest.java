@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -96,7 +97,7 @@ public class CommentServiceTest {
     @DisplayName("댓글 조회 테스트")
     class Get {
         @Test
-        public void 댓글_리스트_조회_테스트(){
+        public void 댓글_리스트_조회_테스트() {
             //given
             int page = 0;
             int size = 2;
@@ -115,6 +116,21 @@ public class CommentServiceTest {
             assertThat(commentList.get(0).getComments()).isEqualTo(firstComment.getComments());
             assertThat(commentList.get(1).getCommentIdx()).isEqualTo(secondComment.getCommentIdx());
             assertThat(commentList.get(1).getComments()).isEqualTo(secondComment.getComments());
+        }
+
+        @Test
+        public void 댓글_없을때_리스트_조회_테스트() {
+            //given
+            int page = 0;
+            int size = 2;
+            List<Comment> arguList = new ArrayList<>();
+            Pageable pageable = PageRequest.of(page, size);
+            //mocking
+            given(commentRepository.findAllByPostIdx(eq(COMMENT_IDX), eq(pageable))).willReturn(arguList);
+            //when
+            List<Comment> commentList = commentService.getCommmentsListByPostIdx(POST_IDX, pageable);
+            //then
+            assertThat(commentList.size()).isEqualTo(0);
         }
 
         @Test
@@ -169,7 +185,7 @@ public class CommentServiceTest {
         }
 
         @Test
-        public void 댓글_수정_예외_존재하지_않는_댓글_테스트() throws Exception {
+            public void 댓글_수정_예외_존재하지_않는_댓글_테스트() throws Exception {
             //given
             //mocking
             given(commentRepository.findById(eq(COMMENT_IDX))).willThrow(new EntityNullException(ErrorInfo.COMMENT_NULL));

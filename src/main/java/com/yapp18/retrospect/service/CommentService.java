@@ -22,7 +22,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public Comment inputComments(Comment comment){
+    public Comment inputComments(Comment comment){ // C
         //타 서비스 의존성을 제거와 코드 가독성을 위해 Entity 외의 메서드 parameter는 최소화 할 것
         Long postIdx = comment.getPost().getPostIdx();
         comment.setPost(postService.findByPostIdx(postIdx));
@@ -31,7 +31,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public Comment getCommmentsByIdx(Long commentIdx){
+    public Comment getCommmentsByIdx(Long commentIdx){ // R
         return commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new EntityNullException(ErrorInfo.COMMENT_NULL));
     }
