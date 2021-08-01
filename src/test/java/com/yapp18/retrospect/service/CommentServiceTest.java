@@ -59,7 +59,7 @@ public class CommentServiceTest {
     @DisplayName("댓글 등록 테스트")
     class Input {
         @Test
-        public void 댓글_등록_테스트() {
+        public void 댓글_등록() {
             //given
             Comment newComment = EntityCreator.createCommentEntity();
             //mocking
@@ -78,7 +78,7 @@ public class CommentServiceTest {
         }
 
         @Test
-        public void 댓글_등록_예외_존재하지_않는_회고글_테스트() {
+        public void 댓글_등록_예외_존재하지_않는_회고글() {
             //given
             Comment newComment = EntityCreator.createCommentEntity();
             //mocking
@@ -97,7 +97,7 @@ public class CommentServiceTest {
     @DisplayName("댓글 조회 테스트")
     class Get {
         @Test
-        public void 댓글_리스트_조회_테스트() {
+        public void 댓글_리스트_조회() {
             //given
             int page = 0;
             int size = 2;
@@ -119,7 +119,7 @@ public class CommentServiceTest {
         }
 
         @Test
-        public void 댓글_없을때_리스트_조회_테스트() {
+        public void 댓글_없을때_리스트_조회() {
             //given
             int page = 0;
             int size = 2;
@@ -134,7 +134,7 @@ public class CommentServiceTest {
         }
 
         @Test
-        public void 댓글_갯수_조회_테스트(){
+        public void 댓글_갯수_조회(){
             //given
             Comment firstComment = EntityCreator.createCommentEntity();
             Comment secondComment = EntityCreator.createCommentEntity();
@@ -155,7 +155,7 @@ public class CommentServiceTest {
     @DisplayName("댓글 수정 테스트")
     class Update {
         @Test
-        public void 댓글_수정_테스트() {
+        public void 댓글_수정() {
             //given
             Comment oldComment = EntityCreator.createCommentEntity();
             //mocking
@@ -170,7 +170,7 @@ public class CommentServiceTest {
         }
 
         @Test
-        public void 댓글_수정_예외_권한_없는_사용자_테스트() {
+        public void 댓글_수정_예외_권한_없는_사용자() {
             //given
             newComment.getUser().setUserIdx(2L);
             Comment oldComment = EntityCreator.createCommentEntity();
@@ -185,7 +185,7 @@ public class CommentServiceTest {
         }
 
         @Test
-            public void 댓글_수정_예외_존재하지_않는_댓글_테스트() throws Exception {
+            public void 댓글_수정_예외_존재하지_않는_댓글() throws Exception {
             //given
             //mocking
             given(commentRepository.findById(eq(COMMENT_IDX))).willThrow(new EntityNullException(ErrorInfo.COMMENT_NULL));
@@ -202,7 +202,7 @@ public class CommentServiceTest {
     @DisplayName("댓글 삭제 테스트")
     class Delete {
         @Test
-        public void 댓글_삭제_테스트() {
+        public void 댓글_삭제() {
             //given
             Comment oldComment = EntityCreator.createCommentEntity();
             //mocking
@@ -220,7 +220,7 @@ public class CommentServiceTest {
         }
 
         @Test
-        public void 댓글_삭제_예외_권한_없는_사용자_테스트() {
+        public void 댓글_삭제_예외_권한_없는_사용자() {
             //given
             newComment.getUser().setUserIdx(2L);
             Comment oldComment = EntityCreator.createCommentEntity();
@@ -235,7 +235,7 @@ public class CommentServiceTest {
         }
 
         @Test
-        public void 댓글_삭제_예외_존재하지_않는_댓글_테스트() throws Exception {
+        public void 댓글_삭제_예외_존재하지_않는_댓글() throws Exception {
             //given
             Comment oldComment = EntityCreator.createCommentEntity();
             //mocking

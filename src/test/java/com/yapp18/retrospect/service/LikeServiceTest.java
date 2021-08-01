@@ -2,10 +2,9 @@ package com.yapp18.retrospect.service;
 
 import com.yapp18.retrospect.common.EntityCreator;
 import com.yapp18.retrospect.config.ErrorInfo;
-import com.yapp18.retrospect.config.TokenErrorInfo;
-import com.yapp18.retrospect.domain.comment.Comment;
 import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.like.LikeRepository;
+import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.web.advice.EntityNullException;
 import org.junit.jupiter.api.Test;
@@ -13,9 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
 
-import java.util.*;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -36,6 +34,9 @@ public class LikeServiceTest {
     private LikeRepository likeRepository;
 
     @Mock
+    private PostRepository postRepository;
+
+    @Mock
     private LikeMapper likeMapper;
 
     private static final Long USER_IDX = 1L;
@@ -43,12 +44,13 @@ public class LikeServiceTest {
     private static final Long LIKE_IDX = 1L;
 
     @Test
-    public void 스크랩_등록_테스트() {
+    public void 스크랩_등록() {
         //given
         Like newLike = EntityCreator.createLikeEntity();
         //mocking
         given(postService.findByPostIdx(eq(POST_IDX))).willReturn(newLike.getPost());
-        given(likeMapper.toEntity(any(), any())).willReturn(newLike);
+//        given(likeMapper.toEntity(any(), any())).willReturn(newLike);
+        given(likeRepository.save(any())).willReturn(newLike);
         //when
         Like inputtedLike = likeService.inputLikes(newLike.getUser(), POST_IDX);
         //then
@@ -59,7 +61,7 @@ public class LikeServiceTest {
     }
 
     @Test
-    public void 스크랩을_사용자와_회고글로_조회_테스트() {
+    public void 스크랩을_사용자와_회고글로_조회() {
         //given
         Like oldLike = EntityCreator.createLikeEntity();
         //mocking
@@ -73,7 +75,7 @@ public class LikeServiceTest {
     }
 
     @Test
-    public void 존재하지_않는_스크랩을_사용자와_회고글로_조회_테스트() {
+    public void 존재하지_않는_스크랩을_사용자와_회고글로_조회() {
         //given
         //mocking
         given(likeRepository.findByPostIdxAndUserIdx(eq(POST_IDX), eq(USER_IDX))).willThrow(new EntityNullException(ErrorInfo.LIKE_NULL));
@@ -86,7 +88,7 @@ public class LikeServiceTest {
     }
 
 //    @Test
-//    public void 댓글_리스트_조회_첫페이지_테스트() {
+//    public void 댓글_리스트_조회_첫페이지() {
 //        //given
 //        int page = 0;
 //        int size = 2;
@@ -118,7 +120,7 @@ public class LikeServiceTest {
 //    }
 
     @Test
-    public void 스크랩_삭제_테스트() {
+    public void 스크랩_삭제() {
         //given
         Like like = EntityCreator.createLikeEntity();
         //mocking
@@ -136,7 +138,7 @@ public class LikeServiceTest {
     }
 
 //    @Test
-//    public void 스크랩_삭제_예외_권한_없는_사용자_테스트() {
+//    public void 스크랩_삭제_예외_권한_없는_사용자() {
 //        //given
 //        Like newLike = EntityCreator.createLikeEntity();
 //        newLike.getUser().setUserIdx(2L);
@@ -152,7 +154,7 @@ public class LikeServiceTest {
 //    }
 
     @Test
-    public void 댓글_삭제_예외_존재하지_않는_댓글_테스트() throws Exception {
+    public void 댓글_삭제_예외_존재하지_않는_댓글() throws Exception {
         //given
         //mocking
         given(likeRepository.findByPostIdxAndUserIdx(eq(POST_IDX), eq(USER_IDX))).willThrow(new EntityNullException(ErrorInfo.LIKE_NULL));

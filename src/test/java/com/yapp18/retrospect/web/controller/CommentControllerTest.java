@@ -36,7 +36,7 @@ public class CommentControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockRetrospectUser
-    public void 댓글_작성_테스트() throws Exception {
+    public void 댓글_작성() throws Exception {
         // ArgumentCaptor를 사용하면 메서드 호출 여부를 검증하는 과정에서 실제 호출할 때 전달한 인자를 보관할 수 있다.
         // ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
 
@@ -60,7 +60,7 @@ public class CommentControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockRetrospectUser
-    public void 댓글_수정_테스트() throws Exception {
+    public void 댓글_수정() throws Exception {
         given(commentService.updateComments(any())).willReturn(EntityCreator.createCommentEntity());
 
         mockMvc.perform(
@@ -75,7 +75,7 @@ public class CommentControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockRetrospectUser
-    public void 댓글_리스트_조회_테스트() throws Exception {
+    public void 댓글_리스트_조회() throws Exception {
         int page = 0;
         int size = 2;
         Comment secondComment = EntityCreator.createCommentEntity();
@@ -99,7 +99,7 @@ public class CommentControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockRetrospectUser
-    public void 댓글_삭제_테스트() throws Exception {
+    public void 댓글_삭제() throws Exception {
         doNothing().when(commentService).deleteComments(any(), eq(COMMENT_IDX));
 
         mockMvc.perform(

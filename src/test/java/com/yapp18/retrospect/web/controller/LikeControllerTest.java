@@ -4,15 +4,12 @@ import com.yapp18.retrospect.annotation.WithMockRetrospectUser;
 import com.yapp18.retrospect.common.EntityCreator;
 import com.yapp18.retrospect.config.ResponseMessage;
 import com.yapp18.retrospect.domain.like.Like;
-import com.yapp18.retrospect.domain.like.LikeRepository;
 import com.yapp18.retrospect.domain.post.Post;
-import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.service.LikeService;
 import com.yapp18.retrospect.web.AbstractControllerTest;
 import com.yapp18.retrospect.web.dto.LikeDto;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +42,7 @@ public class LikeControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockRetrospectUser
-    public void 스크랩_등록_테스트() throws Exception {
+    public void 스크랩_등록() throws Exception {
         given(likeService.inputLikes(any(), eq(POST_IDX))).willReturn(EntityCreator.createLikeEntity());
 
         mockMvc.perform(
@@ -63,7 +60,7 @@ public class LikeControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockRetrospectUser
-    public void 스크랩_조회_테스트() throws Exception {
+    public void 스크랩_조회() throws Exception {
         int page = 0;
         int size = 2;
         Like secondLike = EntityCreator.createLikeEntity();
@@ -101,7 +98,7 @@ public class LikeControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockRetrospectUser
-    public void 스크랩_삭제_테스트() throws Exception {
+    public void 스크랩_삭제() throws Exception {
         doNothing().when(likeService).deleteLikes(any(), eq(POST_IDX));
 
         mockMvc.perform(
