@@ -39,6 +39,12 @@ public class LikeService {
     }
 
     @Transactional
+    public Like getLikeByPostAndUser(Post post, User user){ // R
+        return likeRepository.findByPostAndUser(post, user)
+                .orElseThrow(() -> new EntityNullException(ErrorInfo.LIKE_NULL));
+    }
+
+    @Transactional
     public List<LikeDto.BasicResponse> getLikeListCreatedAt(User user, Long cursorIdx, Pageable pageable){
         List<Like> likeList =  cursorIdx == 0 ?
                 likeRepository.findByUserOrderByCreatedAtDesc(user, pageable):
@@ -51,7 +57,8 @@ public class LikeService {
 
     @Transactional
     public void deleteLikes(User user, Long postIdx){ // D
-        Like like = getLikeByPostIdxAndUserIdx(user.getUserIdx(), postIdx);
+        Post post = postService.findByPostIdx(postIdx);
+        Like like = getLikeByPostAndUser(post, user);
 
         if(!like.isWriter(user)){
             throw new AccessDeniedException(TokenErrorInfo.ACCESS_DENIED.getMessage());

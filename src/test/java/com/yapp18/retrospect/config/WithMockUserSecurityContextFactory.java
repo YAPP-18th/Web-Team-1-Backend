@@ -15,19 +15,23 @@ public class WithMockUserSecurityContextFactory implements WithSecurityContextFa
     @Override
     public SecurityContext createSecurityContext(WithMockRetrospectUser annotation) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
+        User user = User.builder()
+                .userIdx(1L)
+                .email("user1@example.com")
+                .name("이름1")
+                .nickname("닉네임1")
+                .profile("프로필1")
+                .job("직업1")
+                .intro("자기소개1")
+                .provider(AuthProvider.kakao)
+                .providerId("1")
+                .role(Role.MEMBER)
+                .build();
+//        user.setCreatedAt(LocalDateTime.of(2021, 5, 23, 11, 42, 5));
+//        user.setModifiedAt(LocalDateTime.of(2021, 5, 23, 11, 42, 5));
 
-        UserPrincipal userPrincipal =
-                new UserPrincipal(User.builder()
-                        .email("test@example.com")
-                        .name("테스트이름")
-                        .nickname("테스트닉네임")
-                        .profile("profile-url")
-                        .provider(AuthProvider.kakao)
-                        .providerId("12345")
-                        .role(Role.MEMBER)
-                        .job("테스트직업")
-                        .intro("테스트자기소개")
-                        .build());
+        UserPrincipal userPrincipal = new UserPrincipal(user);
+
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(userPrincipal, "password", userPrincipal.getAuthorities());
         context.setAuthentication(authentication);

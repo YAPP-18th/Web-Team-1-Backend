@@ -18,8 +18,8 @@ public interface LikeMapper extends GenericMapper<Like, LikeDto.BasicResponse> {
     @Mapping(target = "likeIdx", ignore = true)
     @Mapping(target = "user", source = "user")
     @Mapping(target = "post", source = "post")
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "modifiedAt", ignore = true)
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "modifiedAt", expression = "java(java.time.LocalDateTime.now())")
     Like toEntity(User user, Post post);
 
     @Override

@@ -12,8 +12,9 @@ import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Optional<Like> findByPostAndUserUserIdx(Post post, Long UserIdx);
+    Optional<Like> findByPostAndUser(Post post, User user);
 
-    @Query(value = "SELECT like_idx FROM like_tb WHERE (like_tb.post_idx =: postIdx) AND (like_tb.user_idx =: userIdx)",  nativeQuery = true)
+    @Query(value = "SELECT like_idx FROM like_tb WHERE (like_tb.post_idx = :postIdx) AND (like_tb.user_idx = :userIdx)",  nativeQuery = true)
     Optional<Like> findByPostIdxAndUserIdx(Long postIdx, Long userIdx);
 
     List<Like> findByUserOrderByCreatedAtDesc(User user, Pageable page);

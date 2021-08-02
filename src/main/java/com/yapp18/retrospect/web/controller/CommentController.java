@@ -39,10 +39,12 @@ public class CommentController {
         //dtoToEntity mapstruct 활용할 것
         Comment newComment = commentMapper.toEntity(inputRequest, user, Post.builder().postIdx(inputRequest.getPostIdx()).build());
         //기존 return new ResponseEntity<> 대신 빌더 패턴을 사용하는게 가독성에 더 좋아보임
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiDefaultResponse.res(201, ResponseMessage.COMMENT_SAVE.getResponseMessage(),
-                commentMapper.toDto(commentService.inputComments(newComment)))
-        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiDefaultResponse.res(201,
+                        ResponseMessage.COMMENT_SAVE.getResponseMessage(),
+                        commentMapper.toDto(commentService.inputComments(newComment))
+                        )
+                );
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 수정")
@@ -52,11 +54,12 @@ public class CommentController {
                                                  @ApiParam(value = "수정 comment_idx", required = true, example = "3")
                                                      @PathVariable(value = "commentIdx") Long commentIdx) {
         Comment newComment = commentMapper.toEntity(updateRequest, user, commentIdx);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiDefaultResponse.res(201,
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiDefaultResponse.res(201,
                         ResponseMessage.COMMENT_UPDATE.getResponseMessage(),
-                        commentMapper.toDto(commentService.updateComments(newComment)))
-        );
+                        commentMapper.toDto(commentService.updateComments(newComment))
+                        )
+                );
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 댓글 삭제")
@@ -65,10 +68,10 @@ public class CommentController {
                                                  @ApiParam(value = "삭제 comment_idx", required = true, example = "3")
                                                  @PathVariable(value = "commentIdx") Long commentIdx) {
         commentService.deleteComments(user, commentIdx);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
-                ApiDefaultResponse.res(204,
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ApiDefaultResponse.res(204,
                         ResponseMessage.COMMENT_DELETE.getResponseMessage())
-        );
+                );
     }
 
     @ApiOperation(value = "comment", notes = "[댓글] 회고글에 댓글 목록 조회")

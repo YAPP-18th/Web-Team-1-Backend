@@ -6,7 +6,6 @@ import com.yapp18.retrospect.domain.like.Like;
 import com.yapp18.retrospect.domain.user.User;
 import com.yapp18.retrospect.mapper.LikeMapper;
 import com.yapp18.retrospect.service.LikeService;
-import com.yapp18.retrospect.service.TokenService;
 import com.yapp18.retrospect.web.dto.ApiDefaultResponse;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.LikeDto;
@@ -19,9 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,6 +33,7 @@ public class LikeController {
     @PostMapping("")
     public ResponseEntity<Object> inputLikes(@CurrentUser User user,
                                              @RequestBody LikeDto.InputRequest inputRequest) {
+
         Like newLike = likeService.inputLikes(user, inputRequest.getPostIdx());
 
         return ResponseEntity.status(HttpStatus.CREATED)

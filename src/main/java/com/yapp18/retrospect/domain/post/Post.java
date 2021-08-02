@@ -62,11 +62,11 @@ public class Post extends BaseTimeEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "post",orphanRemoval = true)
-    private  List<Like> like = new ArrayList<>();
+    private List<Like> like = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)
-    private  List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", orphanRemoval = true)
