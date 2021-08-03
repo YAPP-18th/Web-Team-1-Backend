@@ -7,7 +7,7 @@
   
  <img alt="Jenkins" src="https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white"/>  <img alt="Docker" src="https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white"/> <img alt="AWS" src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white"/> <img alt="Nginx" src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white"/>
  
-  ![201512475_5715364638537850_229962042777774324_n](https://user-images.githubusercontent.com/54519245/126858248-8ecee569-c880-4301-a7b2-f69bf1a2aed8.jpg)
+![A4 - 1](https://user-images.githubusercontent.com/54519245/128004604-7da80704-63fe-4e59-ac37-cd9fcb6fedd6.png)
  
   </div>
 
