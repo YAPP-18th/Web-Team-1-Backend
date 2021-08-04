@@ -13,13 +13,16 @@ public interface LikeMapper extends GenericMapper<Like, LikeDto.BasicResponse> {
     LikeMapper instance = Mappers.getMapper(LikeMapper.class);
 
     @Override
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "post", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
     Like toEntity(LikeDto.BasicResponse dto);
 
     @Mapping(target = "likeIdx", ignore = true)
     @Mapping(target = "user", source = "user")
     @Mapping(target = "post", source = "post")
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "modifiedAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
     Like toEntity(User user, Post post);
 
     @Override
