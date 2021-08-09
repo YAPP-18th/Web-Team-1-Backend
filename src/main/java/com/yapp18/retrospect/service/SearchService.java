@@ -1,9 +1,11 @@
 package com.yapp18.retrospect.service;
 
+import com.yapp18.retrospect.config.ErrorInfo;
 import com.yapp18.retrospect.domain.post.Post;
 import com.yapp18.retrospect.domain.post.PostQueryRepository;
 import com.yapp18.retrospect.domain.post.PostRepository;
 import com.yapp18.retrospect.mapper.PostMapper;
+import com.yapp18.retrospect.web.advice.EntityNullException;
 import com.yapp18.retrospect.web.dto.ApiPagingResultResponse;
 import com.yapp18.retrospect.web.dto.PostDto;
 import com.yapp18.retrospect.web.dto.SearchDto;
@@ -30,15 +32,20 @@ public class SearchService {
         // 카테고리 검색 시
         List<PostDto.ListResponse> result;
         if (searchDto.getType().equals("category") && searchDto.getKeyword() == null){ // 검색타입이 카테고리고 키워드가 없음.
-            result = getPostCategory(searchDto.getPage(), pageable, searchDto.getQuery()) // cursorId, 페이지 정보, 쿼리 넘김(카테고리)
-                    .stream().map(post->postMapper.postToListResponse(post, userIdx))
+           List<Post> posts = getPostCategory(searchDto.getPage(), pageable, searchDto.getQuery()) ;// cursorId, 페이지 정보, 쿼리 넘김(카테고리)
+           if (posts.isEmpty()) throw new EntityNullException(ErrorInfo.CONDITION_NULL);
+
+            result = posts.stream().map(post->postMapper.postToListResponse(post, userIdx))
                     .collect(Collectors.toList());
         } else{
             // 통합 검색 시
-            result = findAllByType(searchDto.getType(), searchDto.getQuery(), searchDto.getKeyword(), searchDto.getPage(),pageable)
-                    .stream().map(post->postMapper.postToListResponse(post, userIdx))
+            List<Post> posts = findAllByType(searchDto.getType(), searchDto.getQuery(), searchDto.getKeyword(), searchDto.getPage(),pageable);
+            if (posts.isEmpty()) throw new EntityNullException(ErrorInfo.CONDITION_NULL);
+
+            result = posts.stream().map(post->postMapper.postToListResponse(post, userIdx))
                     .collect(Collectors.toList());
         }
+
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
         return new ApiPagingResultResponse<>(isNext(searchDto, pageable, lastIdx), result);
     }
@@ -47,13 +54,15 @@ public class SearchService {
     // 해시태그로 검색
     @Transactional(readOnly = true)
     public ApiPagingResultResponse<PostDto.ListResponse> getPostsByHashTag(String tag, Long cursorId, Pageable pageable, Long userIdx){
-        List<PostDto.ListResponse> result = findAllByTag(cursorId, pageable, tag).stream()
+        List<Post> posts = findAllByTag(cursorId, pageable, tag);
+        if (posts.isEmpty()) throw new EntityNullException(ErrorInfo.CONDITION_NULL);
+
+        List<PostDto.ListResponse> result= posts.stream()
                 .map(post->postMapper.postToListResponse(post, userIdx))
                 .collect(Collectors.toList());
         Long lastIdx = result.isEmpty() ? null : result.get(result.size()-1).getPostIdx();
         return new ApiPagingResultResponse<>(isHashTag(lastIdx, pageable, tag), result);
     }
-
 
 
     // 통합 검색 분기처리
